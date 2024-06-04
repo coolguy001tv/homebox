@@ -4,7 +4,7 @@ env:
   HBOX_LOG_LEVEL: debug
   HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
-  UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
+  UNSAFE_DISABLE_PASSWORD_PROJECTION: ""
 tasks:
   setup:
     desc: Install development dependencies
@@ -108,7 +108,7 @@ tasks:
       - "./backend/internal/data/ent/schema/**/*"
 
   db:migration:
-    desc: Runs the database diff engine to generate a SQL migration files
+    desc: Runs the database diff engine to generate a SQL migration files 
     deps:
       - db:generate
     cmds:

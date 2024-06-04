@@ -12,4 +12,5 @@
 
 <script lang="ts" setup>
   const { theme } = useTheme();
+  console.log('hello this is a test')
 </script>
