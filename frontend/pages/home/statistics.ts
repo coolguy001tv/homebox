@@ -6,6 +6,14 @@ type StatCard = {
   type: "currency" | "number";
 };
 
+export function statLabelData(api: UserClient){
+  const {data} = useAsyncData(async ()=>{
+    const {data} = await api.stats.labels();
+    return data;
+  })
+  return data
+}
+
 export function statCardData(api: UserClient) {
   const { data: statistics } = useAsyncData(async () => {
     const { data } = await api.stats.group();

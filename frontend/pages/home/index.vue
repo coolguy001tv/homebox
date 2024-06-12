@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { statCardData } from "./statistics";
+  import { statCardData, statLabelData } from "./statistics";
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -22,6 +22,8 @@
 
   const itemTable = itemsTable(api);
   const stats = statCardData(api);
+  const statLabel = statLabelData(api);
+
 </script>
 
 <template>
@@ -31,6 +33,12 @@
         <Subtitle> 快速统计 </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
           <StatCard v-for="(stat, i) in stats" :key="i" :title="stat.label" :value="stat.value" :type="stat.type" />
+        </div>
+      </section>
+      <section>
+        <Subtitle> 各个标签统计 </Subtitle>
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
+          <StatCard v-for="(stat, i) in statLabel" :key="i" :title="stat.name" :value="stat.total" type="currency" />
         </div>
       </section>
 

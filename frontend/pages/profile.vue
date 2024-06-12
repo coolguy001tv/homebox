@@ -25,12 +25,16 @@
   });
 
   const currencyExample = computed(() => {
-    const formatter = new Intl.NumberFormat("en-US", {
+    const formatter = new Intl.NumberFormat("zh-CN", {
       style: "currency",
-      currency: currency.value ? currency.value.code : "USD",
+      currencyDisplay: 'symbol',
+      currency: 'CNY', // 人民币
+      // currency: currency.value ? currency.value.code : "USD",
     });
 
-    return formatter.format(1000);
+    const result = formatter.format(1000)
+
+    return result;
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -286,7 +290,7 @@
 <template>
   <div>
     <BaseModal v-model="passwordChange.dialog">
-      <template #title> Change Password </template>
+      <template #title> 修改密码 </template>
 
       <form @submit.prevent="changePassword">
         <FormPassword v-model="passwordChange.current" label="Current Password" placeholder="" />
@@ -329,7 +333,7 @@
         <template #title>
           <BaseSectionHeader>
             <Icon name="mdi-account" class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> User Profile </span>
+            <span class="text-base-600"> 用户信息 </span>
             <template #description> Invite users, and manage your account. </template>
           </BaseSectionHeader>
         </template>
