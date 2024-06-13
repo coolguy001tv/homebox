@@ -53,6 +53,9 @@
               <Icon v-if="d.insured" name="mdi-check" class="text-green-500 h-5 w-5" />
               <Icon v-else name="mdi-close" class="text-red-500 h-5 w-5" />
             </template>
+            <template v-else-if="cell(h) === 'cell-item'">
+              <img class="h-[50px] w-full object-cover rounded-t shadow-sm border-gray-300" :src="getImageUrl(d)" />
+            </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
             </slot>
@@ -79,13 +82,24 @@
   };
   const props = defineProps<Props>();
 
+  const api = useUserApi();
+
+  const getImageUrl = (item) => {
+    if (!item.imageId) {
+      return "/no-image.jpg";
+    }
+
+    return api.authURL(`/items/${item.id}/attachments/${item.imageId}`);
+  };
+
   const sortByProperty = ref<keyof ItemSummary | "">("");
 
   const headers = computed<TableHeader[]>(() => {
     return [
+      { text:"首图", value: "item"},
       { text: "Name", value: "name" },
       { text: "Quantity", value: "quantity", align: "center" },
-      { text: "Insured", value: "insured", align: "center" },
+      // { text: "Insured", value: "insured", align: "center" }, // 不关心保险问题
       { text: "Price", value: "purchasePrice" },
     ] as TableHeader[];
   });
