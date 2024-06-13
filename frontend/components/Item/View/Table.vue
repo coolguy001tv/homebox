@@ -84,7 +84,7 @@
 
   const api = useUserApi();
 
-  const getImageUrl = (item) => {
+  const getImageUrl = (item: ItemSummary ) => {
     if (!item.imageId) {
       return "/no-image.jpg";
     }
