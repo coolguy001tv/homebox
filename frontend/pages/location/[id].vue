@@ -137,6 +137,7 @@
               </div>
               <h1 class="text-2xl pb-1">
                 {{ location ? location.name : "" }}
+                <span class="text-xs">(合计{{ items?.length}}项)</span>
               </h1>
               <div class="flex gap-1 flex-wrap text-xs">
                 <div>
