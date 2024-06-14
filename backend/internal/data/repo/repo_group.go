@@ -102,6 +102,7 @@ type (
 		ID    uuid.UUID `json:"id"`
 		Name  string    `json:"name"`
 		Total float64   `json:"total"`
+		Count int       `json:"count"` // 用于存储计算total的行数
 	}
 )
 
@@ -133,6 +134,7 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, GID
 
 func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, GID uuid.UUID) ([]TotalsByOrganizer, error) {
 	var v []TotalsByOrganizer
+	var updatedV []TotalsByOrganizer
 
 	err := r.db.Label.Query().
 		Where(
@@ -150,9 +152,31 @@ func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, GID uu
 			return sql.As(sql.Sum(itemTable.C(item.FieldPurchasePrice)), "total")
 		}).
 		Scan(ctx, &v)
-	if err != nil {
-		return nil, err
+
+	// 获取label的条数
+	for _, total := range v {
+		var count int
+		row := r.db.Sql().QueryRowContext(ctx, `SELECT COUNT(*)
+			FROM label_items
+			WHERE label_id = ?`, total.ID)
+		err := row.Scan(&count)
+		if err != nil {
+			return nil, err
+		}
+		// 创建一个新的 TotalsByOrganizer 实例，复制原始数据并更新 Count 字段
+		updatedTotal := total
+		updatedTotal.Count = count
+
+		updatedV = append(updatedV, updatedTotal)
+
 	}
+
+	// 现在 updatedV 包含了正确的 Count 值，你可以用它替换原来的 v
+	v = updatedV
+
+	// 或者，如果你想一次性打印整个数组，可以将其转换为JSON字符串
+	//jsonTotals, err := json.MarshalIndent(v, "", "  ")
+	//log.Info().RawJSON("totals", jsonTotals).Msg("所有标签的统计信息2")
 
 	return v, err
 }

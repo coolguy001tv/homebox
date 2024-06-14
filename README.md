@@ -14,7 +14,7 @@
 ## Quick Start
 
 ## Docker build脚本
-`docker build . -t hellocoolguy/homebox:0.0.2`
+`docker build . -t hellocoolguy/homebox:0.0.3`
 记得在wsl(ubuntu)下运行，否则有权限问题
 
 目前已经设置了wsl的代理，如果后续有问题，可以重新设置一下，设置方式如下：
@@ -26,13 +26,13 @@
 ## 发布流程
 1. 确保上面的docker build命令正常成功执行
 2. 登录到docker hub: `docker login` (密码参见notion文档)
-3. `docker push hellocoolguy/homebox:0.0.2`
+3. `docker push hellocoolguy/homebox:0.0.3`
 4. 可选的 latest tag操作：
-    1. docker tag hellocoolguy/homebox:0.0.2 hellocoolguy/homebox:latest
+    1. docker tag hellocoolguy/homebox:0.0.3 hellocoolguy/homebox:latest
     2. docker push hellocoolguy/homebox:latest
 
 ## 一些有用的脚本
-1. `docker images`可以查看当前已经build好的image，比如前面通过`docker build`出来的·hellocoolguy/homebox:0.0.2`
+1. `docker images`可以查看当前已经build好的image，比如前面通过`docker build`出来的·hellocoolguy/homebox:0.0.3`
 
 ## 一些异常情况
 ### `ERROR: failed to solve: node:18-alpine: failed to resolve source metadata for docker.io/library/node:18-alpine: ...: 8134 != 7826: failed precondition`

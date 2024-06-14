@@ -38,7 +38,7 @@
       <section>
         <Subtitle> 各个标签统计 </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
-          <StatCard v-for="(stat, i) in statLabel" :key="i" :title="stat.name" :value="stat.total" type="currency" />
+          <StatCard v-for="(stat, i) in statLabel" :key="i" :title="stat.name" :value="stat.total" type="currency" :subtitle="stat.count+'项'"/>
         </div>
       </section>
 

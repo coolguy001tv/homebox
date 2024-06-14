@@ -319,6 +319,7 @@ export interface TotalsByOrganizer {
   id: string;
   name: string;
   total: number;
+  count: number;
 }
 
 export interface TreeItem {
