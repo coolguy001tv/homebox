@@ -7,6 +7,7 @@
         <template v-if="type === 'number'">{{ value }}</template>
       </div>
       <div v-if="subtitle" class="stat-desc">{{ subtitle }}</div>
+      <slot />
     </div>
   </div>
 </template>
