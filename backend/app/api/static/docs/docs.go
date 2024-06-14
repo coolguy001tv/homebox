@@ -410,6 +410,16 @@ const docTemplate = `{
                         "description": "location Ids",
                         "name": "locations",
                         "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "parent Ids",
+                        "name": "parentIds",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1574,7 +1584,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ApiSummary"
+                            "$ref": "#/definitions/v1.APISummary"
                         }
                     }
                 }
@@ -1645,6 +1655,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.LoginForm"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "auth provider",
+                        "name": "provider",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1998,12 +2014,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/repo.ItemAttachment"
                     }
                 },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.ItemSummary"
-                    }
-                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2181,8 +2191,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "assetId": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "integer"
                 },
                 "description": {
                     "type": "string"
@@ -2614,6 +2623,10 @@ const docTemplate = `{
         "repo.TotalsByOrganizer": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "用于存储计算total的行数",
+                    "type": "integer"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2736,15 +2749,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ActionAmountResult": {
-            "type": "object",
-            "properties": {
-                "completed": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.ApiSummary": {
+        "v1.APISummary": {
             "type": "object",
             "properties": {
                 "allowRegistration": {
@@ -2770,6 +2775,14 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "v1.ActionAmountResult": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "integer"
                 }
             }
         },

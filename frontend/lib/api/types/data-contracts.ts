@@ -81,7 +81,6 @@ export interface ItemOut {
   /** @example "0" */
   assetId: string;
   attachments: ItemAttachment[];
-  children: ItemSummary[];
   createdAt: Date | string;
   description: string;
   fields: ItemField[];
@@ -141,8 +140,7 @@ export interface ItemSummary {
 
 export interface ItemUpdate {
   archived: boolean;
-  /** @example "0" */
-  assetId: string;
+  assetId: number;
   description: string;
   fields: ItemField[];
   id: string;
@@ -316,10 +314,11 @@ export interface PaginationResultItemSummary {
 }
 
 export interface TotalsByOrganizer {
+  /** 用于存储计算total的行数 */
+  count: number;
   id: string;
   name: string;
   total: number;
-  count: number;
 }
 
 export interface TreeItem {
@@ -365,11 +364,7 @@ export interface UserRegistration {
   token: string;
 }
 
-export interface ActionAmountResult {
-  completed: number;
-}
-
-export interface ApiSummary {
+export interface APISummary {
   allowRegistration: boolean;
   build: Build;
   demo: boolean;
@@ -377,6 +372,10 @@ export interface ApiSummary {
   message: string;
   title: string;
   versions: string[];
+}
+
+export interface ActionAmountResult {
+  completed: number;
 }
 
 export interface Build {
