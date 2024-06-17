@@ -58,6 +58,10 @@ type Item struct {
 	PurchaseFrom string `json:"purchase_from,omitempty"`
 	// PurchasePrice holds the value of the "purchase_price" field.
 	PurchasePrice float64 `json:"purchase_price,omitempty"`
+	// SetPrice holds the value of the "set_price" field.
+	SetPrice float64 `json:"set_price,omitempty"`
+	// OriginalPrice holds the value of the "original_price" field.
+	OriginalPrice float64 `json:"original_price,omitempty"`
 	// SoldTime holds the value of the "sold_time" field.
 	SoldTime time.Time `json:"sold_time,omitempty"`
 	// SoldTo holds the value of the "sold_to" field.
@@ -189,7 +193,7 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case item.FieldInsured, item.FieldArchived, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
-		case item.FieldPurchasePrice, item.FieldSoldPrice:
+		case item.FieldPurchasePrice, item.FieldSetPrice, item.FieldOriginalPrice, item.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
 		case item.FieldQuantity, item.FieldAssetID:
 			values[i] = new(sql.NullInt64)
@@ -339,6 +343,18 @@ func (i *Item) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field purchase_price", values[j])
 			} else if value.Valid {
 				i.PurchasePrice = value.Float64
+			}
+		case item.FieldSetPrice:
+			if value, ok := values[j].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field set_price", values[j])
+			} else if value.Valid {
+				i.SetPrice = value.Float64
+			}
+		case item.FieldOriginalPrice:
+			if value, ok := values[j].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field original_price", values[j])
+			} else if value.Valid {
+				i.OriginalPrice = value.Float64
 			}
 		case item.FieldSoldTime:
 			if value, ok := values[j].(*sql.NullTime); !ok {
@@ -517,6 +533,12 @@ func (i *Item) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("purchase_price=")
 	builder.WriteString(fmt.Sprintf("%v", i.PurchasePrice))
+	builder.WriteString(", ")
+	builder.WriteString("set_price=")
+	builder.WriteString(fmt.Sprintf("%v", i.SetPrice))
+	builder.WriteString(", ")
+	builder.WriteString("original_price=")
+	builder.WriteString(fmt.Sprintf("%v", i.OriginalPrice))
 	builder.WriteString(", ")
 	builder.WriteString("sold_time=")
 	builder.WriteString(i.SoldTime.Format(time.ANSIC))

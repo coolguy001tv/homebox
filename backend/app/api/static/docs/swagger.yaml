@@ -152,6 +152,9 @@ definitions:
       notes:
         description: Extras
         type: string
+      originalPrice:
+        example: "0"
+        type: string
       parent:
         allOf:
         - $ref: '#/definitions/repo.ItemSummary'
@@ -168,6 +171,9 @@ definitions:
       quantity:
         type: integer
       serialNumber:
+        type: string
+      setPrice:
+        example: "0"
         type: string
       soldNotes:
         type: string
@@ -221,11 +227,17 @@ definitions:
         x-omitempty: true
       name:
         type: string
+      originalPrice:
+        example: "0"
+        type: string
       purchasePrice:
         example: "0"
         type: string
       quantity:
         type: integer
+      setPrice:
+        example: "0"
+        type: string
       updatedAt:
         type: string
     type: object
@@ -264,6 +276,9 @@ definitions:
       notes:
         description: Extras
         type: string
+      originalPrice:
+        example: "0"
+        type: string
       parentId:
         type: string
         x-nullable: true
@@ -280,6 +295,9 @@ definitions:
         type: integer
       serialNumber:
         description: Identifications
+        type: string
+      setPrice:
+        example: "0"
         type: string
       soldNotes:
         type: string

@@ -151,6 +151,16 @@ func PurchasePrice(v float64) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldPurchasePrice, v))
 }
 
+// SetPrice applies equality check predicate on the "set_price" field. It's identical to SetPriceEQ.
+func SetPrice(v float64) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldSetPrice, v))
+}
+
+// OriginalPrice applies equality check predicate on the "original_price" field. It's identical to OriginalPriceEQ.
+func OriginalPrice(v float64) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldOriginalPrice, v))
+}
+
 // SoldTime applies equality check predicate on the "sold_time" field. It's identical to SoldTimeEQ.
 func SoldTime(v time.Time) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldSoldTime, v))
@@ -1164,6 +1174,86 @@ func PurchasePriceLT(v float64) predicate.Item {
 // PurchasePriceLTE applies the LTE predicate on the "purchase_price" field.
 func PurchasePriceLTE(v float64) predicate.Item {
 	return predicate.Item(sql.FieldLTE(FieldPurchasePrice, v))
+}
+
+// SetPriceEQ applies the EQ predicate on the "set_price" field.
+func SetPriceEQ(v float64) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldSetPrice, v))
+}
+
+// SetPriceNEQ applies the NEQ predicate on the "set_price" field.
+func SetPriceNEQ(v float64) predicate.Item {
+	return predicate.Item(sql.FieldNEQ(FieldSetPrice, v))
+}
+
+// SetPriceIn applies the In predicate on the "set_price" field.
+func SetPriceIn(vs ...float64) predicate.Item {
+	return predicate.Item(sql.FieldIn(FieldSetPrice, vs...))
+}
+
+// SetPriceNotIn applies the NotIn predicate on the "set_price" field.
+func SetPriceNotIn(vs ...float64) predicate.Item {
+	return predicate.Item(sql.FieldNotIn(FieldSetPrice, vs...))
+}
+
+// SetPriceGT applies the GT predicate on the "set_price" field.
+func SetPriceGT(v float64) predicate.Item {
+	return predicate.Item(sql.FieldGT(FieldSetPrice, v))
+}
+
+// SetPriceGTE applies the GTE predicate on the "set_price" field.
+func SetPriceGTE(v float64) predicate.Item {
+	return predicate.Item(sql.FieldGTE(FieldSetPrice, v))
+}
+
+// SetPriceLT applies the LT predicate on the "set_price" field.
+func SetPriceLT(v float64) predicate.Item {
+	return predicate.Item(sql.FieldLT(FieldSetPrice, v))
+}
+
+// SetPriceLTE applies the LTE predicate on the "set_price" field.
+func SetPriceLTE(v float64) predicate.Item {
+	return predicate.Item(sql.FieldLTE(FieldSetPrice, v))
+}
+
+// OriginalPriceEQ applies the EQ predicate on the "original_price" field.
+func OriginalPriceEQ(v float64) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldOriginalPrice, v))
+}
+
+// OriginalPriceNEQ applies the NEQ predicate on the "original_price" field.
+func OriginalPriceNEQ(v float64) predicate.Item {
+	return predicate.Item(sql.FieldNEQ(FieldOriginalPrice, v))
+}
+
+// OriginalPriceIn applies the In predicate on the "original_price" field.
+func OriginalPriceIn(vs ...float64) predicate.Item {
+	return predicate.Item(sql.FieldIn(FieldOriginalPrice, vs...))
+}
+
+// OriginalPriceNotIn applies the NotIn predicate on the "original_price" field.
+func OriginalPriceNotIn(vs ...float64) predicate.Item {
+	return predicate.Item(sql.FieldNotIn(FieldOriginalPrice, vs...))
+}
+
+// OriginalPriceGT applies the GT predicate on the "original_price" field.
+func OriginalPriceGT(v float64) predicate.Item {
+	return predicate.Item(sql.FieldGT(FieldOriginalPrice, v))
+}
+
+// OriginalPriceGTE applies the GTE predicate on the "original_price" field.
+func OriginalPriceGTE(v float64) predicate.Item {
+	return predicate.Item(sql.FieldGTE(FieldOriginalPrice, v))
+}
+
+// OriginalPriceLT applies the LT predicate on the "original_price" field.
+func OriginalPriceLT(v float64) predicate.Item {
+	return predicate.Item(sql.FieldLT(FieldOriginalPrice, v))
+}
+
+// OriginalPriceLTE applies the LTE predicate on the "original_price" field.
+func OriginalPriceLTE(v float64) predicate.Item {
+	return predicate.Item(sql.FieldLTE(FieldOriginalPrice, v))
 }
 
 // SoldTimeEQ applies the EQ predicate on the "sold_time" field.

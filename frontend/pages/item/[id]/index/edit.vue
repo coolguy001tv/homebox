@@ -193,6 +193,16 @@
       // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
+    {
+      type: "text",
+      label: "原价",
+      ref: "originalPrice",
+    },
+    {
+      type: "text",
+      label: "套餐价",
+      ref: "setPrice",
+    },
   ];
 
   const warrantyFields: FormField[] = [
@@ -460,7 +470,7 @@
           <template #title-actions>
             <div class="flex flex-wrap justify-between items-center mt-2 gap-4"></div>
           </template>
-          <div class="px-5 pt-2 border-t mb-6 grid md:grid-cols-2 gap-4">
+          <div class="px-5 pt-2 border-t mb-6 grid md:grid-cols-3 gap-4">
             <LocationSelector v-model="item.location" />
             <FormMultiselect v-model="item.labels" label="Labels" :items="labels ?? []" />
             <Autocomplete
@@ -508,30 +518,7 @@
           </div>
         </BaseCard>
 
-        <BaseCard>
-          <template #title> Custom Fields </template>
-          <div class="px-5 border-t divide-y divide-gray-300 space-y-4">
-            <div
-              v-for="(field, idx) in item.fields"
-              :key="`field-${idx}`"
-              class="grid grid-cols-2 md:grid-cols-4 gap-2"
-            >
-              <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
-              <FormTextField v-model="field.name" label="Name" />
-              <div class="flex items-end col-span-3">
-                <FormTextField v-model="field.textValue" label="Value" />
-                <div class="tooltip" data-tip="Delete">
-                  <button class="btn btn-sm btn-square mb-2 ml-2" @click="item.fields.splice(idx, 1)">
-                    <Icon name="mdi-delete" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="px-5 pb-4 mt-4 flex justify-end">
-            <BaseButton size="sm" @click="addField"> Add </BaseButton>
-          </div>
-        </BaseCard>
+
 
         <div
           v-if="preferences.editorAdvancedView"
@@ -631,6 +618,34 @@
             </div>
           </div>
         </div>
+
+
+
+
+        <BaseCard>
+          <template #title> Custom Fields </template>
+          <div class="px-5 border-t divide-y divide-gray-300 space-y-4">
+            <div
+                v-for="(field, idx) in item.fields"
+                :key="`field-${idx}`"
+                class="grid grid-cols-2 md:grid-cols-4 gap-2"
+            >
+              <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
+              <FormTextField v-model="field.name" label="Name" />
+              <div class="flex items-end col-span-3">
+                <FormTextField v-model="field.textValue" label="Value" />
+                <div class="tooltip" data-tip="Delete">
+                  <button class="btn btn-sm btn-square mb-2 ml-2" @click="item.fields.splice(idx, 1)">
+                    <Icon name="mdi-delete" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-5 pb-4 mt-4 flex justify-end">
+            <BaseButton size="sm" @click="addField"> Add </BaseButton>
+          </div>
+        </BaseCard>
 
         <div v-if="preferences.editorAdvancedView" class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">

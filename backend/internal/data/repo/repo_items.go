@@ -93,6 +93,8 @@ type (
 		PurchaseTime  types.Date `json:"purchaseTime"`
 		PurchaseFrom  string     `json:"purchaseFrom"`
 		PurchasePrice float64    `json:"purchasePrice,string"`
+		OriginalPrice float64    `json:"originalPrice,string"`
+		SetPrice      float64    `json:"setPrice,string"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
@@ -123,6 +125,8 @@ type (
 		UpdatedAt   time.Time `json:"updatedAt"`
 
 		PurchasePrice float64 `json:"purchasePrice,string"`
+		OriginalPrice float64 `json:"originalPrice,string"`
+		SetPrice      float64 `json:"setPrice,string"`
 
 		// Edges
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
@@ -197,6 +201,8 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		UpdatedAt:     item.UpdatedAt,
 		Archived:      item.Archived,
 		PurchasePrice: item.PurchasePrice,
+		SetPrice:      item.SetPrice,
+		OriginalPrice: item.OriginalPrice,
 
 		// Edges
 		Location: location,
@@ -586,6 +592,8 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 		SetPurchaseTime(data.PurchaseTime.Time()).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
+		SetSetPrice(data.SetPrice).
+		SetOriginalPrice(data.OriginalPrice).
 		SetSoldTime(data.SoldTime.Time()).
 		SetSoldTo(data.SoldTo).
 		SetSoldPrice(data.SoldPrice).
@@ -663,7 +671,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 			SetTextValue(f.TextValue).
 			SetNumberValue(f.NumberValue).
 			SetBooleanValue(f.BooleanValue)
-			// SetTimeValue(f.TimeValue)
+		// SetTimeValue(f.TimeValue)
 
 		_, err = opt.Save(ctx)
 		if err != nil {

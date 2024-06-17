@@ -2068,6 +2068,10 @@ const docTemplate = `{
                     "description": "Extras",
                     "type": "string"
                 },
+                "originalPrice": {
+                    "type": "string",
+                    "example": "0"
+                },
                 "parent": {
                     "allOf": [
                         {
@@ -2093,6 +2097,10 @@ const docTemplate = `{
                 },
                 "serialNumber": {
                     "type": "string"
+                },
+                "setPrice": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "soldNotes": {
                     "type": "string"
@@ -2172,12 +2180,20 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "originalPrice": {
+                    "type": "string",
+                    "example": "0"
+                },
                 "purchasePrice": {
                     "type": "string",
                     "example": "0"
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "setPrice": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2235,6 +2251,10 @@ const docTemplate = `{
                     "description": "Extras",
                     "type": "string"
                 },
+                "originalPrice": {
+                    "type": "string",
+                    "example": "0"
+                },
                 "parentId": {
                     "type": "string",
                     "x-nullable": true,
@@ -2257,6 +2277,10 @@ const docTemplate = `{
                 "serialNumber": {
                     "description": "Identifications",
                     "type": "string"
+                },
+                "setPrice": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "soldNotes": {
                     "type": "string"

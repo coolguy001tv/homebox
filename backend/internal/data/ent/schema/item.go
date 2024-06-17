@@ -82,6 +82,10 @@ func (Item) Fields() []ent.Field {
 			Optional(),
 		field.Float("purchase_price").
 			Default(0),
+		field.Float("set_price").
+			Default(0),
+		field.Float("original_price").
+			Default(0),
 
 		// ------------------------------------
 		// Sold Details

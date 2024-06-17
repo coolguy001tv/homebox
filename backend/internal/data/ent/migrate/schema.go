@@ -171,6 +171,8 @@ var (
 		{Name: "purchase_time", Type: field.TypeTime, Nullable: true},
 		{Name: "purchase_from", Type: field.TypeString, Nullable: true},
 		{Name: "purchase_price", Type: field.TypeFloat64, Default: 0},
+		{Name: "set_price", Type: field.TypeFloat64, Default: 0},
+		{Name: "original_price", Type: field.TypeFloat64, Default: 0},
 		{Name: "sold_time", Type: field.TypeTime, Nullable: true},
 		{Name: "sold_to", Type: field.TypeString, Nullable: true},
 		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
@@ -187,19 +189,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "items_groups_items",
-				Columns:    []*schema.Column{ItemsColumns[24]},
+				Columns:    []*schema.Column{ItemsColumns[26]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "items_items_children",
-				Columns:    []*schema.Column{ItemsColumns[25]},
+				Columns:    []*schema.Column{ItemsColumns[27]},
 				RefColumns: []*schema.Column{ItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "items_locations_items",
-				Columns:    []*schema.Column{ItemsColumns[26]},
+				Columns:    []*schema.Column{ItemsColumns[28]},
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

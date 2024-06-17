@@ -4095,6 +4095,10 @@ type ItemMutation struct {
 	purchase_from              *string
 	purchase_price             *float64
 	addpurchase_price          *float64
+	set_price                  *float64
+	addset_price               *float64
+	original_price             *float64
+	addoriginal_price          *float64
 	sold_time                  *time.Time
 	sold_to                    *string
 	sold_price                 *float64
@@ -5105,6 +5109,118 @@ func (m *ItemMutation) ResetPurchasePrice() {
 	m.addpurchase_price = nil
 }
 
+// SetSetPrice sets the "set_price" field.
+func (m *ItemMutation) SetSetPrice(f float64) {
+	m.set_price = &f
+	m.addset_price = nil
+}
+
+// SetPrice returns the value of the "set_price" field in the mutation.
+func (m *ItemMutation) SetPrice() (r float64, exists bool) {
+	v := m.set_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSetPrice returns the old "set_price" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldSetPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSetPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSetPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSetPrice: %w", err)
+	}
+	return oldValue.SetPrice, nil
+}
+
+// AddSetPrice adds f to the "set_price" field.
+func (m *ItemMutation) AddSetPrice(f float64) {
+	if m.addset_price != nil {
+		*m.addset_price += f
+	} else {
+		m.addset_price = &f
+	}
+}
+
+// AddedSetPrice returns the value that was added to the "set_price" field in this mutation.
+func (m *ItemMutation) AddedSetPrice() (r float64, exists bool) {
+	v := m.addset_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSetPrice resets all changes to the "set_price" field.
+func (m *ItemMutation) ResetSetPrice() {
+	m.set_price = nil
+	m.addset_price = nil
+}
+
+// SetOriginalPrice sets the "original_price" field.
+func (m *ItemMutation) SetOriginalPrice(f float64) {
+	m.original_price = &f
+	m.addoriginal_price = nil
+}
+
+// OriginalPrice returns the value of the "original_price" field in the mutation.
+func (m *ItemMutation) OriginalPrice() (r float64, exists bool) {
+	v := m.original_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOriginalPrice returns the old "original_price" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldOriginalPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOriginalPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOriginalPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOriginalPrice: %w", err)
+	}
+	return oldValue.OriginalPrice, nil
+}
+
+// AddOriginalPrice adds f to the "original_price" field.
+func (m *ItemMutation) AddOriginalPrice(f float64) {
+	if m.addoriginal_price != nil {
+		*m.addoriginal_price += f
+	} else {
+		m.addoriginal_price = &f
+	}
+}
+
+// AddedOriginalPrice returns the value that was added to the "original_price" field in this mutation.
+func (m *ItemMutation) AddedOriginalPrice() (r float64, exists bool) {
+	v := m.addoriginal_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOriginalPrice resets all changes to the "original_price" field.
+func (m *ItemMutation) ResetOriginalPrice() {
+	m.original_price = nil
+	m.addoriginal_price = nil
+}
+
 // SetSoldTime sets the "sold_time" field.
 func (m *ItemMutation) SetSoldTime(t time.Time) {
 	m.sold_time = &t
@@ -5729,7 +5845,7 @@ func (m *ItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ItemMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, item.FieldCreatedAt)
 	}
@@ -5786,6 +5902,12 @@ func (m *ItemMutation) Fields() []string {
 	}
 	if m.purchase_price != nil {
 		fields = append(fields, item.FieldPurchasePrice)
+	}
+	if m.set_price != nil {
+		fields = append(fields, item.FieldSetPrice)
+	}
+	if m.original_price != nil {
+		fields = append(fields, item.FieldOriginalPrice)
 	}
 	if m.sold_time != nil {
 		fields = append(fields, item.FieldSoldTime)
@@ -5845,6 +5967,10 @@ func (m *ItemMutation) Field(name string) (ent.Value, bool) {
 		return m.PurchaseFrom()
 	case item.FieldPurchasePrice:
 		return m.PurchasePrice()
+	case item.FieldSetPrice:
+		return m.SetPrice()
+	case item.FieldOriginalPrice:
+		return m.OriginalPrice()
 	case item.FieldSoldTime:
 		return m.SoldTime()
 	case item.FieldSoldTo:
@@ -5900,6 +6026,10 @@ func (m *ItemMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPurchaseFrom(ctx)
 	case item.FieldPurchasePrice:
 		return m.OldPurchasePrice(ctx)
+	case item.FieldSetPrice:
+		return m.OldSetPrice(ctx)
+	case item.FieldOriginalPrice:
+		return m.OldOriginalPrice(ctx)
 	case item.FieldSoldTime:
 		return m.OldSoldTime(ctx)
 	case item.FieldSoldTo:
@@ -6050,6 +6180,20 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPurchasePrice(v)
 		return nil
+	case item.FieldSetPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSetPrice(v)
+		return nil
+	case item.FieldOriginalPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOriginalPrice(v)
+		return nil
 	case item.FieldSoldTime:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -6095,6 +6239,12 @@ func (m *ItemMutation) AddedFields() []string {
 	if m.addpurchase_price != nil {
 		fields = append(fields, item.FieldPurchasePrice)
 	}
+	if m.addset_price != nil {
+		fields = append(fields, item.FieldSetPrice)
+	}
+	if m.addoriginal_price != nil {
+		fields = append(fields, item.FieldOriginalPrice)
+	}
 	if m.addsold_price != nil {
 		fields = append(fields, item.FieldSoldPrice)
 	}
@@ -6112,6 +6262,10 @@ func (m *ItemMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedAssetID()
 	case item.FieldPurchasePrice:
 		return m.AddedPurchasePrice()
+	case item.FieldSetPrice:
+		return m.AddedSetPrice()
+	case item.FieldOriginalPrice:
+		return m.AddedOriginalPrice()
 	case item.FieldSoldPrice:
 		return m.AddedSoldPrice()
 	}
@@ -6143,6 +6297,20 @@ func (m *ItemMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddPurchasePrice(v)
+		return nil
+	case item.FieldSetPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSetPrice(v)
+		return nil
+	case item.FieldOriginalPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOriginalPrice(v)
 		return nil
 	case item.FieldSoldPrice:
 		v, ok := value.(float64)
@@ -6315,6 +6483,12 @@ func (m *ItemMutation) ResetField(name string) error {
 		return nil
 	case item.FieldPurchasePrice:
 		m.ResetPurchasePrice()
+		return nil
+	case item.FieldSetPrice:
+		m.ResetSetPrice()
+		return nil
+	case item.FieldOriginalPrice:
+		m.ResetOriginalPrice()
 		return nil
 	case item.FieldSoldTime:
 		m.ResetSoldTime()

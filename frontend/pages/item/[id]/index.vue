@@ -301,6 +301,18 @@
     return item.value?.purchaseFrom || item.value?.purchasePrice !== "0";
   });
 
+  const salePercent = computed(()=>{
+    if(!item.value){
+      return;
+    }
+    const {purchasePrice, originalPrice} = item.value;
+    if(purchasePrice && originalPrice){
+      return Math.round(+purchasePrice/+originalPrice*100);
+    }
+
+  })
+
+
   const purchaseDetails = computed<Details>(() => {
     const v: Details = [
       {
@@ -317,6 +329,16 @@
         text: item.value?.purchaseTime || "",
         type: "date",
         date: true,
+      },
+      {
+        name: "原价",
+        text: item.value?.originalPrice || "",
+        type: "currency",
+      },
+      {
+        name: "套餐价",
+        text: item.value?.setPrice || "",
+        type: "currency",
       },
     ];
 
@@ -565,19 +587,30 @@
           </BaseCard>
 
           <BaseCard v-if="showPurchase" collapsable>
-            <template #title> Purchase Details </template>
+            <template #title> 购买详情 </template>
             <DetailsSection :details="purchaseDetails" />
+            <div class="border-t py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6" v-if="salePercent">
+              <dt class="text-sm font-medium text-base-content">
+                折扣
+              </dt>
+              <dd class="text-sm text-base-content text-start sm:col-span-2">
+                {{salePercent}}%
+              </dd>
+
+            </div>
+
+
           </BaseCard>
 
-          <BaseCard v-if="showWarranty" collapsable>
-            <template #title> Warranty Details </template>
-            <DetailsSection :details="warrantyDetails" />
-          </BaseCard>
+<!--          <BaseCard v-if="showWarranty" collapsable>-->
+<!--            <template #title> Warranty Details </template>-->
+<!--            <DetailsSection :details="warrantyDetails" />-->
+<!--          </BaseCard>-->
 
-          <BaseCard v-if="showSold" collapsable>
-            <template #title> Sold Details </template>
-            <DetailsSection :details="soldDetails" />
-          </BaseCard>
+<!--          <BaseCard v-if="showSold" collapsable>-->
+<!--            <template #title> Sold Details </template>-->
+<!--            <DetailsSection :details="soldDetails" />-->
+<!--          </BaseCard>-->
         </template>
       </div>
     </section>

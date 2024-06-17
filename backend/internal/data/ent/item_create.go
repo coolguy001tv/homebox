@@ -285,6 +285,34 @@ func (ic *ItemCreate) SetNillablePurchasePrice(f *float64) *ItemCreate {
 	return ic
 }
 
+// SetSetPrice sets the "set_price" field.
+func (ic *ItemCreate) SetSetPrice(f float64) *ItemCreate {
+	ic.mutation.SetSetPrice(f)
+	return ic
+}
+
+// SetNillableSetPrice sets the "set_price" field if the given value is not nil.
+func (ic *ItemCreate) SetNillableSetPrice(f *float64) *ItemCreate {
+	if f != nil {
+		ic.SetSetPrice(*f)
+	}
+	return ic
+}
+
+// SetOriginalPrice sets the "original_price" field.
+func (ic *ItemCreate) SetOriginalPrice(f float64) *ItemCreate {
+	ic.mutation.SetOriginalPrice(f)
+	return ic
+}
+
+// SetNillableOriginalPrice sets the "original_price" field if the given value is not nil.
+func (ic *ItemCreate) SetNillableOriginalPrice(f *float64) *ItemCreate {
+	if f != nil {
+		ic.SetOriginalPrice(*f)
+	}
+	return ic
+}
+
 // SetSoldTime sets the "sold_time" field.
 func (ic *ItemCreate) SetSoldTime(t time.Time) *ItemCreate {
 	ic.mutation.SetSoldTime(t)
@@ -546,6 +574,14 @@ func (ic *ItemCreate) defaults() {
 		v := item.DefaultPurchasePrice
 		ic.mutation.SetPurchasePrice(v)
 	}
+	if _, ok := ic.mutation.SetPrice(); !ok {
+		v := item.DefaultSetPrice
+		ic.mutation.SetSetPrice(v)
+	}
+	if _, ok := ic.mutation.OriginalPrice(); !ok {
+		v := item.DefaultOriginalPrice
+		ic.mutation.SetOriginalPrice(v)
+	}
 	if _, ok := ic.mutation.SoldPrice(); !ok {
 		v := item.DefaultSoldPrice
 		ic.mutation.SetSoldPrice(v)
@@ -624,6 +660,12 @@ func (ic *ItemCreate) check() error {
 	}
 	if _, ok := ic.mutation.PurchasePrice(); !ok {
 		return &ValidationError{Name: "purchase_price", err: errors.New(`ent: missing required field "Item.purchase_price"`)}
+	}
+	if _, ok := ic.mutation.SetPrice(); !ok {
+		return &ValidationError{Name: "set_price", err: errors.New(`ent: missing required field "Item.set_price"`)}
+	}
+	if _, ok := ic.mutation.OriginalPrice(); !ok {
+		return &ValidationError{Name: "original_price", err: errors.New(`ent: missing required field "Item.original_price"`)}
 	}
 	if _, ok := ic.mutation.SoldPrice(); !ok {
 		return &ValidationError{Name: "sold_price", err: errors.New(`ent: missing required field "Item.sold_price"`)}
@@ -746,6 +788,14 @@ func (ic *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.PurchasePrice(); ok {
 		_spec.SetField(item.FieldPurchasePrice, field.TypeFloat64, value)
 		_node.PurchasePrice = value
+	}
+	if value, ok := ic.mutation.SetPrice(); ok {
+		_spec.SetField(item.FieldSetPrice, field.TypeFloat64, value)
+		_node.SetPrice = value
+	}
+	if value, ok := ic.mutation.OriginalPrice(); ok {
+		_spec.SetField(item.FieldOriginalPrice, field.TypeFloat64, value)
+		_node.OriginalPrice = value
 	}
 	if value, ok := ic.mutation.SoldTime(); ok {
 		_spec.SetField(item.FieldSoldTime, field.TypeTime, value)

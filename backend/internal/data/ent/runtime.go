@@ -279,12 +279,20 @@ func init() {
 	itemDescPurchasePrice := itemFields[14].Descriptor()
 	// item.DefaultPurchasePrice holds the default value on creation for the purchase_price field.
 	item.DefaultPurchasePrice = itemDescPurchasePrice.Default.(float64)
+	// itemDescSetPrice is the schema descriptor for set_price field.
+	itemDescSetPrice := itemFields[15].Descriptor()
+	// item.DefaultSetPrice holds the default value on creation for the set_price field.
+	item.DefaultSetPrice = itemDescSetPrice.Default.(float64)
+	// itemDescOriginalPrice is the schema descriptor for original_price field.
+	itemDescOriginalPrice := itemFields[16].Descriptor()
+	// item.DefaultOriginalPrice holds the default value on creation for the original_price field.
+	item.DefaultOriginalPrice = itemDescOriginalPrice.Default.(float64)
 	// itemDescSoldPrice is the schema descriptor for sold_price field.
-	itemDescSoldPrice := itemFields[17].Descriptor()
+	itemDescSoldPrice := itemFields[19].Descriptor()
 	// item.DefaultSoldPrice holds the default value on creation for the sold_price field.
 	item.DefaultSoldPrice = itemDescSoldPrice.Default.(float64)
 	// itemDescSoldNotes is the schema descriptor for sold_notes field.
-	itemDescSoldNotes := itemFields[18].Descriptor()
+	itemDescSoldNotes := itemFields[20].Descriptor()
 	// item.SoldNotesValidator is a validator for the "sold_notes" field. It is called by the builders before save.
 	item.SoldNotesValidator = itemDescSoldNotes.Validators[0].(func(string) error)
 	// itemDescID is the schema descriptor for id field.

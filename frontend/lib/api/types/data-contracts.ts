@@ -97,6 +97,8 @@ export interface ItemOut {
   name: string;
   /** Extras */
   notes: string;
+  /** @example "0" */
+  originalPrice: string;
   parent?: ItemSummary | null;
   purchaseFrom: string;
   /** @example "0" */
@@ -105,6 +107,8 @@ export interface ItemOut {
   purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
+  /** @example "0" */
+  setPrice: string;
   soldNotes: string;
   /** @example "0" */
   soldPrice: string;
@@ -133,8 +137,12 @@ export interface ItemSummary {
   location?: LocationSummary | null;
   name: string;
   /** @example "0" */
+  originalPrice: string;
+  /** @example "0" */
   purchasePrice: string;
   quantity: number;
+  /** @example "0" */
+  setPrice: string;
   updatedAt: Date | string;
 }
 
@@ -155,6 +163,8 @@ export interface ItemUpdate {
   name: string;
   /** Extras */
   notes: string;
+  /** @example "0" */
+  originalPrice: string;
   parentId?: string | null;
   purchaseFrom: string;
   /** @example "0" */
@@ -164,6 +174,8 @@ export interface ItemUpdate {
   quantity: number;
   /** Identifications */
   serialNumber: string;
+  /** @example "0" */
+  setPrice: string;
   soldNotes: string;
   /** @example "0" */
   soldPrice: string;

@@ -53,6 +53,10 @@ const (
 	FieldPurchaseFrom = "purchase_from"
 	// FieldPurchasePrice holds the string denoting the purchase_price field in the database.
 	FieldPurchasePrice = "purchase_price"
+	// FieldSetPrice holds the string denoting the set_price field in the database.
+	FieldSetPrice = "set_price"
+	// FieldOriginalPrice holds the string denoting the original_price field in the database.
+	FieldOriginalPrice = "original_price"
 	// FieldSoldTime holds the string denoting the sold_time field in the database.
 	FieldSoldTime = "sold_time"
 	// FieldSoldTo holds the string denoting the sold_to field in the database.
@@ -151,6 +155,8 @@ var Columns = []string{
 	FieldPurchaseTime,
 	FieldPurchaseFrom,
 	FieldPurchasePrice,
+	FieldSetPrice,
+	FieldOriginalPrice,
 	FieldSoldTime,
 	FieldSoldTo,
 	FieldSoldPrice,
@@ -221,6 +227,10 @@ var (
 	WarrantyDetailsValidator func(string) error
 	// DefaultPurchasePrice holds the default value on creation for the "purchase_price" field.
 	DefaultPurchasePrice float64
+	// DefaultSetPrice holds the default value on creation for the "set_price" field.
+	DefaultSetPrice float64
+	// DefaultOriginalPrice holds the default value on creation for the "original_price" field.
+	DefaultOriginalPrice float64
 	// DefaultSoldPrice holds the default value on creation for the "sold_price" field.
 	DefaultSoldPrice float64
 	// SoldNotesValidator is a validator for the "sold_notes" field. It is called by the builders before save.
@@ -330,6 +340,16 @@ func ByPurchaseFrom(opts ...sql.OrderTermOption) OrderOption {
 // ByPurchasePrice orders the results by the purchase_price field.
 func ByPurchasePrice(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPurchasePrice, opts...).ToFunc()
+}
+
+// BySetPrice orders the results by the set_price field.
+func BySetPrice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSetPrice, opts...).ToFunc()
+}
+
+// ByOriginalPrice orders the results by the original_price field.
+func ByOriginalPrice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOriginalPrice, opts...).ToFunc()
 }
 
 // BySoldTime orders the results by the sold_time field.

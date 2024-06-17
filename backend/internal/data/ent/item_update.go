@@ -360,6 +360,48 @@ func (iu *ItemUpdate) AddPurchasePrice(f float64) *ItemUpdate {
 	return iu
 }
 
+// SetSetPrice sets the "set_price" field.
+func (iu *ItemUpdate) SetSetPrice(f float64) *ItemUpdate {
+	iu.mutation.ResetSetPrice()
+	iu.mutation.SetSetPrice(f)
+	return iu
+}
+
+// SetNillableSetPrice sets the "set_price" field if the given value is not nil.
+func (iu *ItemUpdate) SetNillableSetPrice(f *float64) *ItemUpdate {
+	if f != nil {
+		iu.SetSetPrice(*f)
+	}
+	return iu
+}
+
+// AddSetPrice adds f to the "set_price" field.
+func (iu *ItemUpdate) AddSetPrice(f float64) *ItemUpdate {
+	iu.mutation.AddSetPrice(f)
+	return iu
+}
+
+// SetOriginalPrice sets the "original_price" field.
+func (iu *ItemUpdate) SetOriginalPrice(f float64) *ItemUpdate {
+	iu.mutation.ResetOriginalPrice()
+	iu.mutation.SetOriginalPrice(f)
+	return iu
+}
+
+// SetNillableOriginalPrice sets the "original_price" field if the given value is not nil.
+func (iu *ItemUpdate) SetNillableOriginalPrice(f *float64) *ItemUpdate {
+	if f != nil {
+		iu.SetOriginalPrice(*f)
+	}
+	return iu
+}
+
+// AddOriginalPrice adds f to the "original_price" field.
+func (iu *ItemUpdate) AddOriginalPrice(f float64) *ItemUpdate {
+	iu.mutation.AddOriginalPrice(f)
+	return iu
+}
+
 // SetSoldTime sets the "sold_time" field.
 func (iu *ItemUpdate) SetSoldTime(t time.Time) *ItemUpdate {
 	iu.mutation.SetSoldTime(t)
@@ -886,6 +928,18 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(item.FieldPurchasePrice, field.TypeFloat64, value)
+	}
+	if value, ok := iu.mutation.SetPrice(); ok {
+		_spec.SetField(item.FieldSetPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iu.mutation.AddedSetPrice(); ok {
+		_spec.AddField(item.FieldSetPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iu.mutation.OriginalPrice(); ok {
+		_spec.SetField(item.FieldOriginalPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iu.mutation.AddedOriginalPrice(); ok {
+		_spec.AddField(item.FieldOriginalPrice, field.TypeFloat64, value)
 	}
 	if value, ok := iu.mutation.SoldTime(); ok {
 		_spec.SetField(item.FieldSoldTime, field.TypeTime, value)
@@ -1568,6 +1622,48 @@ func (iuo *ItemUpdateOne) AddPurchasePrice(f float64) *ItemUpdateOne {
 	return iuo
 }
 
+// SetSetPrice sets the "set_price" field.
+func (iuo *ItemUpdateOne) SetSetPrice(f float64) *ItemUpdateOne {
+	iuo.mutation.ResetSetPrice()
+	iuo.mutation.SetSetPrice(f)
+	return iuo
+}
+
+// SetNillableSetPrice sets the "set_price" field if the given value is not nil.
+func (iuo *ItemUpdateOne) SetNillableSetPrice(f *float64) *ItemUpdateOne {
+	if f != nil {
+		iuo.SetSetPrice(*f)
+	}
+	return iuo
+}
+
+// AddSetPrice adds f to the "set_price" field.
+func (iuo *ItemUpdateOne) AddSetPrice(f float64) *ItemUpdateOne {
+	iuo.mutation.AddSetPrice(f)
+	return iuo
+}
+
+// SetOriginalPrice sets the "original_price" field.
+func (iuo *ItemUpdateOne) SetOriginalPrice(f float64) *ItemUpdateOne {
+	iuo.mutation.ResetOriginalPrice()
+	iuo.mutation.SetOriginalPrice(f)
+	return iuo
+}
+
+// SetNillableOriginalPrice sets the "original_price" field if the given value is not nil.
+func (iuo *ItemUpdateOne) SetNillableOriginalPrice(f *float64) *ItemUpdateOne {
+	if f != nil {
+		iuo.SetOriginalPrice(*f)
+	}
+	return iuo
+}
+
+// AddOriginalPrice adds f to the "original_price" field.
+func (iuo *ItemUpdateOne) AddOriginalPrice(f float64) *ItemUpdateOne {
+	iuo.mutation.AddOriginalPrice(f)
+	return iuo
+}
+
 // SetSoldTime sets the "sold_time" field.
 func (iuo *ItemUpdateOne) SetSoldTime(t time.Time) *ItemUpdateOne {
 	iuo.mutation.SetSoldTime(t)
@@ -2124,6 +2220,18 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 	}
 	if value, ok := iuo.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(item.FieldPurchasePrice, field.TypeFloat64, value)
+	}
+	if value, ok := iuo.mutation.SetPrice(); ok {
+		_spec.SetField(item.FieldSetPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iuo.mutation.AddedSetPrice(); ok {
+		_spec.AddField(item.FieldSetPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iuo.mutation.OriginalPrice(); ok {
+		_spec.SetField(item.FieldOriginalPrice, field.TypeFloat64, value)
+	}
+	if value, ok := iuo.mutation.AddedOriginalPrice(); ok {
+		_spec.AddField(item.FieldOriginalPrice, field.TypeFloat64, value)
 	}
 	if value, ok := iuo.mutation.SoldTime(); ok {
 		_spec.SetField(item.FieldSoldTime, field.TypeTime, value)
