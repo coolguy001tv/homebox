@@ -171,10 +171,10 @@
         text: item.value?.manufacturer,
         copyable: true,
       },
-      {
-        name: "Insured",
-        text: item.value?.insured ? "Yes" : "No",
-      },
+      // {
+      //   name: "Insured",
+      //   text: item.value?.insured ? "Yes" : "No",
+      // },
       {
         name: "Notes",
         type: "markdown",
@@ -301,13 +301,13 @@
     return item.value?.purchaseFrom || item.value?.purchasePrice !== "0";
   });
 
-  const salePercent = computed(()=>{
+  const saleDiscount = computed(()=>{
     if(!item.value){
       return;
     }
     const {purchasePrice, originalPrice} = item.value;
-    if(purchasePrice && originalPrice){
-      return Math.round(+purchasePrice/+originalPrice*100);
+    if(+purchasePrice && +originalPrice){
+      return Math.round(+purchasePrice/+originalPrice*100)/10;
     }
 
   })
@@ -589,12 +589,12 @@
           <BaseCard v-if="showPurchase" collapsable>
             <template #title> 购买详情 </template>
             <DetailsSection :details="purchaseDetails" />
-            <div class="border-t py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6" v-if="salePercent">
+            <div class="border-t py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6" v-if="saleDiscount">
               <dt class="text-sm font-medium text-base-content">
                 折扣
               </dt>
               <dd class="text-sm text-base-content text-start sm:col-span-2">
-                {{salePercent}}%
+                {{ saleDiscount }}折
               </dd>
 
             </div>

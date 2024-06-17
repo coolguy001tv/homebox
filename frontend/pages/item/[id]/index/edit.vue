@@ -243,6 +243,14 @@
     },
   ];
 
+
+  const shouldDisplayField = function (field:FormField){
+    const advancedLabelRefs = ["serialNumber", "modelNumber", "insured","archived","assetId"]
+    return !(advancedLabelRefs.includes(field.ref))
+  }
+
+
+
   // - Attachments
   const attDropZone = ref<HTMLDivElement>();
   const { isOverDropZone: attDropZoneActive } = useDropZone(attDropZone);
@@ -410,6 +418,10 @@
     }
   }
 
+
+
+
+
   onMounted(() => {
     window.addEventListener("keydown", keyboardSave);
   });
@@ -485,36 +497,39 @@
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in mainFields" :key="field.ref" class="sm:divide-y sm:divide-gray-300 grid grid-cols-1">
-              <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
-                <FormTextField
-                  v-else-if="field.type === 'text'"
-                  v-model="item[field.ref]"
-                  :label="field.label"
-                  inline
-                />
-                <FormTextField
-                  v-else-if="field.type === 'number'"
-                  v-model.number="item[field.ref]"
-                  type="number"
-                  :label="field.label"
-                  inline
-                />
-                <FormDatePicker
-                  v-else-if="field.type === 'date'"
-                  v-model="item[field.ref]"
-                  :label="field.label"
-                  inline
-                />
-                <FormCheckbox
-                  v-else-if="field.type === 'checkbox'"
-                  v-model="item[field.ref]"
-                  :label="field.label"
-                  inline
-                />
+            <template  v-for="field in mainFields" :key="field.ref" >
+              <div class="sm:divide-y sm:divide-gray-300 grid grid-cols-1" v-if="shouldDisplayField(field) || preferences.editorAdvancedView">
+                <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
+                  <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                  <FormTextField
+                      v-else-if="field.type === 'text'"
+                      v-model="item[field.ref]"
+                      :label="field.label"
+                      inline
+                  />
+                  <FormTextField
+                      v-else-if="field.type === 'number'"
+                      v-model.number="item[field.ref]"
+                      type="number"
+                      :label="field.label"
+                      inline
+                  />
+                  <FormDatePicker
+                      v-else-if="field.type === 'date'"
+                      v-model="item[field.ref]"
+                      :label="field.label"
+                      inline
+                  />
+                  <FormCheckbox
+                      v-else-if="field.type === 'checkbox'"
+                      v-model="item[field.ref]"
+                      :label="field.label"
+                      inline
+                  />
+                </div>
               </div>
-            </div>
+            </template>
+
           </div>
         </BaseCard>
 
@@ -577,7 +592,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
+        <div class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Purchase Details</h3>
           </div>
@@ -622,7 +637,7 @@
 
 
 
-        <BaseCard>
+        <BaseCard v-if="preferences.editorAdvancedView">
           <template #title> Custom Fields </template>
           <div class="px-5 border-t divide-y divide-gray-300 space-y-4">
             <div

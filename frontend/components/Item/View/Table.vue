@@ -8,6 +8,7 @@
             :key="h.value"
             class="text-no-transform text-sm bg-neutral text-neutral-content cursor-pointer"
             @click="sortBy(h.value)"
+            :style="h.value === 'item'?'width:102px':''"
           >
             <div
               class="flex items-center gap-1"
@@ -40,6 +41,7 @@
               'text-right': h.align === 'right',
               'text-left': h.align === 'left',
             }"
+
           >
             <template v-if="cell(h) === 'cell-name'">
               <NuxtLink class="hover" :to="`/item/${d.id}`">
@@ -54,7 +56,7 @@
               <Icon v-else name="mdi-close" class="text-red-500 h-5 w-5" />
             </template>
             <template v-else-if="cell(h) === 'cell-item'">
-              <img class="h-[50px] w-full object-cover rounded-t shadow-sm border-gray-300" :src="getImageUrl(d)" />
+              <img class="h-[50px] w-full object-cover shadow-sm border-gray-300" :src="getImageUrl(d)" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
@@ -98,7 +100,7 @@
     return [
       { text:"首图", value: "item"},
       { text: "Name", value: "name" },
-      { text: "Quantity", value: "quantity", align: "center" },
+      // { text: "Quantity", value: "quantity", align: "center" },
       // { text: "Insured", value: "insured", align: "center" }, // 不关心保险问题
       { text: "Price", value: "purchasePrice" },
     ] as TableHeader[];
@@ -166,7 +168,7 @@
     return 0;
   }
 
-  const data = computed<TableData[]>(() => {
+  const data = computed(() => {
     // sort by property
     let data = [...props.items].sort(itemSort);
 

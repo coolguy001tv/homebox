@@ -126,6 +126,7 @@ export interface ItemPatch {
 }
 
 export interface ItemSummary {
+  item?:string;
   archived: boolean;
   createdAt: Date | string;
   description: string;
