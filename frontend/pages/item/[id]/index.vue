@@ -320,24 +320,24 @@
         text: item.value?.purchaseFrom || "",
       },
       {
-        name: "Purchase Price",
+        name: "购买价格",
         text: item.value?.purchasePrice || "",
         type: "currency",
       },
       {
-        name: "Purchase Date",
+        name: "购买日期",
         text: item.value?.purchaseTime || "",
         type: "date",
         date: true,
       },
       {
         name: "原价",
-        text: item.value?.originalPrice || "",
+        text: item.value?.originalPrice ? +item.value?.originalPrice : "",
         type: "currency",
       },
       {
         name: "套餐价",
-        text: item.value?.setPrice || "",
+        text: item.value?.setPrice ? +item.value?.setPrice  : '',
         type: "currency",
       },
     ];
@@ -345,6 +345,7 @@
     if (!preferences.value.showEmpty) {
       return filterZeroValues(v);
     }
+
 
     return v;
   });

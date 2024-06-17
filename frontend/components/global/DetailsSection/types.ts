@@ -13,7 +13,7 @@ type DateDetail = BaseDetail & {
 
 type CurrencyDetail = BaseDetail & {
   type: "currency";
-  text: string;
+  text: string | number;
 };
 
 type LinkDetail = BaseDetail & {
