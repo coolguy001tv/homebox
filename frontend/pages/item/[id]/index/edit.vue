@@ -536,7 +536,6 @@
 
 
         <div
-          v-if="preferences.editorAdvancedView"
           ref="attDropZone"
           class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg"
         >
