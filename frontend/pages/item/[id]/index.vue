@@ -542,7 +542,7 @@
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> Photos </template>
             <div
-              class="container border-t border-gray-300 p-4 flex flex-wrap gap-2 mx-auto max-h-[500px] overflow-y-scroll scroll-bg"
+              class="container border-t border-gray-300 p-4 flex flex-wrap gap-2 mx-auto max-h-[500px] overflow-y-auto scroll-bg"
             >
               <button v-for="(img, i) in photos" :key="i" @click="openDialog(img)">
                 <img class="rounded max-h-[200px]" :src="img.src" />
@@ -590,7 +590,7 @@
           <BaseCard v-if="showPurchase" collapsable>
             <template #title> 购买详情 </template>
             <DetailsSection :details="purchaseDetails" />
-            <div class="border-t py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6" v-if="saleDiscount">
+            <div class="border-t px-4 py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6" v-if="saleDiscount">
               <dt class="text-sm font-medium text-base-content">
                 折扣
               </dt>
