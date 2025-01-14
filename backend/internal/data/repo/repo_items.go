@@ -39,6 +39,8 @@ type (
 		ParentItemIDs   []uuid.UUID  `json:"parentIds"`
 		SortBy          string       `json:"sortBy"`
 		IncludeArchived bool         `json:"includeArchived"`
+		PurchaseFrom	string		 `json:"purchaseFrom"`
+		Manufacturer	string		 `json:"manufacturer"`
 		Fields          []FieldQuery `json:"fields"`
 		OrderBy         string       `json:"orderBy"`
 	}
@@ -340,6 +342,16 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		)
 	} else {
 		qb = qb.Where(item.Archived(false))
+	}
+
+	// 购买地点
+	if q.PurchaseFrom != "" {
+		qb = qb.Where(item.PurchaseFromContainsFold(q.PurchaseFrom))
+	}
+
+	// 制造商
+	if q.Manufacturer != "" {
+		qb = qb.Where(item.ManufacturerContainsFold(q.Manufacturer))
 	}
 
 	if q.Search != "" {

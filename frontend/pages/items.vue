@@ -31,8 +31,14 @@
 
   const pageSize = useRouteQuery("pageSize", 21);
   const query = useRouteQuery("q", "");
+
+  
+
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
+  const purchaseFrom = useRouteQuery("purchaseFrom","");
+  const manufacturer = useRouteQuery("manufacturer","");
+
   const fieldSelector = useRouteQuery("fieldSelector", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
@@ -188,6 +194,8 @@
           page: page.value,
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
+          purchaseFrom: purchaseFrom.value,
+          manufacturer: manufacturer.value,
         },
       });
     }
@@ -215,9 +223,12 @@
       locations: locIDs.value,
       labels: labIDs.value,
       includeArchived: includeArchived.value,
+      purchaseFrom:purchaseFrom.value || "",
+      manufacturer:manufacturer.value || "",
       page: page.value,
       pageSize: pageSize.value,
       fields,
+      
     });
 
     function resetItems() {
@@ -262,6 +273,8 @@
         // Reactive
         advanced: "true",
         archived: includeArchived.value ? "true" : "false",
+        purchaseFrom:purchaseFrom.value,
+        manufacturer: manufacturer.value,
         fieldSelector: fieldSelector.value ? "true" : "false",
         pageSize: pageSize.value,
         page: page.value,
@@ -340,6 +353,26 @@
           </template>
         </SearchFilter>
         <SearchFilter v-model="selectedLabels" label="Labels" :options="labels" />
+        <div class="dropdown">
+          <label tabindex="1" class="btn btn-xs">{{purchaseFrom || "购买地点"}}</label>
+          <div
+            tabindex="0"
+            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
+          >
+            <FormTextField v-model="purchaseFrom" placeholder="购买地点" />
+          </div>
+          
+        </div>
+        <div class="dropdown">
+          <label tabindex="1" class="btn btn-xs">{{manufacturer || "制造商"}}</label>
+          <div
+            tabindex="0"
+            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
+          >
+            <FormTextField v-model="manufacturer" placeholder="制造商" />
+          </div>
+          
+        </div>
         <div class="dropdown">
           <label tabindex="0" class="btn btn-xs">Options</label>
           <div

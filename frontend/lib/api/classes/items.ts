@@ -25,6 +25,8 @@ export type ItemsQuery = {
   parentIds?: string[];
   q?: string;
   fields?: string[];
+  purchaseFrom?: string;
+  manufacturer?:string;
 };
 
 export class AttachmentsAPI extends BaseAPI {

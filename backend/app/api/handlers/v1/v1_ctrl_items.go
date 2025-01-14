@@ -57,8 +57,10 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 			Search:          params.Get("q"),
 			LocationIDs:     queryUUIDList(params, "locations"),
 			LabelIDs:        queryUUIDList(params, "labels"),
-      ParentItemIDs:   queryUUIDList(params, "parentIds"),
+      		ParentItemIDs:   queryUUIDList(params, "parentIds"),
 			IncludeArchived: queryBool(params.Get("includeArchived")),
+			PurchaseFrom:	 params.Get("purchaseFrom"),
+			Manufacturer:	 params.Get("manufacturer"),
 			Fields:          filterFieldItems(params["fields"]),
 			OrderBy:         params.Get("orderBy"),
 		}
