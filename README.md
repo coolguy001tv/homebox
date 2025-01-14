@@ -15,8 +15,13 @@
 
 ## Docker build脚本
 
-`docker build . -t hellocoolguy/homebox:0.1.3`
+注意：每次记得修改以下的版本号信息，当前使用的是0.1.4 （可以当前页面全局替换0.1.4到0.1.X）
+
+`docker build . -t hellocoolguy/homebox:0.1.4`
+
 记得在wsl(ubuntu)下运行，否则有权限问题
+
+同时记得先打开本地的Docker Desktop，否则找不到docker命令
 
 目前已经设置了wsl的代理，如果后续有问题，可以重新设置一下，设置方式如下：
 
@@ -29,14 +34,14 @@
 
 1. 确保上面的docker build命令正常成功执行
 2. 登录到docker hub: `docker login` (密码参见notion文档)
-3. `docker push hellocoolguy/homebox:0.1.3`
+3. `docker push hellocoolguy/homebox:0.1.4`
 4. 可选的 latest tag操作：
-   1. docker tag hellocoolguy/homebox:0.1.3 hellocoolguy/homebox:latest
+   1. docker tag hellocoolguy/homebox:0.1.4 hellocoolguy/homebox:latest
    2. docker push hellocoolguy/homebox:latest
 
 ## 一些有用的脚本
 
-1. `docker images`可以查看当前已经build好的image，比如前面通过`docker build`出来的·hellocoolguy/homebox:0.1.3`
+1. `docker images`可以查看当前已经build好的image，比如前面通过`docker build`出来的·hellocoolguy/homebox:0.1.4`
 
 ## 分支注意事项
 目前是基于v0.10.3-release分支进行的开发，不要切换到main上，名字的由来是当前分支是官方的v0.10.3版本切出来的。
