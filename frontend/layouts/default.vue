@@ -12,7 +12,7 @@
     <AppToast />
     <div class="drawer drawer-mobile">
       <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0">
+      <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0" id="the-drawer">
         <AppHeaderDecor class="-mt-10 hidden lg:block" />
         <!-- Button -->
         <div class="navbar z-[99] lg:hidden top-0 fixed bg-primary shadow-md drawer-button">

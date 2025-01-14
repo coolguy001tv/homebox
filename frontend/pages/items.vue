@@ -29,6 +29,18 @@
     },
   });
 
+  // 页面变更的时候，滑到顶部
+  watch(page,function(){
+    console.log('page changed');
+    const content = document.getElementById('the-drawer');
+    if(content){
+      content.scrollTo({
+        top:0,
+        behavior:'smooth'
+      })
+    }
+  })
+
   const pageSize = useRouteQuery("pageSize", 21);
   const query = useRouteQuery("q", "");
 
