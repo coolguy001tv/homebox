@@ -1,5 +1,5 @@
 <template>
-  <div class="stats bg-neutral shadow rounded-md">
+  <div class="stats bg-neutral shadow rounded-md w-full">
     <div class="stat text-neutral-content text-center space-y-1 p-3">
       <div class="stat-title">{{ title }}</div>
       <div class="stat-value text-2xl">

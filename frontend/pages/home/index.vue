@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { statCardData, statLabelData } from "./statistics";
   import { itemsTable } from "./table";
-  import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
 
   definePageMeta({
@@ -16,9 +15,6 @@
 
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.parentLocations);
-
-  const labelsStore = useLabelStore();
-  const labels = computed(() => labelsStore.labels);
 
   const itemTable = itemsTable(api);
   const stats = statCardData(api);
@@ -38,9 +34,11 @@
       <section>
         <Subtitle> 各个标签统计 </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
-          <StatCard v-for="(stat, i) in statLabel" :key="i" :title="`${stat.name}(${stat.count}项)`" :value="stat.total" type="currency">
+          <NuxtLink  :key="i" v-for="(stat, i) in statLabel" :to="`/label/${stat.id}`">
+          <StatCard :title="`${stat.name}(${stat.count}项)`" :value="stat.total" type="currency">
             <div class="stat-desc"><Currency v-if="stat.count" :amount="stat.total/stat.count" />/项</div>
           </StatCard>
+        </NuxtLink>
         </div>
       </section>
 
@@ -59,13 +57,6 @@
         <Subtitle> Storage Locations </Subtitle>
         <div class="grid grid-cols-1 sm:grid-cols-2 card md:grid-cols-3 gap-4">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
-        </div>
-      </section>
-
-      <section>
-        <Subtitle> Labels </Subtitle>
-        <div class="flex gap-4 flex-wrap">
-          <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
       </section>
     </BaseContainer>

@@ -69,6 +69,7 @@ SET path= replace(path, '/data/','.data\')
 WHERE  path like '%/data/%';
 
 ```
+4. 打开前端页面`http://localhost:3000`
 
 [Configuration & Docker Compose](https://hay-kot.github.io/homebox/quick-start)
 
