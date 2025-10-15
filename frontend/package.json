@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev",
@@ -52,7 +53,7 @@
     "pinia": "^2.0.21",
     "postcss": "^8.4.16",
     "tailwindcss": "^3.1.8",
-    "vue": "^3.3.1",
+    "vue": "^3.5.22",
     "vue-router": "4"
   }
 }
