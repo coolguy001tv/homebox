@@ -384,7 +384,8 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 				labelPredicates = append(labelPredicates, item.HasLabelWith(label.ID(l)))
 			}
 
-			andPredicates = append(andPredicates, item.Or(labelPredicates...))
+			// Change label combination from OR to AND to require items to have all selected labels
+			andPredicates = append(andPredicates, item.And(labelPredicates...))
 		}
 
 		if len(q.LocationIDs) > 0 {
