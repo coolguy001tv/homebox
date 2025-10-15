@@ -87,38 +87,51 @@ func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment
 		Only(ctx)
 }
 
-func (r *AttachmentRepo) Update(ctx context.Context, itemID uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
-	// TODO: execute within Tx
-	typ := attachment.Type(data.Type)
+func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
+    // TODO: execute within Tx
+    typ := attachment.Type(data.Type)
 
-	bldr := r.db.Attachment.UpdateOneID(itemID).
-		SetType(typ)
+    // Update the specified attachment by its ID
+    bldr := r.db.Attachment.UpdateOneID(attachmentID).
+        SetType(typ)
 
-	// Primary only applies to photos
-	if typ == attachment.TypePhoto {
-		bldr = bldr.SetPrimary(data.Primary)
-	} else {
-		bldr = bldr.SetPrimary(false)
-	}
+    // Primary only applies to photos
+    if typ == attachment.TypePhoto {
+        bldr = bldr.SetPrimary(data.Primary)
+    } else {
+        bldr = bldr.SetPrimary(false)
+    }
 
-	itm, err := bldr.Save(ctx)
-	if err != nil {
-		return nil, err
-	}
+    updatedAttachment, err := bldr.Save(ctx)
+    if err != nil {
+        return nil, err
+    }
 
-	// Ensure all other attachments are not primary
-	err = r.db.Attachment.Update().
-		Where(
-			attachment.HasItemWith(item.ID(itemID)),
-			attachment.IDNEQ(itm.ID),
-		).
-		SetPrimary(false).
-		Exec(ctx)
-	if err != nil {
-		return nil, err
-	}
+    // If setting a photo as primary, clear primary from other photo attachments on the same item
+    if typ == attachment.TypePhoto && data.Primary {
+        // Find the parent item ID for this attachment
+        parentItemID, err := r.db.Attachment.Query().
+            Where(attachment.ID(updatedAttachment.ID)).
+            QueryItem().
+            OnlyID(ctx)
+        if err != nil {
+            return nil, err
+        }
 
-	return r.Get(ctx, itm.ID)
+        // Ensure all other photo attachments for the same item are not primary
+        if err := r.db.Attachment.Update().
+            Where(
+                attachment.HasItemWith(item.ID(parentItemID)),
+                attachment.TypeEQ(attachment.TypePhoto),
+                attachment.IDNEQ(updatedAttachment.ID),
+            ).
+            SetPrimary(false).
+            Exec(ctx); err != nil {
+            return nil, err
+        }
+    }
+
+    return r.Get(ctx, updatedAttachment.ID)
 }
 
 func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
