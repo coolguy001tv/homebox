@@ -22,8 +22,10 @@ export function parseDate<T>(obj: T, keys: Array<keyof T> = []): T {
       const value = result[key] as string;
 
       if (value === undefined || value === "" || value.startsWith(ZERO_DATE)) {
+        // 默认时间设置为当天，时分秒都设置为0（不知道为什么之前他要把年设置为1）
         const dt = new Date();
-        dt.setFullYear(1);
+        dt.setHours(0, 0, 0, 0);
+        // dt.setFullYear(1);
 
         result[key] = dt;
         return;
