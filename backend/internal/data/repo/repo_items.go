@@ -43,6 +43,7 @@ type (
 		Manufacturer	string		 `json:"manufacturer"`
 		Fields          []FieldQuery `json:"fields"`
 		OrderBy         string       `json:"orderBy"`
+		OrderDir        string       `json:"order"`
 	}
 
 	ItemField struct {
@@ -426,13 +427,39 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	// Order
-	switch q.OrderBy {
-	case "createdAt":
-		qb = qb.Order(ent.Desc(item.FieldCreatedAt))
-	case "updatedAt":
-		qb = qb.Order(ent.Desc(item.FieldUpdatedAt))
-	default: // "name"
-		qb = qb.Order(ent.Asc(item.FieldName))
+	orderBy := q.OrderBy
+	orderDir := q.OrderDir
+	if orderBy == "" {
+		orderBy = "createdAt"
+	}
+	if orderDir == "" {
+		orderDir = "desc"
+	}
+
+	asc := func(field string) *ent.ItemQuery { return qb.Order(ent.Asc(field)) }
+	desc := func(field string) *ent.ItemQuery { return qb.Order(ent.Desc(field)) }
+
+	apply := func(field string) {
+		if orderDir == "asc" {
+			qb = asc(field)
+			return
+		}
+		qb = desc(field)
+	}
+
+	switch orderBy {
+	case "name", "Name":
+		apply(item.FieldName)
+	case "createdAt", "created_at", "CreatedAt":
+		apply(item.FieldCreatedAt)
+	case "updatedAt", "updated_at", "UpdatedAt":
+		apply(item.FieldUpdatedAt)
+	case "purchaseTime", "purchase_time", "PurchaseTime":
+		apply(item.FieldPurchaseTime)
+	case "purchasePrice", "purchase_price", "PurchasePrice":
+		apply(item.FieldPurchasePrice)
+	default:
+		apply(item.FieldCreatedAt)
 	}
 
 	qb = qb.

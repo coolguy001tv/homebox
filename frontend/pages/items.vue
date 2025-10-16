@@ -44,12 +44,15 @@
   const pageSize = useRouteQuery("pageSize", 21);
   const query = useRouteQuery("q", "");
 
-  
+
 
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
   const purchaseFrom = useRouteQuery("purchaseFrom","");
   const manufacturer = useRouteQuery("manufacturer","");
+
+  const orderBy = useRouteQuery("orderBy", "createdAt");
+  const order = useRouteQuery("order", "desc");
 
   const fieldSelector = useRouteQuery("fieldSelector", false);
 
@@ -208,6 +211,8 @@
           includeArchived: includeArchived.value ? "true" : "false",
           purchaseFrom: purchaseFrom.value,
           manufacturer: manufacturer.value,
+          orderBy: orderBy.value,
+          order: order.value,
         },
       });
     }
@@ -239,8 +244,10 @@
       manufacturer:manufacturer.value || "",
       page: page.value,
       pageSize: pageSize.value,
+      orderBy: orderBy.value,
+      order: order.value as "asc" | "desc",
       fields,
-      
+
     });
 
     function resetItems() {
@@ -268,7 +275,7 @@
     initialSearch.value = false;
   }
 
-  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations, orderBy, order], search, { debounce: 250, maxWait: 1000 });
 
   async function submit() {
     // Set URL Params
@@ -291,6 +298,8 @@
         pageSize: pageSize.value,
         page: page.value,
         q: query.value,
+        orderBy: orderBy.value,
+        order: order.value,
 
         // Non-reactive
         loc: locIDs.value,
@@ -322,6 +331,8 @@
         pageSize: 10,
         page: 1,
         q: "",
+        orderBy: "createdAt",
+        order: "desc",
         loc: [],
         lab: [],
         fields,
@@ -373,7 +384,7 @@
           >
             <FormTextField v-model="purchaseFrom" placeholder="购买地点" />
           </div>
-          
+
         </div>
         <div class="dropdown">
           <label tabindex="1" class="btn btn-xs">{{manufacturer || "制造商"}}</label>
@@ -383,7 +394,44 @@
           >
             <FormTextField v-model="manufacturer" placeholder="制造商" />
           </div>
-          
+
+        </div>
+        <div class="dropdown">
+          <label tabindex="1" class="btn btn-xs">{{ orderBy || "排序字段" }}</label>
+          <div
+            tabindex="0"
+            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
+          >
+            <div class="form-control w-full max-w-xs">
+              <label class="label">
+                <span class="label-text">排序字段</span>
+              </label>
+              <select v-model="orderBy" class="select-bordered select">
+                <option value="name">名字</option>
+                <option value="createdAt">创建时间</option>
+                <option value="updatedAt">更新时间</option>
+                <option value="purchaseTime">购买时间</option>
+                <option value="purchasePrice">购买价格</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <label tabindex="1" class="btn btn-xs">{{ order === 'asc' ? '升序' : '倒序' }}</label>
+          <div
+            tabindex="0"
+            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
+          >
+            <div class="form-control w-full max-w-xs">
+              <label class="label">
+                <span class="label-text">排列顺序</span>
+              </label>
+              <select v-model="order" class="select-bordered select">
+                <option value="desc">倒序</option>
+                <option value="asc">升序</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="dropdown">
           <label tabindex="0" class="btn btn-xs">Options</label>
@@ -437,7 +485,7 @@
               :items="allFields ?? []"
               @change="fetchValues(f[0])"
             >
-              <option v-for="(fv, _, i) in allFields" :key="i" :value="fv">{{ fv }}</option>
+          <option v-for="(fv, i) in allFields" :key="i" :value="fv">{{ fv }}</option>
             </select>
           </div>
           <div class="form-control w-full max-w-xs">

@@ -17,6 +17,7 @@ import { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
   orderBy?: string;
+  order?: "asc" | "desc";
   includeArchived?: boolean;
   page?: number;
   pageSize?: number;

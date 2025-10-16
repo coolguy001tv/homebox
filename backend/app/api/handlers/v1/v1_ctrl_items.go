@@ -63,6 +63,7 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 			Manufacturer:	 params.Get("manufacturer"),
 			Fields:          filterFieldItems(params["fields"]),
 			OrderBy:         params.Get("orderBy"),
+			OrderDir:        params.Get("order"),
 		}
 
 		if strings.HasPrefix(v.Search, "#") {
