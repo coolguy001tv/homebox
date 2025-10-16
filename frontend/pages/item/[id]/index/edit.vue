@@ -568,13 +568,21 @@
                 :key="attachment.id"
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
-                <p class="my-auto col-span-4">
-                  {{ attachment.document.title }}
-                </p>
+                <div class="my-auto col-span-4 flex items-center gap-3">
+                  <img
+                    v-if="attachment.type === 'photo'"
+                    :src="api.authURL(`/items/${item.id}/attachments/${attachment.id}`)"
+                    class="h-12 object-cover rounded"
+                    :alt="attachment.document.title"
+                  />
+                  <p class="my-auto">
+                    {{ attachment.document.title }}
+                  </p>
+                </div>
                 <p class="my-auto">
                   {{ capitalize(attachment.type) }}
                 </p>
-                <div class="flex gap-2 justify-end">
+                <div class="flex gap-2 justify-end  items-center">
                   <div class="tooltip" data-tip="Delete">
                     <button class="btn btn-sm btn-square" @click="deleteAttachment(attachment.id)">
                       <Icon name="mdi-delete" />

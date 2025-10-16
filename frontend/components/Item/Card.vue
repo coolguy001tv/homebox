@@ -11,6 +11,14 @@
           {{ item.location.name }}
         </NuxtLink>
       </div>
+      <div class="absolute  top-1 right-1 text-white">
+        <a v-if="+item.purchasePrice > 0.01">
+          <Currency :amount="item.purchasePrice" />
+          <span class="text-xs" v-if="+item.originalPrice > 0.01">/{{item.originalPrice}}</span>
+
+        </a>
+
+      </div>
     </div>
     <div class="rounded-b p-4 pt-2 flex-grow col-span-4 flex flex-col gap-y-1 bg-base-100">
       <h2 class="text-lg font-bold two-line">{{ item.name }}</h2>
