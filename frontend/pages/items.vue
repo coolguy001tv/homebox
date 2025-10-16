@@ -54,6 +54,19 @@
   const orderBy = useRouteQuery("orderBy", "createdAt");
   const order = useRouteQuery("order", "desc");
 
+  const orderByLabel = computed(() => {
+    const map: Record<string, string> = {
+      createdAt: "创建时间",
+      updatedAt: "更新时间",
+      purchaseTime: "购买时间",
+      purchasePrice: "购买价格",
+      name: "名字",
+    };
+    return map[orderBy.value] ?? "创建时间";
+  });
+
+  const orderLabel = computed(() => (order.value === "asc" ? "升序" : "倒序"));
+
   const fieldSelector = useRouteQuery("fieldSelector", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
@@ -396,42 +409,23 @@
           </div>
 
         </div>
-        <div class="dropdown">
-          <label tabindex="1" class="btn btn-xs">{{ orderBy || "排序字段" }}</label>
-          <div
-            tabindex="0"
-            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
-          >
-            <div class="form-control w-full max-w-xs">
-              <label class="label">
-                <span class="label-text">排序字段</span>
-              </label>
-              <select v-model="orderBy" class="select-bordered select">
-                <option value="name">名字</option>
-                <option value="createdAt">创建时间</option>
-                <option value="updatedAt">更新时间</option>
-                <option value="purchaseTime">购买时间</option>
-                <option value="purchasePrice">购买价格</option>
-              </select>
-            </div>
-          </div>
+        <div class="flex items-center gap-2">
+<!--          <span class="text-xs opacity-70">排序</span>-->
+<!--          动画会导致option抖动-->
+          <select v-model="orderBy" class="btn btn-xs focus-visible:outline-none animate-none" style="transform: none;">
+            <option value="createdAt">创建时间</option>
+            <option value="updatedAt">更新时间</option>
+            <option value="purchaseTime">购买时间</option>
+            <option value="purchasePrice">购买价格</option>
+            <option value="name">名字</option>
+          </select>
         </div>
-        <div class="dropdown">
-          <label tabindex="1" class="btn btn-xs">{{ order === 'asc' ? '升序' : '倒序' }}</label>
-          <div
-            tabindex="0"
-            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
-          >
-            <div class="form-control w-full max-w-xs">
-              <label class="label">
-                <span class="label-text">排列顺序</span>
-              </label>
-              <select v-model="order" class="select-bordered select">
-                <option value="desc">倒序</option>
-                <option value="asc">升序</option>
-              </select>
-            </div>
-          </div>
+        <div class="flex items-center gap-2">
+<!--          <span class="text-xs opacity-70">顺序</span>-->
+          <select v-model="order"  class="btn btn-xs focus-visible:outline-none" style="animation: none;transform: none;">
+            <option value="desc">倒序</option>
+            <option value="asc">升序</option>
+          </select>
         </div>
         <div class="dropdown">
           <label tabindex="0" class="btn btn-xs">Options</label>
