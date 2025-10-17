@@ -1,7 +1,7 @@
 <template>
   <NuxtLink class="group card rounded-md border border-gray-300" :to="`/item/${item.id}`">
-    <div class="relative h-[200px]">
-      <img v-if="imageUrl" class="h-[200px] w-full object-cover rounded-t shadow-sm border-gray-300" :src="imageUrl" />
+    <div class="relative">
+      <img v-if="imageUrl" class="w-full aspect-[4/3] object-cover rounded-t shadow-sm border-gray-300" :src="imageUrl" />
       <div class="absolute bottom-1 left-1">
         <NuxtLink
           v-if="item.location"
