@@ -91,6 +91,20 @@ func (lu *LabelUpdate) ClearColor() *LabelUpdate {
 	return lu
 }
 
+// SetRequired sets the "required" field.
+func (lu *LabelUpdate) SetRequired(b bool) *LabelUpdate {
+	lu.mutation.SetRequired(b)
+	return lu
+}
+
+// SetNillableRequired sets the "required" field if the given value is not nil.
+func (lu *LabelUpdate) SetNillableRequired(b *bool) *LabelUpdate {
+	if b != nil {
+		lu.SetRequired(*b)
+	}
+	return lu
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (lu *LabelUpdate) SetGroupID(id uuid.UUID) *LabelUpdate {
 	lu.mutation.SetGroupID(id)
@@ -237,6 +251,9 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if lu.mutation.ColorCleared() {
 		_spec.ClearField(label.FieldColor, field.TypeString)
+	}
+	if value, ok := lu.mutation.Required(); ok {
+		_spec.SetField(label.FieldRequired, field.TypeBool, value)
 	}
 	if lu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -389,6 +406,20 @@ func (luo *LabelUpdateOne) SetNillableColor(s *string) *LabelUpdateOne {
 // ClearColor clears the value of the "color" field.
 func (luo *LabelUpdateOne) ClearColor() *LabelUpdateOne {
 	luo.mutation.ClearColor()
+	return luo
+}
+
+// SetRequired sets the "required" field.
+func (luo *LabelUpdateOne) SetRequired(b bool) *LabelUpdateOne {
+	luo.mutation.SetRequired(b)
+	return luo
+}
+
+// SetNillableRequired sets the "required" field if the given value is not nil.
+func (luo *LabelUpdateOne) SetNillableRequired(b *bool) *LabelUpdateOne {
+	if b != nil {
+		luo.SetRequired(*b)
+	}
 	return luo
 }
 
@@ -568,6 +599,9 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 	}
 	if luo.mutation.ColorCleared() {
 		_spec.ClearField(label.FieldColor, field.TypeString)
+	}
+	if value, ok := luo.mutation.Required(); ok {
+		_spec.SetField(label.FieldRequired, field.TypeBool, value)
 	}
 	if luo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

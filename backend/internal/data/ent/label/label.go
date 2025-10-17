@@ -25,6 +25,8 @@ const (
 	FieldDescription = "description"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
+	// FieldRequired holds the string denoting the required field in the database.
+	FieldRequired = "required"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeItems holds the string denoting the items edge name in mutations.
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldColor,
+	FieldRequired,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "labels"
@@ -95,6 +98,8 @@ var (
 	DescriptionValidator func(string) error
 	// ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	ColorValidator func(string) error
+	// DefaultRequired holds the default value on creation for the "required" field.
+	DefaultRequired bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -130,6 +135,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByColor orders the results by the color field.
 func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
+}
+
+// ByRequired orders the results by the required field.
+func ByRequired(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRequired, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

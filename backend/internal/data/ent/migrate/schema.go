@@ -275,6 +275,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "required", Type: field.TypeBool, Default: false},
 		{Name: "group_labels", Type: field.TypeUUID},
 	}
 	// LabelsTable holds the schema information for the "labels" table.
@@ -285,7 +286,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "labels_groups_labels",
-				Columns:    []*schema.Column{LabelsColumns[6]},
+				Columns:    []*schema.Column{LabelsColumns[7]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

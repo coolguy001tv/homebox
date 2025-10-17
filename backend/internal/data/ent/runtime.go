@@ -397,6 +397,10 @@ func init() {
 	labelDescColor := labelFields[0].Descriptor()
 	// label.ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	label.ColorValidator = labelDescColor.Validators[0].(func(string) error)
+	// labelDescRequired is the schema descriptor for required field.
+	labelDescRequired := labelFields[1].Descriptor()
+	// label.DefaultRequired holds the default value on creation for the required field.
+	label.DefaultRequired = labelDescRequired.Default.(bool)
 	// labelDescID is the schema descriptor for id field.
 	labelDescID := labelMixinFields0[0].Descriptor()
 	// label.DefaultID holds the default value on creation for the id field.

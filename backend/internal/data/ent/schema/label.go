@@ -26,6 +26,8 @@ func (Label) Fields() []ent.Field {
 		field.String("color").
 			MaxLen(255).
 			Optional(),
+		field.Bool("required").
+			Default(false),
 	}
 }
 

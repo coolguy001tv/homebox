@@ -7687,6 +7687,7 @@ type LabelMutation struct {
 	name          *string
 	description   *string
 	color         *string
+	required      *bool
 	clearedFields map[string]struct{}
 	group         *uuid.UUID
 	clearedgroup  bool
@@ -8008,6 +8009,42 @@ func (m *LabelMutation) ResetColor() {
 	delete(m.clearedFields, label.FieldColor)
 }
 
+// SetRequired sets the "required" field.
+func (m *LabelMutation) SetRequired(b bool) {
+	m.required = &b
+}
+
+// Required returns the value of the "required" field in the mutation.
+func (m *LabelMutation) Required() (r bool, exists bool) {
+	v := m.required
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRequired returns the old "required" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldRequired(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRequired is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRequired requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRequired: %w", err)
+	}
+	return oldValue.Required, nil
+}
+
+// ResetRequired resets all changes to the "required" field.
+func (m *LabelMutation) ResetRequired() {
+	m.required = nil
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *LabelMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -8135,7 +8172,7 @@ func (m *LabelMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LabelMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, label.FieldCreatedAt)
 	}
@@ -8150,6 +8187,9 @@ func (m *LabelMutation) Fields() []string {
 	}
 	if m.color != nil {
 		fields = append(fields, label.FieldColor)
+	}
+	if m.required != nil {
+		fields = append(fields, label.FieldRequired)
 	}
 	return fields
 }
@@ -8169,6 +8209,8 @@ func (m *LabelMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case label.FieldColor:
 		return m.Color()
+	case label.FieldRequired:
+		return m.Required()
 	}
 	return nil, false
 }
@@ -8188,6 +8230,8 @@ func (m *LabelMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDescription(ctx)
 	case label.FieldColor:
 		return m.OldColor(ctx)
+	case label.FieldRequired:
+		return m.OldRequired(ctx)
 	}
 	return nil, fmt.Errorf("unknown Label field %s", name)
 }
@@ -8231,6 +8275,13 @@ func (m *LabelMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetColor(v)
+		return nil
+	case label.FieldRequired:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRequired(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Label field %s", name)
@@ -8310,6 +8361,9 @@ func (m *LabelMutation) ResetField(name string) error {
 		return nil
 	case label.FieldColor:
 		m.ResetColor()
+		return nil
+	case label.FieldRequired:
+		m.ResetRequired()
 		return nil
 	}
 	return fmt.Errorf("unknown Label field %s", name)

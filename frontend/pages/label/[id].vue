@@ -46,11 +46,13 @@
     name: "",
     description: "",
     color: "",
+    required: false,
   });
 
   function openUpdate() {
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
+    updateData.required = label.value?.required || false;
     updateModal.value = true;
   }
 
@@ -95,6 +97,7 @@
       <form v-if="label" @submit.prevent="update">
         <FormTextField v-model="updateData.name" :autofocus="true" label="Label Name" />
         <FormTextArea v-model="updateData.description" label="Label Description" />
+        <FormCheckbox v-model="updateData.required" label="Required Label" />
         <div class="modal-action">
           <BaseButton type="submit" :loading="updating"> Update </BaseButton>
         </div>
@@ -111,8 +114,10 @@
               </div>
             </div>
             <div>
-              <h1 class="text-2xl pb-1">
-                {{ label ? label.name : "" }} <span class="text-xs">(合计{{ items?.length}}项)</span>
+              <h1 class="text-2xl pb-1 flex items-center">
+                {{ label ? label.name : "" }} 
+                <span v-if="label?.required" class="badge badge-warning badge-sm mx-2">必需</span>
+                <span class="text-xs">(合计{{ items?.length}}项)</span>
               </h1>
               <div class="flex gap-1 flex-wrap text-xs">
                 <div>

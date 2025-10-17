@@ -29,6 +29,8 @@ type Label struct {
 	Description string `json:"description,omitempty"`
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
+	// Required holds the value of the "required" field.
+	Required bool `json:"required,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LabelQuery when eager-loading is set.
 	Edges        LabelEdges `json:"edges"`
@@ -74,6 +76,8 @@ func (*Label) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case label.FieldRequired:
+			values[i] = new(sql.NullBool)
 		case label.FieldName, label.FieldDescription, label.FieldColor:
 			values[i] = new(sql.NullString)
 		case label.FieldCreatedAt, label.FieldUpdatedAt:
@@ -132,6 +136,12 @@ func (l *Label) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
 				l.Color = value.String
+			}
+		case label.FieldRequired:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field required", values[i])
+			} else if value.Valid {
+				l.Required = value.Bool
 			}
 		case label.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -200,6 +210,9 @@ func (l *Label) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("color=")
 	builder.WriteString(l.Color)
+	builder.WriteString(", ")
+	builder.WriteString("required=")
+	builder.WriteString(fmt.Sprintf("%v", l.Required))
 	builder.WriteByte(')')
 	return builder.String()
 }

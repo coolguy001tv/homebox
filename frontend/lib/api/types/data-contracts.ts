@@ -196,6 +196,7 @@ export interface LabelCreate {
    * @maxLength 255
    */
   name: string;
+  required: boolean;
 }
 
 export interface LabelOut {
@@ -203,6 +204,7 @@ export interface LabelOut {
   description: string;
   id: string;
   name: string;
+  required: boolean;
   updatedAt: Date | string;
 }
 
@@ -211,6 +213,7 @@ export interface LabelSummary {
   description: string;
   id: string;
   name: string;
+  required: boolean;
   updatedAt: Date | string;
 }
 

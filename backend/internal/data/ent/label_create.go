@@ -85,6 +85,20 @@ func (lc *LabelCreate) SetNillableColor(s *string) *LabelCreate {
 	return lc
 }
 
+// SetRequired sets the "required" field.
+func (lc *LabelCreate) SetRequired(b bool) *LabelCreate {
+	lc.mutation.SetRequired(b)
+	return lc
+}
+
+// SetNillableRequired sets the "required" field if the given value is not nil.
+func (lc *LabelCreate) SetNillableRequired(b *bool) *LabelCreate {
+	if b != nil {
+		lc.SetRequired(*b)
+	}
+	return lc
+}
+
 // SetID sets the "id" field.
 func (lc *LabelCreate) SetID(u uuid.UUID) *LabelCreate {
 	lc.mutation.SetID(u)
@@ -168,6 +182,10 @@ func (lc *LabelCreate) defaults() {
 		v := label.DefaultUpdatedAt()
 		lc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := lc.mutation.Required(); !ok {
+		v := label.DefaultRequired
+		lc.mutation.SetRequired(v)
+	}
 	if _, ok := lc.mutation.ID(); !ok {
 		v := label.DefaultID()
 		lc.mutation.SetID(v)
@@ -199,6 +217,9 @@ func (lc *LabelCreate) check() error {
 		if err := label.ColorValidator(v); err != nil {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
 		}
+	}
+	if _, ok := lc.mutation.Required(); !ok {
+		return &ValidationError{Name: "required", err: errors.New(`ent: missing required field "Label.required"`)}
 	}
 	if _, ok := lc.mutation.GroupID(); !ok {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Label.group"`)}
@@ -257,6 +278,10 @@ func (lc *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 	if value, ok := lc.mutation.Color(); ok {
 		_spec.SetField(label.FieldColor, field.TypeString, value)
 		_node.Color = value
+	}
+	if value, ok := lc.mutation.Required(); ok {
+		_spec.SetField(label.FieldRequired, field.TypeBool, value)
+		_node.Required = value
 	}
 	if nodes := lc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

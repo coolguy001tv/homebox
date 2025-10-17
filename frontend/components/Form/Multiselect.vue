@@ -21,8 +21,8 @@
             bordered: selected[idx],
           }"
         >
-          <button type="button" @click="toggle(idx)">
-            {{ name != "" ? obj[name] : obj }}
+          <button type="button" @click="toggle(idx)" class="gap-1">
+            {{ name != "" ? obj[name] : obj }}<span class="text-warning" v-if="obj.required">*</span>
           </button>
         </li>
       </ul>

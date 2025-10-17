@@ -6,6 +6,10 @@
       <FormTextField ref="nameInput" v-model="form.name" :trigger-focus="focused" :autofocus="true" label="Item Name" />
       <FormTextArea v-model="form.description" label="Item Description" />
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
+      <div v-if="requiredLabels.length > 0" class="text-sm text-warning mt-2">
+        <Icon name="mdi-alert-circle" class="inline h-4 w-4 mr-1" />
+        必须选择以下标签中的至少一个: {{ requiredLabels.map(l => l.name).join(', ') }}
+      </div>
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
@@ -54,6 +58,8 @@
 
   const labelStore = useLabelStore();
   const labels = computed(() => labelStore.labels);
+
+  const requiredLabels = computed(() => labels.value.filter(label => label.required));
 
   const route = useRoute();
 
@@ -106,6 +112,14 @@
 
   async function create(close = true) {
     if (!form.location) {
+      return;
+    }
+
+    // 检查是否选择了至少一个required label
+    const selectedRequiredLabels = form.labels.filter(label => label.required);
+    
+    if (requiredLabels.value.length > 0 && selectedRequiredLabels.length === 0) {
+      toast.error("必须选择至少一个必需的标签");
       return;
     }
 

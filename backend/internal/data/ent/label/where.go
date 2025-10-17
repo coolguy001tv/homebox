@@ -81,6 +81,11 @@ func Color(v string) predicate.Label {
 	return predicate.Label(sql.FieldEQ(FieldColor, v))
 }
 
+// Required applies equality check predicate on the "required" field. It's identical to RequiredEQ.
+func Required(v bool) predicate.Label {
+	return predicate.Label(sql.FieldEQ(FieldRequired, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Label {
 	return predicate.Label(sql.FieldEQ(FieldCreatedAt, v))
@@ -374,6 +379,16 @@ func ColorEqualFold(v string) predicate.Label {
 // ColorContainsFold applies the ContainsFold predicate on the "color" field.
 func ColorContainsFold(v string) predicate.Label {
 	return predicate.Label(sql.FieldContainsFold(FieldColor, v))
+}
+
+// RequiredEQ applies the EQ predicate on the "required" field.
+func RequiredEQ(v bool) predicate.Label {
+	return predicate.Label(sql.FieldEQ(FieldRequired, v))
+}
+
+// RequiredNEQ applies the NEQ predicate on the "required" field.
+func RequiredNEQ(v bool) predicate.Label {
+	return predicate.Label(sql.FieldNEQ(FieldRequired, v))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

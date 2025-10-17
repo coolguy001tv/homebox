@@ -10,6 +10,7 @@
         label="Label Name"
       />
       <FormTextArea v-model="form.description" label="Label Description" />
+      <FormCheckbox v-model="form.required" label="Required Label"  />
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit"> Create </BaseButton>
@@ -47,12 +48,14 @@
     name: "",
     description: "",
     color: "", // Future!
+    required: false,
   });
 
   function reset() {
     form.name = "";
     form.description = "";
     form.color = "";
+    form.required = false;
     focused.value = false;
     loading.value = false;
   }

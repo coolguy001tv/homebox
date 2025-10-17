@@ -22,6 +22,7 @@ type (
 		Name        string `json:"name"        validate:"required,min=1,max=255"`
 		Description string `json:"description" validate:"max=255"`
 		Color       string `json:"color"`
+		Required    bool   `json:"required"`
 	}
 
 	LabelUpdate struct {
@@ -29,12 +30,14 @@ type (
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
 		Description string    `json:"description" validate:"max=255"`
 		Color       string    `json:"color"`
+		Required    bool      `json:"required"`
 	}
 
 	LabelSummary struct {
 		ID          uuid.UUID `json:"id"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
+		Required    bool      `json:"required"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
@@ -49,6 +52,7 @@ func mapLabelSummary(label *ent.Label) LabelSummary {
 		ID:          label.ID,
 		Name:        label.Name,
 		Description: label.Description,
+		Required:    label.Required,
 		CreatedAt:   label.CreatedAt,
 		UpdatedAt:   label.UpdatedAt,
 	}
@@ -101,6 +105,7 @@ func (r *LabelRepository) Create(ctx context.Context, groupID uuid.UUID, data La
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetColor(data.Color).
+		SetRequired(data.Required).
 		SetGroupID(groupID).
 		Save(ctx)
 	if err != nil {
@@ -122,6 +127,7 @@ func (r *LabelRepository) update(ctx context.Context, data LabelUpdate, where ..
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetColor(data.Color).
+		SetRequired(data.Required).
 		Save(ctx)
 }
 
