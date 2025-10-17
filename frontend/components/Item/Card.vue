@@ -14,7 +14,7 @@
       <div class="absolute  top-1 right-1 text-white">
         <a v-if="+item.purchasePrice > 0.01">
           <Currency :amount="item.purchasePrice" />
-          <span class="text-xs" v-if="+item.originalPrice > 0.01">/{{item.originalPrice}}</span>
+          <span class="text-xs" v-if="+item.originalPrice > 0.01 && item.purchasePrice!==item.originalPrice">/{{item.originalPrice}}</span>
 
         </a>
 
