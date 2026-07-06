@@ -4,8 +4,10 @@
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-sqlite",
-        ".data/homebox.db"
+        "-p",
+        "mcp-sqlite",
+        "mcp-sqlite-server",
+        "./backend/.data/homebox.db"
       ]
     }
   }
