@@ -2207,7 +2207,8 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "assetId": {
-                    "type": "integer"
+                    "type": "string",
+                    "example": "0"
                 },
                 "description": {
                     "type": "string"
@@ -2321,6 +2322,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "required": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2338,6 +2342,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2358,6 +2365,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string"

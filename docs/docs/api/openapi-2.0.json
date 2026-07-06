@@ -2314,6 +2314,9 @@
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "required": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2331,6 +2334,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2351,6 +2357,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string"

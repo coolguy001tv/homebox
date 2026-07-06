@@ -25,7 +25,7 @@ func WrapResults[T any](items []T) Results[T] {
 }
 
 type Wrapped struct {
-	Item interface{} `json:"item"`
+	Item any `json:"item"`
 }
 
 func Wrap(v any) Wrapped {

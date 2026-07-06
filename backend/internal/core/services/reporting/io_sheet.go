@@ -95,7 +95,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 
 			val := row[col]
 
-			var v interface{}
+			var v any
 
 			switch field.Type {
 			case reflect.TypeOf(""):

@@ -2,7 +2,7 @@
 package faker
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"time"
 )
 
@@ -21,7 +21,7 @@ func (f *Faker) Time() time.Time {
 func (f *Faker) Str(length int) string {
 	b := make([]rune, length)
 	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
+		b[i] = letters[rand.IntN(len(letters))]
 	}
 	return string(b)
 }
@@ -35,9 +35,9 @@ func (f *Faker) Email() string {
 }
 
 func (f *Faker) Bool() bool {
-	return rand.Intn(2) == 1
+	return rand.IntN(2) == 1
 }
 
 func (f *Faker) Num(min, max int) int {
-	return rand.Intn(max-min) + min
+	return rand.IntN(max-min) + min
 }

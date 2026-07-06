@@ -1,6 +1,6 @@
 module github.com/hay-kot/homebox/backend
 
-go 1.21
+go 1.23
 
 require (
 	ariga.io/atlas v0.15.0

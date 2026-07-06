@@ -33,6 +33,7 @@ tasks:
     cmds:
       - |
         npx swagger-typescript-api \
+          generate \
           --no-client \
           --modular \
           --path ./backend/app/api/static/docs/swagger.json \
@@ -102,8 +103,7 @@ tasks:
     dir: backend/internal/
     cmds:
       - |
-        go generate ./... \
-        --template=./data/ent/schema/templates/has_id.tmpl
+        go generate ./...
     sources:
       - "./backend/internal/data/ent/schema/**/*"
 

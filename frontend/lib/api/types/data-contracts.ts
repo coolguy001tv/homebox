@@ -1,6 +1,7 @@
 /* post-processed by ./scripts/process-types.go */
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -126,7 +127,6 @@ export interface ItemPatch {
 }
 
 export interface ItemSummary {
-  item?:string;
   archived: boolean;
   createdAt: Date | string;
   description: string;
@@ -149,6 +149,7 @@ export interface ItemSummary {
 
 export interface ItemUpdate {
   archived: boolean;
+  /** @example "0" */
   assetId: string;
   description: string;
   fields: ItemField[];

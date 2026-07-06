@@ -17,7 +17,7 @@ type CommandIDFunc[T any] func(*http.Request, uuid.UUID) (T, error)
 //
 // Example:
 //
-//		fn := func(r *http.Request) (interface{}, error) {
+//		fn := func(r *http.Request) (any, error) {
 //			// do something
 //			return nil, nil
 //		}
@@ -39,7 +39,7 @@ func Command[T any](f CommandFunc[T], ok int) errchain.HandlerFunc {
 //
 // Example:
 //
-//	fn := func(r *http.Request, id uuid.UUID) (interface{}, error) {
+//	fn := func(r *http.Request, id uuid.UUID) (any, error) {
 //		// do something
 //		return nil, nil
 //	}
