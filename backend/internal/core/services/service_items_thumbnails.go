@@ -13,7 +13,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 
-	// Register additional image decoders
+	// Register additional image decoders (blank imports trigger init())
+	_ "github.com/gen2brain/heic"
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"

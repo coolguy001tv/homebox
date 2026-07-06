@@ -887,6 +887,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/items/{id}/attachments/{attachment_id}/thumb": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Get Item Attachment Thumbnail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Thumbnail width (height auto-scaled)",
+                        "name": "w",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/items/{id}/maintenance": {
             "get": {
                 "security": [
