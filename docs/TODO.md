@@ -13,3 +13,6 @@
 
 ## DevContainer
 - [ ] **`node_modules` volume 挂载** — 避免每次 rebuild 容器都要重装前端依赖。
+
+## 发布
+- [ ] **验证 Docker 发版流程** — 确认 Docker Hub 手动发布流程没问题（build、tag、push 标准镜像 + rootless 镜像），并考虑是否将 Docker Hub 发布也加入 CI/CD。

@@ -84,6 +84,16 @@ export class BaseAPI {
   }
 
   /**
+   * thumbURL builds a thumbnail URL for an item attachment with the given width.
+   * The height is automatically scaled proportionally by the server.
+   * Thumbnails are cached on disk after first generation.
+   */
+  thumbURL(itemId: string, attachmentId: string, width: number): string {
+    const url = `/items/${itemId}/attachments/${attachmentId}/thumb?w=${width}`;
+    return this.authURL(url);
+  }
+
+  /**
    * dropFields will remove any fields that are specified in the fields array
    * additionally, it will remove the `createdAt` and `updatedAt` fields if they
    * are present. This is useful for when you want to send a subset of fields to

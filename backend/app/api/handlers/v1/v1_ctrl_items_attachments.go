@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"path/filepath"
+	"strconv"
 
 	"github.com/hay-kot/homebox/backend/internal/core/services"
 	"github.com/hay-kot/homebox/backend/internal/data/ent/attachment"
@@ -113,6 +114,47 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 //	@Security Bearer
 func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
+}
+
+// HandleItemAttachmentThumb godocs
+//
+//	@Summary  Get Item Attachment Thumbnail
+//	@Tags     Items Attachments
+//	@Produce  image/jpeg
+//	@Param    id            path     string true "Item ID"
+//	@Param    attachment_id path     string true "Attachment ID"
+//	@Param    w             query    int    false "Thumbnail width (height auto-scaled)"
+//	@Success  200           {file}   image/jpeg
+//	@Router   /v1/items/{id}/attachments/{attachment_id}/thumb [GET]
+//	@Security Bearer
+func (ctrl *V1Controller) HandleItemAttachmentThumb() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		attachmentID, err := ctrl.routeUUID(r, "attachment_id")
+		if err != nil {
+			return err
+		}
+
+		widthStr := r.URL.Query().Get("w")
+		width := 0
+		if widthStr != "" {
+			width, err = strconv.Atoi(widthStr)
+			if err != nil || width < 0 {
+				return validate.NewRequestError(
+					errors.New("invalid width parameter"),
+					http.StatusBadRequest,
+				)
+			}
+		}
+
+		target, err := ctrl.svc.Items.Thumbnail(r.Context(), attachmentID, width)
+		if err != nil {
+			log.Err(err).Msg("failed to get thumbnail")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		http.ServeFile(w, r, target)
+		return nil
+	}
 }
 
 // HandleItemAttachmentDelete godocs

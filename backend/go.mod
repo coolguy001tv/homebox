@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.12.5
 	github.com/ardanlabs/conf/v3 v3.1.7
 	github.com/containrrr/shoutrrr v0.8.0
+	github.com/disintegration/imaging v1.6.2
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a
@@ -23,6 +24,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.2.2
 	github.com/yeqown/go-qrcode/writer/standard v1.2.2
 	golang.org/x/crypto v0.16.0
+	golang.org/x/image v0.14.0
 	modernc.org/sqlite v1.27.0
 )
 
@@ -59,7 +61,6 @@ require (
 	github.com/swaggo/files v1.0.1 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	github.com/zclconf/go-cty v1.14.1 // indirect
-	golang.org/x/image v0.14.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect

@@ -156,6 +156,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1Base("/items/{id}/attachments/{attachment_id}"),
 		chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...),
 	)
+	r.Get(
+		v1Base("/items/{id}/attachments/{attachment_id}/thumb"),
+		chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentThumb(), assetMW...),
+	)
 
 	// Reporting Services
 	r.Get(v1Base("/reporting/bill-of-materials"), chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))

@@ -571,7 +571,7 @@
                 <div class="my-auto col-span-4 flex items-center gap-3">
                   <img
                     v-if="attachment.type === 'photo'"
-                    :src="api.authURL(`/items/${item.id}/attachments/${attachment.id}`)"
+                    :src="api.thumbURL(item.id, attachment.id, 100)"
                     class="h-12 object-cover rounded"
                     :alt="attachment.document.title"
                   />

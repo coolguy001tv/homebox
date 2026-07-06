@@ -71,7 +71,8 @@
   };
 
   type Photo = {
-    src: string;
+    src: string;       // thumbnail URL
+    original: string;  // full-resolution URL
   };
 
   const photos = computed<Photo[]>(() => {
@@ -80,7 +81,8 @@
         if (cur.type === "photo") {
           acc.push({
             // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
+            src: api.thumbURL(item.value.id, cur.id, 800),
+            original: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
           });
         }
         return acc;
@@ -391,7 +393,7 @@
   function openDialog(img: Photo) {
     // @ts-ignore - I don't know why this is happening
     refDialog.value?.showModal();
-    dialoged.src = img.src;
+    dialoged.src = img.original;
   }
 
   function closeDialog() {

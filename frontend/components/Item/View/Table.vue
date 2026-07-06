@@ -91,7 +91,7 @@
       return "/no-image.jpg";
     }
 
-    return api.authURL(`/items/${item.id}/attachments/${item.imageId}`);
+    return api.thumbURL(item.id, item.imageId, 400);
   };
 
   const sortByProperty = ref<keyof ItemSummary | "">("");

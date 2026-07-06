@@ -53,5 +53,6 @@ nav:
     - Quick Start: quick-start.md
     - Tips and Tricks: tips-tricks.md
     - Import and Export: import-csv.md
+    - Image Thumbnails: image-thumbnails.md
     - Building The Binary: build.md
   - API: "https://redocly.github.io/redoc/?url=https://hay-kot.github.io/homebox/api/openapi-2.0.json"

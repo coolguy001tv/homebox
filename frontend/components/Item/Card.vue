@@ -51,7 +51,7 @@
       return "/no-image.jpg";
     }
 
-    return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+    return api.thumbURL(props.item.id, props.item.imageId, 400);
   });
 
   const top3 = computed(() => {
