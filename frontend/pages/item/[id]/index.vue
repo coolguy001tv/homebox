@@ -71,8 +71,9 @@
   };
 
   type Photo = {
-    src: string;       // thumbnail URL
-    original: string;  // full-resolution URL
+    src: string;       // thumbnail URL (always JPEG, works in all browsers)
+    original: string;  // full-resolution URL (for download)
+    title: string;     // original filename with extension (e.g. IMG_1234.HEIC)
   };
 
   const photos = computed<Photo[]>(() => {
@@ -83,6 +84,7 @@
             // @ts-expect-error - it's impossible for this to be null at this point
             src: api.thumbURL(item.value.id, cur.id, 800),
             original: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
+            title: cur.document.title,
           });
         }
         return acc;
@@ -388,12 +390,18 @@
   const refDialog = ref<HTMLDialogElement>();
   const dialoged = reactive({
     src: "",
+    download: "",
+    title: "",
   });
 
   function openDialog(img: Photo) {
     // @ts-ignore - I don't know why this is happening
     refDialog.value?.showModal();
-    dialoged.src = img.original;
+    // Use thumbnail (always JPEG) for display so HEIC images render in all browsers.
+    dialoged.src = img.src;
+    // Use original URL for download, with the original filename.
+    dialoged.download = img.original;
+    dialoged.title = img.title;
   }
 
   function closeDialog() {
@@ -454,7 +462,7 @@
     <dialog ref="refDialog" class="z-[999] fixed bg-transparent">
       <div ref="refDialogBody" class="relative">
         <div class="absolute right-0 -mt-3 -mr-3 sm:-mt-4 sm:-mr-4 space-x-1">
-          <a class="btn btn-sm sm:btn-md btn-primary btn-circle" :href="dialoged.src" download>
+          <a class="btn btn-sm sm:btn-md btn-primary btn-circle" :href="dialoged.download" :download="dialoged.title">
             <Icon class="h-5 w-5" name="mdi-download" />
           </a>
           <button class="btn btn-sm sm:btn-md btn-primary btn-circle" @click="closeDialog()">
