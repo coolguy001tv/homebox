@@ -1,15 +1,15 @@
 
 # Build Nuxt
-FROM node:22-alpine as frontend-builder
+FROM node:22-alpine AS frontend-builder
 WORKDIR  /app
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 COPY frontend .
 RUN pnpm build
 
 # Build API
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION

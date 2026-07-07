@@ -74,6 +74,7 @@
     src: string;       // thumbnail URL (always JPEG, works in all browsers)
     original: string;  // full-resolution URL (for download)
     title: string;     // original filename with extension (e.g. IMG_1234.HEIC)
+    id: string;        // attachment ID, used to build dialog thumbnail URL
   };
 
   const photos = computed<Photo[]>(() => {
@@ -82,9 +83,10 @@
         if (cur.type === "photo") {
           acc.push({
             // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.thumbURL(item.value.id, cur.id, 800),
+            src: api.thumbURL(item.value.id, cur.id, 400),
             original: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
             title: cur.document.title,
+            id: cur.id,
           });
         }
         return acc;
@@ -397,8 +399,8 @@
   function openDialog(img: Photo) {
     // @ts-ignore - I don't know why this is happening
     refDialog.value?.showModal();
-    // Use thumbnail (always JPEG) for display so HEIC images render in all browsers.
-    dialoged.src = img.src;
+    // Use a larger thumbnail (w=1500) for the dialog display so HEIC images render in all browsers.
+    dialoged.src = api.thumbURL(item.value!.id, img.id, 1500);
     // Use original URL for download, with the original filename.
     dialoged.download = img.original;
     dialoged.title = img.title;
@@ -470,7 +472,7 @@
           </button>
         </div>
 
-        <img class="max-w-[80vw] max-h-[80vh]" :src="dialoged.src" />
+        <img class="max-w-[80vw] max-h-[80vh]" :src="dialoged.src" :key="dialoged.src" />
       </div>
     </dialog>
 

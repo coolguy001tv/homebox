@@ -34,6 +34,9 @@
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^1.0.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "vue-demi"]
+  },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@iconify/vue": "^3.2.1",
