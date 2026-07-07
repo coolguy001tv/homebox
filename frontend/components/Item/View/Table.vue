@@ -81,8 +81,11 @@
 
   type Props = {
     items: ItemSummary[];
+    thumbWidth?: number;
   };
-  const props = defineProps<Props>();
+  const props = withDefaults(defineProps<Props>(), {
+    thumbWidth: 400,
+  });
 
   const api = useUserApi();
 
@@ -91,7 +94,7 @@
       return "/no-image.jpg";
     }
 
-    return api.thumbURL(item.id, item.imageId, 400);
+    return api.thumbURL(item.id, item.imageId, props.thumbWidth);
   };
 
   const sortByProperty = ref<keyof ItemSummary | "">("");

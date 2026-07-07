@@ -51,7 +51,7 @@
       return "/no-image.jpg";
     }
 
-    return api.thumbURL(props.item.id, props.item.imageId, 400);
+    return api.thumbURL(props.item.id, props.item.imageId, props.thumbWidth);
   });
 
   const top3 = computed(() => {
@@ -62,6 +62,10 @@
     item: {
       type: Object as () => ItemOut | ItemSummary,
       required: true,
+    },
+    thumbWidth: {
+      type: Number,
+      default: 400,
     },
   });
 </script>
