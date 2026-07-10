@@ -22,6 +22,12 @@
 }
 ```
 
+### 🖼️ 缩略图缓存优化：避免污染 NAS 目录
+
+- **优先使用 NAS 缩略图**：`ThumbnailPath` 优先读取 NAS 自带缩略图（`.@__thumb/<imageName>`），画质更好、无需额外 I/O
+- **缓存移至本地**：无法使用 NAS 缩略图时，不再将缓存写入 NAS 源目录，改为缓存到 Homebox 数据目录 `<dataDir>/import-thumbs/`，消除 NAS 自身对缓存文件重复生成缩略图的浪费
+- **可配置缩略图目录**：新增 `HBOX_IMPORT_THUMB_DIR` 环境变量，可自定义 NAS 缩略图子目录名（默认 `.@__thumb`）
+
 ---
 
 ## v0.1.11 (2026-07-10)
