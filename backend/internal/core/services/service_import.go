@@ -1,6 +1,8 @@
 package services
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -16,8 +18,10 @@ import (
 
 // ImportService handles browsing and importing files from server-side directories.
 type ImportService struct {
-	repo       *repo.AllRepos
-	importDirs []string
+	repo           *repo.AllRepos
+	importDirs     []string
+	importThumbDir string // NAS 缩略图子目录名
+	thumbCacheDir  string // Homebox 本地缩略图缓存目录
 }
 
 // FileEntry represents a file or directory in the import browser.
@@ -177,8 +181,9 @@ func (svc *ImportService) ImportAttachment(ctx Context, itemID uuid.UUID, source
 	return svc.repo.Items.GetOneByGroup(ctx, ctx.GID, itemID)
 }
 
-// ThumbnailPath generates a thumbnail for a file in the import directory
-// and returns the cache path. The thumbnail is cached alongside the source file.
+// ThumbnailPath returns a path to a thumbnail for a file in the import directory.
+// It first checks for a NAS-generated thumbnail, then falls back to a locally
+// cached thumbnail in the Homebox data directory, generating one if needed.
 func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, error) {
 	realPath, err := svc.resolvePath(importPath)
 	if err != nil {
@@ -189,12 +194,21 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 		return realPath, nil
 	}
 
-	cachePath := thumbCachePath(realPath, width)
+	// 1. Prefer NAS-generated thumbnail (e.g. .@__thumb/<imageName>)
+	if nas := svc.findNasThumb(realPath); nas != "" {
+		return nas, nil
+	}
 
+	// 2. Check Homebox local cache
+	cachePath, err := svc.importThumbCachePath(realPath, width)
+	if err != nil {
+		return "", err
+	}
 	if _, err := os.Stat(cachePath); err == nil {
 		return cachePath, nil
 	}
 
+	// 3. Generate and cache locally
 	if err := generateThumb(realPath, cachePath, width); err != nil {
 		log.Err(err).
 			Str("src", realPath).
@@ -205,6 +219,46 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 	}
 
 	return cachePath, nil
+}
+
+// findNasThumb looks for a NAS-generated thumbnail file for the given source
+// file inside the configured import thumb directory (default .@__thumb).
+// Returns empty string when not found or not configured.
+func (svc *ImportService) findNasThumb(realPath string) string {
+	if svc.importThumbDir == "" {
+		return ""
+	}
+
+	dir := filepath.Dir(realPath)
+	name := filepath.Base(realPath)
+	thumbDir := filepath.Join(dir, svc.importThumbDir)
+
+	candidate := filepath.Join(thumbDir, name)
+	if _, err := os.Stat(candidate); err == nil {
+		return candidate
+	}
+
+	return ""
+}
+
+// importThumbCachePath derives a local cache path under thumbCacheDir for the
+// given source file path and width. Uses an MD5 hash of the source path to
+// produce a stable, filesystem-safe filename.
+func (svc *ImportService) importThumbCachePath(srcPath string, width int) (string, error) {
+	hash := md5.Sum([]byte(srcPath))
+	hashStr := hex.EncodeToString(hash[:])
+	ext := strings.ToLower(filepath.Ext(srcPath))
+
+	if svc.thumbCacheDir == "" {
+		return "", fmt.Errorf("thumb cache directory is not set")
+	}
+
+	return filepath.Join(svc.thumbCacheDir, fmt.Sprintf("%s_w%d%s", hashStr, width, ext)), nil
+}
+
+// SetThumbCacheDir sets the Homebox local thumbnail cache directory.
+func (svc *ImportService) SetThumbCacheDir(dir string) {
+	svc.thumbCacheDir = dir
 }
 
 // resolvePath validates that the given public path is within one of the

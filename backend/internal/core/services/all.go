@@ -21,6 +21,7 @@ type OptionsFunc func(*options)
 type options struct {
 	autoIncrementAssetID bool
 	importDirs           string
+	importThumbDir       string
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -32,6 +33,12 @@ func WithAutoIncrementAssetID(v bool) func(*options) {
 func WithImportDirs(dirs string) func(*options) {
 	return func(o *options) {
 		o.importDirs = dirs
+	}
+}
+
+func WithImportThumbDir(dir string) func(*options) {
+	return func(o *options) {
+		o.importThumbDir = dir
 	}
 }
 

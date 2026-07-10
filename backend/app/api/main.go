@@ -136,11 +136,21 @@ func run(cfg *config.Config) error {
 		importDirs = env
 	}
 
+	// NAS thumb dir: prefer env var; config file as fallback
+	importThumbDir := cfg.Import.ImportThumbDir
+	if env := os.Getenv("HBOX_IMPORT_THUMB_DIR"); env != "" {
+		importThumbDir = env
+	}
+	thumbCacheDir := filepath.Join(cfg.Storage.Data, "import-thumbs")
+
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithImportDirs(importDirs),
+		services.WithImportThumbDir(importThumbDir),
 	)
+
+	app.services.Import.SetThumbCacheDir(thumbCacheDir)
 
 	// =========================================================================
 	// Start Server
