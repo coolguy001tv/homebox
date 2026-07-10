@@ -92,3 +92,47 @@ docker run -d \
 ## Credits
 
 - Logo by [@lakotelman](https://github.com/lakotelman)
+
+## Browse NAS Files 功能说明
+
+### 配置方法
+
+通过环境变量 `HBOX_IMPORT_DIRS` 指定可在编辑页中浏览的服务器端目录，Docker 挂载时建议使用 `:ro` 只读模式。
+
+示例（挂载多个目录）：
+
+```yaml
+environment:
+  - HBOX_IMPORT_DIRS=/import/Pictures,/import/Docs
+
+volumes:
+  - /share/CoolGuy/Pictures:/import/Pictures:ro
+  - /share/CoolGuy/Docs:/import/Docs:ro
+```
+
+### 工作原理
+
+导入文件时在 `/data/<gid>/documents/` 下创建**符号链接（symlink）**指向原始文件，不复制文件内容。删除附件时仅删除 symlink，原始文件不受影响。
+
+### 更换映射目录后保持已有 symlink 有效
+
+如果将来需要更换 NAS 上的源目录（例如从 `/share/CoolGuy/Pictures` 迁移到 `/share/CoolGuy/Pictures2`），已创建的大量 symlink 仍指向旧的容器内路径 `/import/Pictures/xxx.jpg`，直接去掉旧映射会导致这些链接失效。
+
+**解决方案：docker-compose 中同时挂载新旧目录，旧目录保持只读，新目录用于后续使用：**
+
+```yaml
+environment:
+  - HBOX_IMPORT_DIRS=/import/Pictures2,/import/Docs2   # Browse NAS Files 只显示新目录
+
+volumes:
+  - /share/Public/App/homebox:/data/
+  - /share/CoolGuy/Pictures:/import/Pictures:ro        # 旧目录保留，已有 symlink 继续有效
+  - /share/CoolGuy/Docs:/import/Docs:ro                # 旧目录保留
+  - /share/CoolGuy/Pictures2:/import/Pictures2:ro      # 新目录，供 Browse NAS Files 使用
+  - /share/CoolGuy/Docs2:/import/Docs2:ro              # 新目录
+```
+
+**关键点**：
+- `HBOX_IMPORT_DIRS` 只写新目录路径，Browse NAS Files 弹窗只显示新目录
+- 旧目录映射**不写在** `HBOX_IMPORT_DIRS` 中（不在文件浏览器中显示），但**保留 volumes 挂载**以维持已有 symlink 有效
+- 旧映射路径保持不变（如 `/import/Pictures`），否则已有 symlink 会断裂
