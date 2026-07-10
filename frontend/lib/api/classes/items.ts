@@ -14,6 +14,7 @@ import {
 } from "../types/data-contracts";
 import { AttachmentTypes, PaginationResult } from "../types/non-generated";
 import { Requests } from "~~/lib/requests";
+import { ImportAPI } from "./import";
 
 export type ItemsQuery = {
   orderBy?: string;
@@ -100,12 +101,14 @@ export class ItemsApi extends BaseAPI {
   attachments: AttachmentsAPI;
   maintenance: MaintenanceAPI;
   fields: FieldsAPI;
+  importDir: ImportAPI;
 
   constructor(http: Requests, token: string) {
     super(http, token);
     this.fields = new FieldsAPI(http);
     this.attachments = new AttachmentsAPI(http);
     this.maintenance = new MaintenanceAPI(http);
+    this.importDir = new ImportAPI(http, token);
   }
 
   getAll(q: ItemsQuery = {}) {

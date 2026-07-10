@@ -129,9 +129,17 @@ func run(cfg *config.Config) error {
 	app.bus = eventbus.New()
 	app.db = c
 	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+
+	// Import dirs: prefer env var; config file as fallback
+	importDirs := cfg.Import.ImportDirs
+	if env := os.Getenv("HBOX_IMPORT_DIRS"); env != "" {
+		importDirs = env
+	}
+
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
+		services.WithImportDirs(importDirs),
 	)
 
 	// =========================================================================

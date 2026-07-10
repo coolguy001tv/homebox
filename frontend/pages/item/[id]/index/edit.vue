@@ -1,21 +1,22 @@
 <script setup lang="ts">
-  import { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
-  import { AttachmentTypes } from "~~/lib/api/types/non-generated";
-  import { useLabelStore } from "~~/stores/labels";
-  import { useLocationStore } from "~~/stores/locations";
-  import { capitalize } from "~~/lib/strings";
-  import Autocomplete from "~~/components/Form/Autocomplete.vue";
+import { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
+import { AttachmentTypes } from "~~/lib/api/types/non-generated";
+import { useLabelStore } from "~~/stores/labels";
+import { useLocationStore } from "~~/stores/locations";
+import { capitalize } from "~~/lib/strings";
+import Autocomplete from "~~/components/Form/Autocomplete.vue";
+import FileBrowser from "~~/components/Item/FileBrowser.vue";
 
-  definePageMeta({
-    middleware: ["auth"],
-  });
+definePageMeta({
+  middleware: ["auth"],
+});
 
-  const route = useRoute();
-  const api = useUserApi();
-  const toast = useNotifier();
-  const preferences = useViewPreferences();
+const route = useRoute();
+const api = useUserApi();
+const toast = useNotifier();
+const preferences = useViewPreferences();
 
-  const itemId = computed<string>(() => route.params.id as string);
+const itemId = computed<string>(() => route.params.id as string);
 
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.allLocations);
@@ -301,6 +302,21 @@
     item.value.attachments = data.attachments;
   }
 
+  const fileBrowserOpen = ref(false);
+
+  async function onFileImported(entry: { name: string; path: string; isDir: boolean }) {
+    const { data, error } = await api.items.importDir.importToItem(itemId.value, entry.path, null);
+
+    if (error) {
+      toast.error("Failed to import file: " + entry.name);
+      return;
+    }
+
+    toast.success("File imported: " + entry.name);
+    item.value.attachments = data.attachments;
+    fileBrowserOpen.value = false;
+  }
+
   const confirm = useConfirm();
 
   async function deleteAttachment(attachmentId: string) {
@@ -559,6 +575,14 @@
               <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
               <p>Drag and drop files here or click to select files</p>
             </button>
+            <div class="mt-3 flex justify-end">
+              <BaseButton size="sm" @click="fileBrowserOpen = true">
+                <template #icon>
+                  <Icon name="mdi-folder-open-outline" />
+                </template>
+                Browse NAS Files
+              </BaseButton>
+            </div>
           </div>
 
           <div class="border-t border-gray-300 p-4">
@@ -750,5 +774,7 @@
         </div>
       </div>
     </section>
+
+    <FileBrowser v-model="fileBrowserOpen" @select="onFileImported" />
   </div>
 </template>

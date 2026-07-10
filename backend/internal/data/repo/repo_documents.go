@@ -95,6 +95,39 @@ func (r *DocumentRepository) Create(ctx context.Context, gid uuid.UUID, doc Docu
 	)
 }
 
+// CreateFromPath creates a document record by symlinking to an existing file.
+// This avoids copying file contents and is used for importing files from
+// server-side directories (e.g., NAS mounts).
+func (r *DocumentRepository) CreateFromPath(ctx context.Context, gid uuid.UUID, title, sourcePath string) (DocumentOut, error) {
+	ext := filepath.Ext(title)
+	if ext == "" {
+		return DocumentOut{}, ErrInvalidDocExtension
+	}
+
+	destPath := r.path(gid, ext)
+
+	parent := filepath.Dir(destPath)
+	err := os.MkdirAll(parent, 0o755)
+	if err != nil {
+		return DocumentOut{}, err
+	}
+
+	// Create a symlink instead of copying the file.
+	// When the attachment is deleted, os.Remove only removes the symlink,
+	// not the original file.
+	err = os.Symlink(sourcePath, destPath)
+	if err != nil {
+		return DocumentOut{}, err
+	}
+
+	return mapDocumentOutErr(r.db.Document.Create().
+		SetGroupID(gid).
+		SetTitle(title).
+		SetPath(destPath).
+		Save(ctx),
+	)
+}
+
 func (r *DocumentRepository) Rename(ctx context.Context, id uuid.UUID, title string) (DocumentOut, error) {
 	return mapDocumentOutErr(r.db.Document.UpdateOneID(id).
 		SetTitle(title).

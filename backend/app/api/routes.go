@@ -112,6 +112,9 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 	r.Put(v1Base("/labels/{id}"), chain.ToHandlerFunc(v1Ctrl.HandleLabelUpdate(), userMW...))
 	r.Delete(v1Base("/labels/{id}"), chain.ToHandlerFunc(v1Ctrl.HandleLabelDelete(), userMW...))
 
+	r.Get(v1Base("/import/browse"), chain.ToHandlerFunc(v1Ctrl.HandleImportBrowse(), userMW...))
+	r.Get(v1Base("/import/thumb"), chain.ToHandlerFunc(v1Ctrl.HandleImportThumb(), userMW...))
+
 	r.Get(v1Base("/items"), chain.ToHandlerFunc(v1Ctrl.HandleItemsGetAll(), userMW...))
 	r.Post(v1Base("/items"), chain.ToHandlerFunc(v1Ctrl.HandleItemsCreate(), userMW...))
 	r.Post(v1Base("/items/import"), chain.ToHandlerFunc(v1Ctrl.HandleItemsImport(), userMW...))
@@ -125,6 +128,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 	r.Delete(v1Base("/items/{id}"), chain.ToHandlerFunc(v1Ctrl.HandleItemDelete(), userMW...))
 
 	r.Post(v1Base("/items/{id}/attachments"), chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentCreate(), userMW...))
+	r.Post(v1Base("/items/{id}/attachments/import"), chain.ToHandlerFunc(v1Ctrl.HandleImportAttachmentCreate(), userMW...))
 	r.Put(v1Base("/items/{id}/attachments/{attachment_id}"), chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentUpdate(), userMW...))
 	r.Delete(v1Base("/items/{id}/attachments/{attachment_id}"), chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentDelete(), userMW...))
 
