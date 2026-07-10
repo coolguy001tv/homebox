@@ -1,5 +1,29 @@
 # 版本更新日志
 
+## v0.1.12 (2026-07-10)
+
+### ⚡ 性能优化：Browse NAS Files 分页与无限滚动
+
+- **后端分页**：`/api/v1/import/browse` 新增 `page`/`pageSize` 查询参数，文件按页返回（默认每页 50 个），目录始终全部返回（导航元素）
+- **前端无限滚动**：FileBrowser 改为 IntersectionObserver 哨兵机制，滚动到底部自动加载下一页，不再一次性渲染全部文件
+- **缩略图加载优化**：每页仅渲染 50 个文件条目，配合 `loading="lazy"` + `decoding="async"`，大幅减少并发的缩略图生成请求，避免 NAS I/O 被占满
+
+### 🔧 API 变化
+
+`GET /api/v1/import/browse` 响应格式从 `FileEntry[]` 变更为：
+
+```json
+{
+  "dirs": [...],     // 所有目录（始终全部，已排序）
+  "files": [...],    // 当前页文件（已排序）
+  "page": 1,
+  "pageSize": 50,
+  "total": 200       // 文件总数
+}
+```
+
+---
+
 ## v0.1.11 (2026-07-10)
 
 ### 🖼️ 新增功能：Browse NAS Files（NAS 文件直接导入）

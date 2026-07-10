@@ -30,7 +30,7 @@
       </div>
 
       <!-- Empty -->
-      <div v-else-if="entries.length === 0" class="flex justify-center items-center flex-1 text-gray-500">
+      <div v-else-if="dirs.length === 0 && files.length === 0" class="flex justify-center items-center flex-1 text-gray-500">
         <div class="text-center">
           <Icon name="mdi-folder-open-outline" class="h-12 w-12 mx-auto mb-2" />
           <p>This directory is empty</p>
@@ -39,22 +39,32 @@
 
       <!-- File/directory grid -->
       <div v-else class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 overflow-y-auto flex-1 p-1">
+        <!-- Directories (always all visible, navigation elements) -->
         <button
-          v-for="entry in sortedEntries"
+          v-for="entry in dirs"
           :key="entry.path"
           class="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-base-200 transition-colors text-center cursor-pointer border border-transparent hover:border-base-300"
-          :class="{ 'opacity-60': !entry.isDir && !entry.isImage }"
           @click="onEntryClick(entry)"
         >
-          <!-- Folder icon -->
-          <Icon v-if="entry.isDir" name="mdi-folder" class="h-10 w-10 text-yellow-500" />
+          <Icon name="mdi-folder" class="h-10 w-10 text-yellow-500" />
+          <span class="text-xs break-all line-clamp-2 leading-tight">{{ entry.name }}</span>
+        </button>
 
+        <!-- Files (paginated, infinite scroll) -->
+        <button
+          v-for="entry in files"
+          :key="entry.path"
+          class="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-base-200 transition-colors text-center cursor-pointer border border-transparent hover:border-base-300"
+          :class="{ 'opacity-60': !entry.isImage }"
+          @click="onEntryClick(entry)"
+        >
           <!-- Image thumbnail -->
           <img
-            v-else-if="entry.isImage"
+            v-if="entry.isImage"
             :src="thumbSrc(entry.path)"
             class="h-16 w-full object-cover rounded"
             loading="lazy"
+            decoding="async"
             :alt="entry.name"
           />
 
@@ -62,14 +72,19 @@
           <Icon v-else name="mdi-file-outline" class="h-10 w-10 text-gray-400" />
 
           <span class="text-xs break-all line-clamp-2 leading-tight">{{ entry.name }}</span>
-          <span v-if="!entry.isDir" class="text-xs text-gray-400">{{ formatSize(entry.size) }}</span>
+          <span class="text-xs text-gray-400">{{ formatSize(entry.size) }}</span>
         </button>
+
+        <!-- Sentinel element for infinite scroll trigger -->
+        <div v-if="hasMore" ref="sentinel" class="col-span-full flex justify-center py-4">
+          <span v-if="loadingMore" class="loading loading-spinner loading-sm"></span>
+        </div>
       </div>
     </div>
 
     <template v-if="!loading && !errorMsg" #footer>
       <div class="text-xs text-gray-400">
-        {{ entries.length }} item{{ entries.length !== 1 ? 's' : '' }}
+        {{ dirs.length + files.length }} item{{ (dirs.length + files.length) !== 1 ? 's' : '' }} ({{ totalFiles }} file{{ totalFiles !== 1 ? 's' : '' }} total)
       </div>
     </template>
   </BaseModal>
@@ -98,22 +113,21 @@ const toast = useNotifier();
 
 const loading = ref(false);
 const errorMsg = ref("");
-const entries = ref<FileEntry[]>([]);
+const dirs = ref<FileEntry[]>([]);
+const files = ref<FileEntry[]>([]);
 const currentPath = ref("");
+const currentPage = ref(1);
+const totalFiles = ref(0);
+const pageSize = 50;
+const loadingMore = ref(false);
+const sentinel = ref<HTMLElement | null>(null);
+
+const hasMore = computed(() => files.value.length < totalFiles.value);
 
 // Breadcrumbs: split path segments
 const breadcrumbs = computed(() => {
   if (!currentPath.value) return [];
   return currentPath.value.split("/").filter(Boolean);
-});
-
-const sortedEntries = computed(() => {
-  return [...entries.value].sort((a, b) => {
-    // Directories first
-    if (a.isDir !== b.isDir) return a.isDir ? -1 : 1;
-    // Alphabetical within each group
-    return a.name.localeCompare(b.name);
-  });
 });
 
 function thumbSrc(filePath: string): string {
@@ -129,19 +143,55 @@ function formatSize(bytes: number): string {
 async function loadDir(subPath: string) {
   loading.value = true;
   errorMsg.value = "";
+  currentPage.value = 1;
+  dirs.value = [];
+  files.value = [];
+  totalFiles.value = 0;
 
-  const { data, error } = await api.items.importDir.browse(subPath);
+  const { data, error } = await api.items.importDir.browse(subPath, 1, pageSize);
 
   loading.value = false;
 
   if (error) {
     errorMsg.value = `Failed to browse directory: ${error}`;
-    entries.value = [];
     return;
   }
 
-  entries.value = data || [];
+  if (data) {
+    dirs.value = data.dirs || [];
+    files.value = data.files || [];
+    totalFiles.value = data.total || 0;
+  }
 }
+
+async function loadMore() {
+  if (loadingMore.value || !hasMore.value) return;
+  loadingMore.value = true;
+  const nextPage = currentPage.value + 1;
+
+  const { data, error } = await api.items.importDir.browse(currentPath.value, nextPage, pageSize);
+
+  loadingMore.value = false;
+
+  if (error) return;
+
+  if (data && data.files) {
+    files.value.push(...data.files);
+    currentPage.value = data.page;
+    totalFiles.value = data.total;
+  }
+}
+
+// Infinite scroll via IntersectionObserver — auto-cleaned by vueuse when sentinel unmounts
+useIntersectionObserver(
+  sentinel,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting && hasMore.value && !loading.value && !loadingMore.value) {
+      loadMore();
+    }
+  },
+  { rootMargin: '200px' }
+);
 
 function goToDir(index: number) {
   if (index < 0) {
@@ -170,10 +220,9 @@ function onEntryClick(entry: FileEntry) {
 function getBasePrefix(): string {
   // The browse API returns absolute paths. We need to find the base prefix
   // from the first entry so we can construct relative paths for navigation.
-  if (entries.value.length === 0) return "";
-  const firstPath = entries.value[0].path;
-  const lastName = entries.value[0].name;
-  return firstPath.substring(0, firstPath.length - lastName.length);
+  const first = dirs.value[0] || files.value[0];
+  if (!first) return "";
+  return first.path.substring(0, first.path.length - first.name.length);
 }
 
 // Reload on open

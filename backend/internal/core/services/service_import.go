@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -30,6 +31,15 @@ type FileEntry struct {
 	IsImage bool      `json:"isImage"`
 }
 
+// BrowseResult separates directories (always all) from paginated files.
+type BrowseResult struct {
+	Dirs     []FileEntry `json:"dirs"`
+	Files    []FileEntry `json:"files"`
+	Page     int         `json:"page"`
+	PageSize int         `json:"pageSize"`
+	Total    int         `json:"total"` // total number of files (for pagination)
+}
+
 var imageExtensions = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true, ".webp": true,
 	".gif": true, ".bmp": true, ".tiff": true, ".heic": true, ".heif": true,
@@ -37,18 +47,21 @@ var imageExtensions = map[string]bool{
 
 // Browse lists files and directories under the given sub-path within the
 // allowed import directories. An empty subPath returns the root listing.
-func (svc *ImportService) Browse(subPath string) ([]FileEntry, error) {
+// Directories are always returned in full; files are paginated by page and pageSize.
+func (svc *ImportService) Browse(subPath string, page, pageSize int) (BrowseResult, error) {
 	realPath, err := svc.resolvePath(subPath)
 	if err != nil {
-		return nil, err
+		return BrowseResult{}, err
 	}
 
 	entries, err := os.ReadDir(realPath)
 	if err != nil {
-		return nil, fmt.Errorf("read directory: %w", err)
+		return BrowseResult{}, fmt.Errorf("read directory: %w", err)
 	}
 
-	result := make([]FileEntry, 0, len(entries))
+	dirs := make([]FileEntry, 0)
+	files := make([]FileEntry, 0)
+
 	for _, e := range entries {
 		info, err := e.Info()
 		if err != nil {
@@ -56,7 +69,6 @@ func (svc *ImportService) Browse(subPath string) ([]FileEntry, error) {
 		}
 
 		// Skip thumbnail cache files to avoid listing them as entries.
-		// They match the pattern: <original>.thumb_w<width>.jpg
 		if !e.IsDir() && strings.Contains(e.Name(), ".thumb_w") {
 			continue
 		}
@@ -69,7 +81,7 @@ func (svc *ImportService) Browse(subPath string) ([]FileEntry, error) {
 			ext = strings.ToLower(filepath.Ext(e.Name()))
 		}
 
-		result = append(result, FileEntry{
+		entry := FileEntry{
 			Name:    e.Name(),
 			Path:    entryPath,
 			Size:    info.Size(),
@@ -77,10 +89,49 @@ func (svc *ImportService) Browse(subPath string) ([]FileEntry, error) {
 			Ext:     ext,
 			ModTime: info.ModTime(),
 			IsImage: imageExtensions[ext],
-		})
+		}
+
+		if isDir {
+			dirs = append(dirs, entry)
+		} else {
+			files = append(files, entry)
+		}
 	}
 
-	return result, nil
+	// Sort directories and files alphabetically by name
+	sort.Slice(dirs, func(i, j int) bool {
+		return dirs[i].Name < dirs[j].Name
+	})
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].Name < files[j].Name
+	})
+
+	// Apply defaults
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 50
+	}
+
+	// Paginate files
+	totalFiles := len(files)
+	start := (page - 1) * pageSize
+	if start > totalFiles {
+		start = totalFiles
+	}
+	end := start + pageSize
+	if end > totalFiles {
+		end = totalFiles
+	}
+
+	return BrowseResult{
+		Dirs:     dirs,
+		Files:    files[start:end],
+		Page:     page,
+		PageSize: pageSize,
+		Total:    totalFiles,
+	}, nil
 }
 
 // ImportAttachment imports a file from a server-side directory as an item

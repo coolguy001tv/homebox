@@ -24,21 +24,25 @@ type ImportAttachmentBody struct {
 //	@Summary  Browse Import Directories
 //	@Tags     Import
 //	@Produce  json
-//	@Param    path query string false "Subdirectory path to browse"
-//	@Success  200  {array}  services.FileEntry
+//	@Param    path     query string false "Subdirectory path to browse"
+//	@Param    page     query int    false "Page number (files only, default 1)"
+//	@Param    pageSize query int    false "Items per page (files only, default 50)"
+//	@Success  200      {object} services.BrowseResult
 //	@Router   /v1/import/browse [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleImportBrowse() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		subPath := r.URL.Query().Get("path")
+		page := queryIntOrNegativeOne(r.URL.Query().Get("page"))
+		pageSize := queryIntOrNegativeOne(r.URL.Query().Get("pageSize"))
 
-		entries, err := ctrl.svc.Import.Browse(subPath)
+		result, err := ctrl.svc.Import.Browse(subPath, page, pageSize)
 		if err != nil {
 			log.Err(err).Str("path", subPath).Msg("failed to browse import directory")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
-		return server.JSON(w, http.StatusOK, entries)
+		return server.JSON(w, http.StatusOK, result)
 	}
 }
 
