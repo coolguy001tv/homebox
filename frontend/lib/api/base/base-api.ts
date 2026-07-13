@@ -73,14 +73,14 @@ export class BaseAPI {
     this.attachmentToken = attachmentToken;
   }
 
-  // if an attachmentToken is present, it will be added to URL as a query param
-  // this is done with a simple appending of the query param to the URL. If your
-  // URL already has a query param, this will not work.
+  // If an attachmentToken is present, it will be added to URL as a query param
+  // so that <img> tags can authenticate without sending the Authorization header.
+  // The URL is always passed through route() to ensure the /api/v1 prefix.
   authURL(url: string): string {
     if (this.attachmentToken) {
       return route(url, { access_token: this.attachmentToken });
     }
-    return url;
+    return route(url);
   }
 
   /**

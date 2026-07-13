@@ -187,32 +187,50 @@ func (svc *ImportService) ImportAttachment(ctx Context, itemID uuid.UUID, source
 func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, error) {
 	realPath, err := svc.resolvePath(importPath)
 	if err != nil {
+		log.Err(err).Str("importPath", importPath).Msg("import thumb: resolvePath failed")
 		return "", err
 	}
 
 	if width <= 0 {
+		log.Info().Str("src", realPath).Msg("import thumb: width <= 0, serving original")
 		return realPath, nil
 	}
 
 	// 1. Prefer NAS-generated thumbnail (e.g. .@__thumb/<imageName>)
 	if nas := svc.findNasThumb(realPath); nas != "" {
+		log.Info().
+			Str("src", realPath).
+			Str("nasThumb", nas).
+			Int("width", width).
+			Msg("import thumb: hit NAS thumbnail")
 		return nas, nil
 	}
 
 	// 2. Check Homebox local cache
 	cachePath, err := svc.importThumbCachePath(realPath, width)
 	if err != nil {
+		log.Err(err).Str("src", realPath).Msg("import thumb: cache path error")
 		return "", err
 	}
 	if _, err := os.Stat(cachePath); err == nil {
+		log.Info().
+			Str("src", realPath).
+			Str("cache", cachePath).
+			Int("width", width).
+			Msg("import thumb: hit local cache")
 		return cachePath, nil
 	}
 
 	// 3. Ensure cache directory exists and generate thumbnail
-		if err := os.MkdirAll(svc.thumbCacheDir, 0o755); err != nil {
-			log.Err(err).Str("dir", svc.thumbCacheDir).Msg("failed to create thumb cache directory")
-			return realPath, nil
-		}
+	if err := os.MkdirAll(svc.thumbCacheDir, 0o755); err != nil {
+		log.Err(err).Str("dir", svc.thumbCacheDir).Msg("failed to create thumb cache directory")
+		return realPath, nil
+	}
+	log.Info().
+		Str("src", realPath).
+		Str("cache", cachePath).
+		Int("width", width).
+		Msg("import thumb: cache miss, generating thumbnail")
 	if err := generateThumb(realPath, cachePath, width); err != nil {
 		log.Err(err).
 			Str("src", realPath).
@@ -222,6 +240,11 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 		return realPath, nil
 	}
 
+	log.Info().
+		Str("src", realPath).
+		Str("cache", cachePath).
+		Int("width", width).
+		Msg("import thumb: generated new thumbnail")
 	return cachePath, nil
 }
 

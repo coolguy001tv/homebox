@@ -37,10 +37,6 @@ export class ImportAPI extends BaseAPI {
 
   thumbURL(importPath: string, width: number): string {
     const encoded = encodeURIComponent(importPath);
-    // Build the URL manually to avoid route() double-prefixing.
-    // route() prepends /api/v1, and authURL() calls route() again,
-    // so we construct the full path here directly.
-    const path = `/import/thumb?path=${encoded}&w=${width}`;
-    return this.authURL(path);
+    return this.authURL(`/import/thumb?path=${encoded}&w=${width}`);
   }
 }
