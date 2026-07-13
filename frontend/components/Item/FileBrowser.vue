@@ -205,24 +205,15 @@ function goToDir(index: number) {
 
 function onEntryClick(entry: FileEntry) {
   if (entry.isDir) {
-    // Navigate into directory — strip the base prefix to get a relative subPath
-    const basePrefix = getBasePrefix();
-    if (entry.path.startsWith(basePrefix)) {
-      currentPath.value = entry.path.substring(basePrefix.length);
-    }
+    // Navigate into directory — append to current path
+    currentPath.value = currentPath.value
+      ? `${currentPath.value}/${entry.name}`
+      : entry.name;
     loadDir(currentPath.value);
   } else {
     // Import the file
     emit("select", entry);
   }
-}
-
-function getBasePrefix(): string {
-  // The browse API returns absolute paths. We need to find the base prefix
-  // from the first entry so we can construct relative paths for navigation.
-  const first = dirs.value[0] || files.value[0];
-  if (!first) return "";
-  return first.path.substring(0, first.path.length - first.name.length);
 }
 
 // Reload on open
