@@ -208,7 +208,11 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 		return cachePath, nil
 	}
 
-	// 3. Generate and cache locally
+	// 3. Ensure cache directory exists and generate thumbnail
+		if err := os.MkdirAll(svc.thumbCacheDir, 0o755); err != nil {
+			log.Err(err).Str("dir", svc.thumbCacheDir).Msg("failed to create thumb cache directory")
+			return realPath, nil
+		}
 	if err := generateThumb(realPath, cachePath, width); err != nil {
 		log.Err(err).
 			Str("src", realPath).
