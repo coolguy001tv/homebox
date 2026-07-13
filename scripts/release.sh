@@ -120,6 +120,38 @@ if [[ "$tag_latest" =~ ^[Yy]$ ]]; then
 fi
 
 # -----------------------------------------------------------
+# 7. 可选: 推送 Git 标签
+# -----------------------------------------------------------
+echo ""
+read -r -p "是否推送 Git 标签 v${VERSION} 到远程仓库？(y/N): " tag_git
+
+if [[ "$tag_git" =~ ^[Yy]$ ]]; then
+    log_step "推送 Git 标签..."
+
+    # 检查是否是 git 仓库
+    if ! git rev-parse --git-dir &> /dev/null; then
+        log_error "当前目录不是 Git 仓库，无法推送标签。"
+    else
+        # 检查是否有未提交的更改
+        if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+            log_warn "检测到未提交的更改，建议先提交再打标签。"
+            read -r -p "是否继续打标签？(y/N): " force_tag
+            if [[ ! "$force_tag" =~ ^[Yy]$ ]]; then
+                log_info "已跳过 Git 标签。"
+            else
+                git tag -a "v${VERSION}" -m "Release v${VERSION}"
+                git push origin "v${VERSION}"
+                log_info "Git 标签 v${VERSION} 已推送。"
+            fi
+        else
+            git tag -a "v${VERSION}" -m "Release v${VERSION}"
+            git push origin "v${VERSION}"
+            log_info "Git 标签 v${VERSION} 已推送。"
+        fi
+    fi
+fi
+
+# -----------------------------------------------------------
 # 完成
 # -----------------------------------------------------------
 echo ""
@@ -128,6 +160,9 @@ log_info "  发布完成！"
 log_info "  版本标签: ${IMAGE}"
 if [[ "$tag_latest" =~ ^[Yy]$ ]]; then
     log_info "  latest 标签: 已同步"
+fi
+if [[ "$tag_git" =~ ^[Yy]$ ]]; then
+    log_info "  Git 标签: v${VERSION} 已推送"
 fi
 log_info "============================================"
 echo ""
