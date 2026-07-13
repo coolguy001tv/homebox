@@ -65,7 +65,8 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 		BackgroundService: &BackgroundService{repos},
 		Import: &ImportService{
 			repo:       repos,
-			importDirs: parseImportDirs(options.importDirs),
+			importDirs:     parseImportDirs(options.importDirs),
+			importThumbDir: options.importThumbDir,
 		},
 	}
 }
