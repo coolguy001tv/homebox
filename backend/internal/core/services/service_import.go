@@ -250,6 +250,8 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 
 // findNasThumb looks for a NAS-generated thumbnail file for the given source
 // file inside the configured import thumb directory (default .@__thumb).
+// QNAP NAS stores thumbnails as "default" + original filename (e.g. "defaultIMG_1234.HEIC"),
+// so we check both the exact filename and the "default"-prefixed variant.
 // Returns empty string when not found or not configured.
 func (svc *ImportService) findNasThumb(realPath string) string {
 	if svc.importThumbDir == "" {
@@ -260,7 +262,14 @@ func (svc *ImportService) findNasThumb(realPath string) string {
 	name := filepath.Base(realPath)
 	thumbDir := filepath.Join(dir, svc.importThumbDir)
 
+	// Try exact filename match first (e.g. .@__thumb/IMG_1234.HEIC)
 	candidate := filepath.Join(thumbDir, name)
+	if _, err := os.Stat(candidate); err == nil {
+		return candidate
+	}
+
+	// Try "default" prefix (QNAP NAS convention: .@__thumb/defaultIMG_1234.HEIC)
+	candidate = filepath.Join(thumbDir, "default"+name)
 	if _, err := os.Stat(candidate); err == nil {
 		return candidate
 	}
