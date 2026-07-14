@@ -54,3 +54,6 @@ dist/
 # Nuxt Publish Dir
 backend/app/api/static/public/*
 !backend/app/api/static/public/.gitkeep
+
+# 腾讯-codebuddy
+.codebuddy

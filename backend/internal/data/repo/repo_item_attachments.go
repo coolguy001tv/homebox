@@ -88,11 +88,21 @@ func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment
 }
 
 func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
-    // TODO: execute within Tx
     typ := attachment.Type(data.Type)
 
+    // Wrap in a transaction so that setting a photo as primary and clearing
+    // other primaries happens atomically — prevents two primary photos from
+    // coexisting when the second step fails.
+    tx, err := r.db.Tx(ctx)
+    if err != nil {
+        return nil, err
+    }
+    defer tx.Rollback() // nop after successful Commit
+
+    txClient := tx.Client()
+
     // Update the specified attachment by its ID
-    bldr := r.db.Attachment.UpdateOneID(attachmentID).
+    bldr := txClient.Attachment.UpdateOneID(attachmentID).
         SetType(typ)
 
     // Primary only applies to photos
@@ -110,7 +120,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, dat
     // If setting a photo as primary, clear primary from other photo attachments on the same item
     if typ == attachment.TypePhoto && data.Primary {
         // Find the parent item ID for this attachment
-        parentItemID, err := r.db.Attachment.Query().
+        parentItemID, err := txClient.Attachment.Query().
             Where(attachment.ID(updatedAttachment.ID)).
             QueryItem().
             OnlyID(ctx)
@@ -119,7 +129,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, dat
         }
 
         // Ensure all other photo attachments for the same item are not primary
-        if err := r.db.Attachment.Update().
+        if err := txClient.Attachment.Update().
             Where(
                 attachment.HasItemWith(item.ID(parentItemID)),
                 attachment.TypeEQ(attachment.TypePhoto),
@@ -131,6 +141,11 @@ func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, dat
         }
     }
 
+    if err := tx.Commit(); err != nil {
+        return nil, err
+    }
+
+    // Re-fetch outside the transaction so the result reflects the committed state
     return r.Get(ctx, updatedAttachment.ID)
 }
 
