@@ -1,0 +1,36 @@
+# Auto-detect text files and normalize to LF on commit.
+# Working tree can use platform-native line endings, but the repo always stores LF.
+* text=auto
+
+# Explicitly mark source code as text
+*.go      text eol=lf
+*.ts      text eol=lf
+*.vue     text eol=lf
+*.js      text eol=lf
+*.json    text eol=lf
+*.yaml    text eol=lf
+*.yml     text eol=lf
+*.md      text eol=lf
+*.css     text eol=lf
+*.html    text eol=lf
+*.mod     text eol=lf
+*.sum     text eol=lf
+Dockerfile text eol=lf
+
+# Binary files — do not convert
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.svg     binary
+*.webp    binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
+*.eot     binary
+*.db      binary
+*.exe     binary
+*.dll     binary
+*.so      binary
+*.dylib   binary
