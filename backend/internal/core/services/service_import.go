@@ -102,12 +102,12 @@ func (svc *ImportService) Browse(subPath string, page, pageSize int) (BrowseResu
 		}
 	}
 
-	// Sort directories and files alphabetically by name
+	// Sort directories and files alphabetically by name (descending)
 	sort.Slice(dirs, func(i, j int) bool {
-		return dirs[i].Name < dirs[j].Name
+		return dirs[i].Name > dirs[j].Name
 	})
 	sort.Slice(files, func(i, j int) bool {
-		return files[i].Name < files[j].Name
+		return files[i].Name > files[j].Name
 	})
 
 	// Apply defaults
