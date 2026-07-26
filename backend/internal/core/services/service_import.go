@@ -198,6 +198,16 @@ func (svc *ImportService) ThumbnailPath(importPath string, width int) (string, e
 
 	// 1. Prefer NAS-generated thumbnail (e.g. .@__thumb/<imageName>)
 	if nas := svc.findNasThumb(realPath); nas != "" {
+		// Clean up any previously cached local thumbnail — the NAS thumb now
+		// takes priority, so the local cache would never be used again.
+		if cachePath, err := svc.importThumbCachePath(realPath, width); err == nil {
+			if err := os.Remove(cachePath); err == nil {
+				log.Debug().
+					Str("src", realPath).
+					Str("cache", cachePath).
+					Msg("import thumb: removed stale local cache (NAS thumb now available)")
+			}
+		}
 		log.Info().
 			Str("src", realPath).
 			Str("nasThumb", nas).
