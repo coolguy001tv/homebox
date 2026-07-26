@@ -4,6 +4,10 @@ set -euo pipefail
 # ============================================================
 # HomeBox Docker Release Script
 # 一键发布脚本：构建 → 检查登录 → 推送 → (可选) latest 标签
+#
+# 用法:
+#   交互模式:  ./scripts/release.sh [版本号]
+#   AI/CI 模式: ./scripts/release.sh <版本号> -y [--latest] [--git-tag]
 # ============================================================
 
 RED='\033[0;31m'
@@ -17,14 +21,77 @@ log_warn()  { printf "${YELLOW}[WARN]${NC}  %s\n" "$*"; }
 log_error() { printf "${RED}[ERROR]${NC} %s\n" "$*"; }
 log_step()  { printf "\n${CYAN}==> %s${NC}\n\n" "$*"; }
 
+usage() {
+    cat <<EOF
+用法: $0 [选项] <版本号>
+
+选项:
+  -y, --yes       非交互模式，跳过所有确认提示
+  --latest        同时推送 latest 标签（仅 -y 模式生效）
+  --git-tag       同时推送 Git 标签到远程仓库（仅 -y 模式生效）
+  -h, --help      显示此帮助信息
+
+示例:
+  $0 0.1.15                    交互模式
+  $0 0.1.15 -y                 AI 模式，仅构建推送
+  $0 0.1.15 -y --latest        AI 模式，同时推送 latest
+  $0 0.1.15 -y --latest --git-tag  AI 模式，全量发布
+EOF
+    exit 0
+}
+
+# -----------------------------------------------------------
+# 0. 解析命令行参数
+# -----------------------------------------------------------
+YES_MODE=false
+PUSH_LATEST=false
+PUSH_GIT_TAG=false
+VERSION=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -y|--yes)
+            YES_MODE=true
+            shift
+            ;;
+        --latest)
+            PUSH_LATEST=true
+            shift
+            ;;
+        --git-tag)
+            PUSH_GIT_TAG=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+        -*)
+            log_error "未知选项: $1"
+            echo ""
+            usage
+            ;;
+        *)
+            if [[ -z "$VERSION" ]]; then
+                VERSION="$1"
+            else
+                log_error "多余的参数: $1"
+                usage
+            fi
+            shift
+            ;;
+    esac
+done
+
 # -----------------------------------------------------------
 # 1. 解析/确认版本号
 # -----------------------------------------------------------
-VERSION="${1:-}"
-
 if [[ -z "$VERSION" ]]; then
-    # 交互式询问版本号
-    read -r -p "请输入发布版本号 (例如 0.1.11): " VERSION
+    if $YES_MODE; then
+        log_error "非交互模式下必须提供版本号。"
+        echo ""
+        usage
+    fi
+    read -r -p "请输入发布版本号 (例如 0.1.15): " VERSION
 fi
 
 if [[ -z "$VERSION" ]]; then
@@ -32,12 +99,16 @@ if [[ -z "$VERSION" ]]; then
     exit 1
 fi
 
-# 二次确认
-echo ""
-read -r -p "确认发布版本 ${VERSION}？(y/N): " confirm
-if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-    log_info "已取消发布。"
-    exit 0
+# 二次确认（交互模式）
+if ! $YES_MODE; then
+    echo ""
+    read -r -p "确认发布版本 ${VERSION}？(y/N): " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        log_info "已取消发布。"
+        exit 0
+    fi
+else
+    log_info "非交互模式，发布版本: ${VERSION}"
 fi
 
 IMAGE="hellocoolguy/homebox:${VERSION}"
@@ -102,10 +173,21 @@ log_info "镜像推送成功: ${IMAGE}"
 # -----------------------------------------------------------
 # 6. 可选: 更新 latest 标签
 # -----------------------------------------------------------
-echo ""
-read -r -p "是否同时更新 latest 标签并推送？(y/N): " tag_latest
+if $YES_MODE; then
+    if $PUSH_LATEST; then
+        DO_LATEST=true
+    else
+        DO_LATEST=false
+        log_info "跳过 latest 标签（使用 --latest 启用）。"
+    fi
+else
+    echo ""
+    read -r -p "是否同时更新 latest 标签并推送？(y/N): " tag_latest
+    DO_LATEST=false
+    [[ "$tag_latest" =~ ^[Yy]$ ]] && DO_LATEST=true
+fi
 
-if [[ "$tag_latest" =~ ^[Yy]$ ]]; then
+if $DO_LATEST; then
     log_step "更新 latest 标签..."
 
     docker tag "$IMAGE" "$LATEST"
@@ -122,31 +204,68 @@ fi
 # -----------------------------------------------------------
 # 7. 可选: 推送 Git 标签
 # -----------------------------------------------------------
-echo ""
-read -r -p "是否推送 Git 标签 v${VERSION} 到远程仓库？(y/N): " tag_git
+if $YES_MODE; then
+    if $PUSH_GIT_TAG; then
+        DO_GIT_TAG=true
+    else
+        DO_GIT_TAG=false
+        log_info "跳过 Git 标签（使用 --git-tag 启用）。"
+    fi
+else
+    echo ""
+    read -r -p "是否推送 Git 标签 v${VERSION} 到远程仓库？(y/N): " tag_git
+    DO_GIT_TAG=false
+    [[ "$tag_git" =~ ^[Yy]$ ]] && DO_GIT_TAG=true
+fi
 
-if [[ "$tag_git" =~ ^[Yy]$ ]]; then
+if $DO_GIT_TAG; then
     log_step "推送 Git 标签..."
 
-    # 检查是否是 git 仓库
     if ! git rev-parse --git-dir &> /dev/null; then
         log_error "当前目录不是 Git 仓库，无法推送标签。"
     else
-        # 检查是否有未提交的更改
-        if ! git diff-index --quiet HEAD -- 2>/dev/null; then
-            log_warn "检测到未提交的更改，建议先提交再打标签。"
-            read -r -p "是否继续打标签？(y/N): " force_tag
-            if [[ ! "$force_tag" =~ ^[Yy]$ ]]; then
-                log_info "已跳过 Git 标签。"
+        TAG="v${VERSION}"
+
+        # 检查标签是否已存在
+        if git tag -l "$TAG" | grep -q "$TAG"; then
+            log_warn "标签 ${TAG} 已存在。"
+            if $YES_MODE; then
+                log_info "非交互模式：删除旧标签并重新创建。"
+                git tag -d "$TAG"
+                git push origin --delete "$TAG" 2>/dev/null || true
             else
-                git tag -a "v${VERSION}" -m "Release v${VERSION}"
-                git push origin "v${VERSION}"
-                log_info "Git 标签 v${VERSION} 已推送。"
+                read -r -p "是否删除旧标签并重新创建？(y/N): " recreate
+                if [[ "$recreate" =~ ^[Yy]$ ]]; then
+                    git tag -d "$TAG"
+                    git push origin --delete "$TAG" 2>/dev/null || true
+                    log_info "旧标签 ${TAG} 已删除。"
+                else
+                    log_info "已取消 Git 标签。"
+                    DO_GIT_TAG=false
+                fi
             fi
-        else
-            git tag -a "v${VERSION}" -m "Release v${VERSION}"
-            git push origin "v${VERSION}"
-            log_info "Git 标签 v${VERSION} 已推送。"
+        fi
+
+        if $DO_GIT_TAG; then
+            # 检查是否有未提交的更改
+            if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+                log_warn "检测到未提交的更改。"
+                if $YES_MODE; then
+                    log_info "非交互模式：继续打标签。"
+                else
+                    read -r -p "是否继续打标签？(y/N): " force_tag
+                    if [[ ! "$force_tag" =~ ^[Yy]$ ]]; then
+                        log_info "已跳过 Git 标签。"
+                        DO_GIT_TAG=false
+                    fi
+                fi
+            fi
+        fi
+
+        if $DO_GIT_TAG; then
+            git tag -a "$TAG" -m "Release ${TAG}"
+            git push origin "$TAG"
+            log_info "Git 标签 ${TAG} 已推送。"
         fi
     fi
 fi
@@ -158,10 +277,10 @@ echo ""
 log_info "============================================"
 log_info "  发布完成！"
 log_info "  版本标签: ${IMAGE}"
-if [[ "$tag_latest" =~ ^[Yy]$ ]]; then
+if $DO_LATEST; then
     log_info "  latest 标签: 已同步"
 fi
-if [[ "$tag_git" =~ ^[Yy]$ ]]; then
+if $DO_GIT_TAG; then
     log_info "  Git 标签: v${VERSION} 已推送"
 fi
 log_info "============================================"
