@@ -557,7 +557,7 @@
               class="container border-t border-gray-300 p-4 flex flex-wrap gap-2 mx-auto max-h-[500px] overflow-y-auto scroll-bg"
             >
               <button v-for="(img, i) in photos" :key="i" @click="openDialog(img)">
-                <img class="rounded max-h-[200px]" :src="img.src" />
+                <img class="rounded max-h-[200px] min-h-[80px] min-w-[80px] bg-base-300" :src="img.src" />
               </button>
             </div>
           </BaseCard>

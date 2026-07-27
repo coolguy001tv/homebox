@@ -62,7 +62,7 @@
           <img
             v-if="entry.isImage"
             :src="thumbSrc(entry.path)"
-            class="h-16 w-full object-cover rounded"
+            class="h-16 w-full object-cover rounded bg-base-300"
             loading="lazy"
             decoding="async"
             :alt="entry.name"

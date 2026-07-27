@@ -56,7 +56,7 @@
               <Icon v-else name="mdi-close" class="text-red-500 h-5 w-5" />
             </template>
             <template v-else-if="cell(h) === 'cell-item'">
-              <img class=" w-full aspect-[4/3] object-cover shadow-sm border-gray-300" :src="getImageUrl(d)" alt="" />
+              <img class="w-full aspect-[4/3] object-cover shadow-sm border-gray-300 bg-base-300" :src="getImageUrl(d)" alt="" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
