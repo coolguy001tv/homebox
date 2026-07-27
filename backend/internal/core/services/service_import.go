@@ -49,6 +49,12 @@ var imageExtensions = map[string]bool{
 	".gif": true, ".bmp": true, ".tiff": true, ".heic": true, ".heif": true,
 }
 
+var videoExtensions = map[string]bool{
+	".mp4": true, ".mov": true, ".avi": true, ".mkv": true,
+	".webm": true, ".m4v": true, ".wmv": true, ".flv": true,
+	".3gp": true, ".3g2": true,
+}
+
 // Browse lists files and directories under the given sub-path within the
 // allowed import directories. An empty subPath returns the root listing.
 // Directories are always returned in full; files are paginated by page and pageSize.
@@ -77,13 +83,24 @@ func (svc *ImportService) Browse(subPath string, page, pageSize int) (BrowseResu
 			continue
 		}
 
+		// Skip the NAS thumbnail directory (e.g. .@__thumb).
+		if e.IsDir() && e.Name() == svc.importThumbDir {
+			continue
+		}
+
+		ext := ""
+		if !e.IsDir() {
+			ext = strings.ToLower(filepath.Ext(e.Name()))
+		}
+
+		// Skip video files — the user asked to browse photos only.
+		if videoExtensions[ext] {
+			continue
+		}
+
 		entryPath := filepath.Join(realPath, e.Name())
 
 		isDir := e.IsDir()
-		ext := ""
-		if !isDir {
-			ext = strings.ToLower(filepath.Ext(e.Name()))
-		}
 
 		entry := FileEntry{
 			Name:    e.Name(),
@@ -102,12 +119,13 @@ func (svc *ImportService) Browse(subPath string, page, pageSize int) (BrowseResu
 		}
 	}
 
-	// Sort directories and files alphabetically by name (descending)
+	// Sort directories alphabetically by name (descending)
 	sort.Slice(dirs, func(i, j int) bool {
 		return dirs[i].Name > dirs[j].Name
 	})
+	// Sort files by modification time (descending, newest first)
 	sort.Slice(files, func(i, j int) bool {
-		return files[i].Name > files[j].Name
+		return files[i].ModTime.After(files[j].ModTime)
 	})
 
 	// Apply defaults
