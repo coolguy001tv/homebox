@@ -83,8 +83,8 @@ func (svc *ImportService) Browse(subPath string, page, pageSize int) (BrowseResu
 			continue
 		}
 
-		// Skip the NAS thumbnail directory (e.g. .@__thumb).
-		if e.IsDir() && e.Name() == svc.importThumbDir {
+		// Skip hidden directories (dot-prefixed): covers .@__thumb, .sync, .Trash, etc.
+		if e.IsDir() && strings.HasPrefix(e.Name(), ".") {
 			continue
 		}
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/hay-kot/homebox/backend/internal/core/services"
 	"github.com/hay-kot/homebox/backend/internal/data/ent/attachment"
@@ -69,7 +70,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 		attachmentType := r.FormValue("type")
 		if attachmentType == "" {
 			// Attempt to auto-detect the type of the file
-			ext := filepath.Ext(attachmentName)
+			ext := strings.ToLower(filepath.Ext(attachmentName))
 
 			switch ext {
 			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".heic", ".heif":

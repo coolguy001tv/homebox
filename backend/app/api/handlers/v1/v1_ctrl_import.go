@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/hay-kot/homebox/backend/internal/core/services"
 	"github.com/hay-kot/homebox/backend/internal/data/ent/attachment"
@@ -121,7 +122,7 @@ func (ctrl *V1Controller) HandleImportAttachmentCreate() errchain.HandlerFunc {
 		// Auto-detect attachment type from extension if not provided
 		attachmentType := body.Type
 		if attachmentType == "" {
-			ext := filepath.Ext(body.SourcePath)
+			ext := strings.ToLower(filepath.Ext(body.SourcePath))
 			switch ext {
 			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".heic", ".heif":
 				attachmentType = attachment.TypePhoto.String()
