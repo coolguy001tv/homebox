@@ -314,7 +314,7 @@ const itemId = computed<string>(() => route.params.id as string);
 
     toast.success("File imported: " + entry.name);
     item.value.attachments = data.attachments;
-    fileBrowserOpen.value = false;
+    // Keep dialog open so user can continue importing more files
   }
 
   const confirm = useConfirm();
@@ -596,7 +596,7 @@ const itemId = computed<string>(() => route.params.id as string);
                   <img
                     v-if="attachment.type === 'photo'"
                     :src="api.thumbURL(item.id, attachment.id, 100)"
-                    class="h-12 object-cover rounded"
+                    class="h-12 object-cover rounded bg-base-300"
                     :alt="attachment.document.title"
                   />
                   <p class="my-auto">
