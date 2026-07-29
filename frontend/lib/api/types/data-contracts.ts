@@ -387,6 +387,7 @@ export interface APISummary {
   demo: boolean;
   health: boolean;
   message: string;
+  noAuth: boolean;
   title: string;
   versions: string[];
 }

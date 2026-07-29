@@ -210,6 +210,41 @@ func (svc *UserService) RenewToken(ctx context.Context, token string) (UserAuthT
 	return svc.createSessionToken(ctx, dbToken.ID, false)
 }
 
+// CreatePermanentToken creates a user + attachment token pair with a fixed expiry,
+// intended for noAuth mode where a single long-lived token replaces the login flow.
+func (svc *UserService) CreatePermanentToken(ctx context.Context, userID uuid.UUID, expiresAt time.Time) (UserAuthTokenDetail, error) {
+	attachmentToken := hasher.GenerateToken()
+
+	attachmentData := repo.UserAuthTokenCreate{
+		UserID:    userID,
+		TokenHash: attachmentToken.Hash,
+		ExpiresAt: expiresAt,
+	}
+
+	_, err := svc.repos.AuthTokens.CreateToken(ctx, attachmentData, authroles.RoleAttachments)
+	if err != nil {
+		return UserAuthTokenDetail{}, err
+	}
+
+	userToken := hasher.GenerateToken()
+	data := repo.UserAuthTokenCreate{
+		UserID:    userID,
+		TokenHash: userToken.Hash,
+		ExpiresAt: expiresAt,
+	}
+
+	_, err = svc.repos.AuthTokens.CreateToken(ctx, data, authroles.RoleUser)
+	if err != nil {
+		return UserAuthTokenDetail{}, err
+	}
+
+	return UserAuthTokenDetail{
+		Raw:             userToken.Raw,
+		ExpiresAt:       expiresAt,
+		AttachmentToken: attachmentToken.Raw,
+	}, nil
+}
+
 // DeleteSelf deletes the user that is currently logged based of the provided UUID
 // There is _NO_ protection against deleting the wrong user, as such this should only
 // be used when the identify of the user has been confirmed.

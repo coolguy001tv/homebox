@@ -58,6 +58,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 	)
 
+	if a.conf.Options.NoAuth {
+		v1.WithNoAuth(a.noAuthTokenRaw, a.noAuthAttachmentToken, a.noAuthExpires)(v1Ctrl)
+	}
+
 	r.Get(v1Base("/status"), chain.ToHandlerFunc(v1Ctrl.HandleBase(func() bool { return true }, v1.Build{
 		Version:   version,
 		Commit:    commit,

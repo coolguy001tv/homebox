@@ -153,6 +153,35 @@ func run(cfg *config.Config) error {
 	app.services.Import.SetThumbCacheDir(thumbCacheDir)
 
 	// =========================================================================
+	// NoAuth mode: create a permanent 10-year token for the first user.
+	// This token is written to Set-Cookie by the /status endpoint so the browser
+	// can carry it automatically — no login page needed.
+	if cfg.Options.NoAuth {
+		ctx := context.Background()
+		users, err := app.repos.Users.GetAll(ctx)
+		if err != nil || len(users) == 0 {
+			log.Fatal().Err(err).Msg("noAuth mode requires at least one existing user in the database")
+		}
+
+		firstUser := users[0]
+		expiresAt := time.Now().AddDate(10, 0, 0) // 10 years
+
+		tokenDetail, err := app.services.User.CreatePermanentToken(ctx, firstUser.ID, expiresAt)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to create noAuth permanent token")
+		}
+
+		app.noAuthTokenRaw = tokenDetail.Raw
+		app.noAuthAttachmentToken = tokenDetail.AttachmentToken
+		app.noAuthExpires = tokenDetail.ExpiresAt
+
+		log.Info().
+			Str("user", firstUser.Email).
+			Time("expires", tokenDetail.ExpiresAt).
+			Msg("noAuth mode: permanent token created")
+	}
+
+	// =========================================================================
 	// Start Server
 
 	logger := log.With().Caller().Logger()

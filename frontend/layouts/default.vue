@@ -83,7 +83,13 @@
           </div>
 
           <!-- Bottom -->
-          <button class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn" @click="logout">Sign Out</button>
+          <button
+            v-if="!isNoAuth"
+            class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn"
+            @click="logout"
+          >
+            Sign Out
+          </button>
         </div>
       </div>
     </div>
@@ -196,6 +202,11 @@
 
   const authCtx = useAuthContext();
   const api = useUserApi();
+
+  const isNoAuth = computed(() => {
+    // AuthContext doesn't expose _noAuth directly; check via isAuthorized without cookie
+    return authCtx.isAuthorized() && !authCtx.token;
+  });
 
   async function logout() {
     await authCtx.logout(api);

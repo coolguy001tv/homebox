@@ -23,6 +23,12 @@
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();
 
+    if (data.noAuth) {
+      ctx.enableNoAuth();
+      await navigateTo("/home");
+      return data;
+    }
+
     if (data.demo) {
       username.value = "demo@example.com";
       password.value = "demo";
@@ -31,6 +37,8 @@
   });
 
   whenever(status, status => {
+    // noAuth mode redirects away immediately — skip demo form fill
+    if (status?.noAuth) return;
     if (status?.demo) {
       email.value = "demo@example.com";
       loginPassword.value = "demo";

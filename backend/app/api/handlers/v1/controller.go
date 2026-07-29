@@ -4,6 +4,7 @@ package v1
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/homebox/backend/internal/core/services"
@@ -56,14 +57,27 @@ func WithSecureCookies(secure bool) func(*V1Controller) {
 	}
 }
 
+func WithNoAuth(token, attachmentToken string, expires time.Time) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.noAuth = true
+		ctrl.noAuthToken = token
+		ctrl.noAuthAttachmentToken = attachmentToken
+		ctrl.noAuthExpires = expires
+	}
+}
+
 type V1Controller struct {
-	cookieSecure      bool
-	repo              *repo.AllRepos
-	svc               *services.AllServices
-	maxUploadSize     int64
-	isDemo            bool
-	allowRegistration bool
-	bus               *eventbus.EventBus
+	cookieSecure         bool
+	repo                 *repo.AllRepos
+	svc                  *services.AllServices
+	maxUploadSize        int64
+	isDemo               bool
+	allowRegistration    bool
+	noAuth               bool
+	noAuthToken          string
+	noAuthAttachmentToken string
+	noAuthExpires        time.Time
+	bus                  *eventbus.EventBus
 }
 
 type (
@@ -83,6 +97,7 @@ type (
 		Build             Build    `json:"build"`
 		Demo              bool     `json:"demo"`
 		AllowRegistration bool     `json:"allowRegistration"`
+		NoAuth            bool     `json:"noAuth"`
 	}
 )
 
@@ -116,6 +131,21 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 //	@Router  /v1/status [GET]
 func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		if ctrl.noAuth {
+			ctrl.setCookies(w, noPort(r.Host), ctrl.noAuthToken, ctrl.noAuthExpires, true)
+
+			// Also set the attachment token cookie for image URL auth
+			http.SetCookie(w, &http.Cookie{
+				Name:     cookieAttachmentToken,
+				Value:    ctrl.noAuthAttachmentToken,
+				Expires:  ctrl.noAuthExpires,
+				Domain:   noPort(r.Host),
+				Secure:   ctrl.cookieSecure,
+				HttpOnly: false,
+				Path:     "/",
+			})
+		}
+
 		return server.JSON(w, http.StatusOK, APISummary{
 			Healthy:           ready(),
 			Title:             "Homebox",
@@ -123,6 +153,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Build:             build,
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
+			NoAuth:            ctrl.noAuth,
 		})
 	}
 }

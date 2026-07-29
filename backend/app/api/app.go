@@ -20,6 +20,11 @@ type app struct {
 	repos    *repo.AllRepos
 	services *services.AllServices
 	bus      *eventbus.EventBus
+
+	// noAuth mode: pre-generated permanent tokens set at startup
+	noAuthTokenRaw        string
+	noAuthAttachmentToken string
+	noAuthExpires         time.Time
 }
 
 func new(conf *config.Config) *app {

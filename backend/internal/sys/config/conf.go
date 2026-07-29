@@ -36,6 +36,7 @@ type ImportConfig struct {
 type Options struct {
 	AllowRegistration    bool `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool `yaml:"auto_increment_asset_id" conf:"default:true"`
+	NoAuth               bool `yaml:"no_auth"                 conf:"default:false"`
 }
 
 type DebugConf struct {

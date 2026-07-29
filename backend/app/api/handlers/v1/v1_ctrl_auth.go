@@ -15,9 +15,10 @@ import (
 )
 
 const (
-	cookieNameToken    = "hb.auth.token"
-	cookieNameRemember = "hb.auth.remember"
-	cookieNameSession  = "hb.auth.session"
+	cookieNameToken          = "hb.auth.token"
+	cookieNameRemember       = "hb.auth.remember"
+	cookieNameSession        = "hb.auth.session"
+	cookieAttachmentToken    = "hb.auth.attachment_token"
 )
 
 type (

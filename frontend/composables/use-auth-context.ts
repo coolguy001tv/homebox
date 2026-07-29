@@ -23,6 +23,12 @@ export interface IAuthContext {
   invalidateSession(): void;
 
   /**
+   * Enables noAuth mode — subsequent isAuthorized() calls return true
+   * even without a session cookie.
+   */
+  enableNoAuth(): void;
+
+  /**
    * Logs out the user and calls the invalidateSession method.
    */
   logout(api: UserClient): ReturnType<UserClient["user"]["logout"]>;
@@ -43,6 +49,9 @@ class AuthContext implements IAuthContext {
   user?: UserOut;
   private _token: CookieRef<string | null>;
   private _attachmentToken: CookieRef<string | null>;
+
+  /** Set to true when noAuth mode is detected — bypasses cookie-based auth checks. */
+  private _noAuth = false;
 
   get token() {
     // @ts-ignore sometimes it's a boolean I guess?
@@ -67,12 +76,17 @@ class AuthContext implements IAuthContext {
   }
 
   isExpired() {
-    return !this.token;
+    return !this.isAuthorized();
   }
 
   isAuthorized() {
-    console.debug("isAuthorized", this.token);
-    return this.token;
+    console.debug("isAuthorized", this.token, "noAuth", this._noAuth);
+    return this.token || this._noAuth;
+  }
+
+  /** Called when the status endpoint reports noAuth mode. */
+  enableNoAuth() {
+    this._noAuth = true;
   }
 
   invalidateSession() {

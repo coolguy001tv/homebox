@@ -131,7 +131,14 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		}
 
 		if requestToken == "" {
-			return validate.NewRequestError(errors.New("authorization header or query is required"), http.StatusUnauthorized)
+			if a.conf.Options.NoAuth && a.noAuthTokenRaw != "" {
+				// noAuth mode: use the pre-generated permanent token as fallback.
+				// This covers both the first browser visit (before cookies are set)
+				// and SSR API calls that don't carry cookies.
+				requestToken = a.noAuthTokenRaw
+			} else {
+				return validate.NewRequestError(errors.New("authorization header or query is required"), http.StatusUnauthorized)
+			}
 		}
 
 		requestToken = strings.TrimPrefix(requestToken, "Bearer ")
