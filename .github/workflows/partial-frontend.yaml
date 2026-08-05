@@ -18,7 +18,7 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install --shamefully-hoist
+        run: pnpm install --shamefully-hoist --frozen-lockfile
         working-directory: frontend
 
       - name: Run Lint
@@ -57,7 +57,7 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
         working-directory: frontend
 
       - name: Run Integration Tests

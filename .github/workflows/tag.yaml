@@ -5,65 +5,29 @@ on:
     tags:
       - v*
 
-env:
-  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
 jobs:
   backend-tests:
     name: "Backend Server Tests"
-    uses: hay-kot/homebox/.github/workflows/partial-backend.yaml@main
+    uses: ./.github/workflows/partial-backend.yaml
 
   frontend-tests:
     name: "Frontend and End-to-End Tests"
-    uses: hay-kot/homebox/.github/workflows/partial-frontend.yaml@main
-
-  goreleaser:
-    name: goreleaser
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Build Frontend and Copy to Backend
-        working-directory: frontend
-        run: |
-          pnpm install --shamefully-hoist
-          pnpm run build
-          cp -r ./.output/public ../backend/app/api/static/
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          workdir: "backend"
-          distribution: goreleaser
-          version: latest
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/partial-frontend.yaml
 
   publish-tag:
     name: "Publish Tag"
-    uses: hay-kot/homebox/.github/workflows/partial-publish.yaml@main
+    uses: ./.github/workflows/partial-publish.yaml
     with:
       release: true
       tag: ${{ github.ref_name }}
     secrets:
-      GH_TOKEN: ${{ secrets.CR_PAT }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   deploy-docs:
     name: Deploy docs
     needs:
       - publish-tag
-      - goreleaser
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
