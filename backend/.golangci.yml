@@ -1,9 +1,9 @@
 run:
   timeout: 10m
-  # golangci-lint 官方 v1.64.8 二进制由 Go 1.24 编译，而 go.mod 目标是 1.25.0，
-  # 会导致 "build go version lower than targeted" 报错 (exit 3)。
-  # 这里显式指定分析用的 Go 版本为 1.24，绕过 go.mod 目标版本检查。
-  go: "1.24.0"
+  # 注：此处不再需要 `run.go` 覆盖。CI 改用 `install-mode: goinstall`
+  # （golangci-lint-action@v6）让 golangci v1.64.8 用 go1.25 从源码编译，
+  # 生成的二进制与 go.mod 目标 1.25.0 匹配，不再有 "build go version lower
+  # than targeted" 报错，也不再触发官方 go1.24 二进制的内存失控 OOM。
   skip-dirs:
     - internal/data/ent.*
 linters-settings:

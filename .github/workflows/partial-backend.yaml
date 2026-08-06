@@ -27,6 +27,12 @@ jobs:
           # 固定版本，避免 `latest`（v2）无法加载本项目 v1 格式的 .golangci.yml（CI 报 exit code 3）
           version: v1.64.8
 
+          # 官方 v1.64.8 二进制由 Go 1.24 编译，与 go1.25 工具链/go.mod 1.25.0 不兼容：
+          # go/packages 加载时内存失控 OOM（exit 137，Docker 已复现）。
+          # install-mode: goinstall 让 action 用 CI 工具链 go1.25 从源码编译 golangci，
+          # 生成 go1.25-built 二进制，与项目匹配（Docker 实证 golangci run EXIT=0）。
+          install-mode: goinstall
+
           # v6 action 默认会跑 `golangci-lint config verify`，其 JSONSchema 对 v1 配置误报
           # （`run.skip-dirs`/`exclusions` 被 additionalProperties:false 拒绝，属于已知误报）。
           # 关闭该校验，.golangci.yml 仍由 `golangci-lint run` 正常解析。
