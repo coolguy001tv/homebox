@@ -63,13 +63,38 @@
 - **验证**：golang:1.23-alpine 容器 + golangci 官方 v1.64.8 二进制**精确复现**同一错误；golang:1.25 容器中 golangci 正常加载包（无版本错误）。
 - **修复**：partial-backend.yaml + partial-frontend.yaml 的 `setup-go` `go-version` `1.23`→`1.25`（与 go.mod 匹配，纯 CI 配置）
 
+## ✅ v0.1.19 run #13（commit b180520）——测试全绿（2026-08-06）
+
+| job | 结果 |
+|---|---|
+| Backend golangci-lint | ✅ `install-mode: goinstall` 生效（go1.25 从源码编译 v1.64.8） |
+| Backend go:coverage | ✅ 可移植重写后全绿（容器实证 GO_TEST_EXIT=0） |
+| Frontend Lint / Integration | ✅ |
+| Publish Tag | ⏳ 例行 Docker 三平台构建（与本次修复无关，~20 分钟） |
+
+**最后一个失败已修复**：`TestIsWithin` / `TestIsWithin_Subpath`（`backend/internal/core/services/service_import_test.go`）硬编码 Windows 路径（`C:\test-images`、`D:\othere\file.jpg`、`..\Windows\System32`）。Linux 上反斜杠是**字面字符**，Windows 绝对路径被当相对路径处理 → 包含性断言结果相反 → `go:coverage` 必挂。这是 golangci 修好后才暴露的**潜在问题**（作者本地 Windows 编写、本地通过，Linux CI 之前从没跑到）。修复：改用 `filepath.Join(os.TempDir(), ...)` 构造双平台绝对路径，**保留全部用例语义**（大小写由 `strings.EqualFold` 语义保证，Windows 行为不变）。
+
+**说明**：run #12 的 Publish Tag 已把 v0.1.19 发布到 Docker Hub（构建自 63a32cc，app 二进制与 b180520 相同，测试文件不影响产物）。
+
+**已知无害警告**：Go job 的 "Restore cache failed"——`setup-go` 在仓库根找 `go.sum`，实际在 `backend/` 子目录。纯提速项（`cache-dependency-path: backend/go.sum`），不影响绿，未处理。
+
 ## ⏭️ 下一步
 
 1. ✅ 提交全部修复并推送 main（commit `5ad84de`，27 文件，97+/170-）
 2. ✅ 删除远端 tag `v0.1.19` 并重新打 tag 推送（触发 Publish Release run #31065556566）
 3. ✅ 提交二轮 3 个配置修复（commit `cc968be`，4 文件）
-4. ✅ 提交三轮修复（commit `4d96d0a`，6 文件：golangci verify:false / 前端 vue-tsc / busy_timeout）→ run #10：前端双绿 + 镜像已发布，剩 golangci
-5. ⏳ 提交四轮修复（setup-go go 1.23→1.25）+ 重新打 tag 触发新 run，确认全绿
+4. ✅ 提交三轮修复（commit `4d96d0a`，6 文件）→ run #10：前端双绿 + 镜像已发布
+5. ✅ 四轮修复 setup-go go 1.23→1.25（commit `d6e2bfb`）
+6. ✅ golangci OOM：`install-mode: goinstall` 源码编译（commit `63a32cc`）→ run #12 lint 绿
+7. ✅ 可移植重写 isWithin 测试（commit `b180520`）→ run #13 测试全绿
+8. ⏳ 等 Publish Tag 构建完成，确认 v0.1.19 镜像更新（例行，约 20 分钟）
+
+### 后续可选优化（不阻塞，另开轮次）
+
+- **方向 B（已拍板）**：golangci-lint 升级 v2.12.2（go1.26 编译、原生支持 go1.25 模块），迁移 `.golangci.yml` 到 v2 格式
+- `setup-go` 加 `cache-dependency-path: backend/go.sum` 提速（Go 构建缓存恢复）
+- Node 20 deprecated 的 action 升级（checkout@v5 / setup-go@v6 / golangci-lint-action@v7）
+- 真实 bug：`repo_documents.go:80-88` `Create()` 缺 `defer f.Close()`（文件句柄泄漏）
 
 ### 补充决策（2026-08-06）
 
