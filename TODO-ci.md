@@ -54,12 +54,22 @@
 
 **备注**：`.golangci.yml` 的 `issues.fix: true` 会在本地 lint 时**自动改写文件**（曾把 `ent/schema/user.go` 的多余空行删掉）。已回滚并确认 skip-dirs 排除 ent、CI 不会碰它。
 
+## 🔍 v0.1.19 run #10（commit 4d96d0a）的结果（2026-08-06）
+
+- ✅ **Frontend Lint、Frontend Integration Tests 全绿**（vue-tsc 固定 + busy_timeout 修复生效）
+- ✅ **Publish Tag 成功**：Docker Hub `v0.1.19` 已更新（05:12Z，amd64/arm64/arm）
+- ❌ **Backend golangci 仍失败**（步骤跑 142s 后失败，非启动即败）→ 已定位并修复
+- **根因**：CI `setup-go` 用 go **1.23**，而 `go.mod` 要求 **1.25.0**；golangci-lint 分析时设 `GOTOOLCHAIN=local`（不会自动下载工具链），`go/packages` 加载失败：`go.mod requires go >= 1.25.0 (running go 1.23.12; GOTOOLCHAIN=local)`。本地 go1.26 无此问题，故此前一直未发现。
+- **验证**：golang:1.23-alpine 容器 + golangci 官方 v1.64.8 二进制**精确复现**同一错误；golang:1.25 容器中 golangci 正常加载包（无版本错误）。
+- **修复**：partial-backend.yaml + partial-frontend.yaml 的 `setup-go` `go-version` `1.23`→`1.25`（与 go.mod 匹配，纯 CI 配置）
+
 ## ⏭️ 下一步
 
 1. ✅ 提交全部修复并推送 main（commit `5ad84de`，27 文件，97+/170-）
 2. ✅ 删除远端 tag `v0.1.19` 并重新打 tag 推送（触发 Publish Release run #31065556566）
 3. ✅ 提交二轮 3 个配置修复（commit `cc968be`，4 文件）
-4. ⏳ 提交三轮修复（golangci verify:false / 前端 vue-tsc / busy_timeout）+ 重新打 tag 触发新 run，确认全绿 + Docker Hub 更新
+4. ✅ 提交三轮修复（commit `4d96d0a`，6 文件：golangci verify:false / 前端 vue-tsc / busy_timeout）→ run #10：前端双绿 + 镜像已发布，剩 golangci
+5. ⏳ 提交四轮修复（setup-go go 1.23→1.25）+ 重新打 tag 触发新 run，确认全绿
 
 ### 补充决策（2026-08-06）
 

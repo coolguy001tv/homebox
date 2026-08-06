@@ -46,7 +46,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          # 与 partial-backend 保持一致：go.mod 要求 go 1.25.0，工具链直接给到 1.25，
+          # 避免依赖 GOTOOLCHAIN=auto 去下载工具链。
+          go-version: "1.25"
 
       - uses: actions/setup-node@v4
         with:

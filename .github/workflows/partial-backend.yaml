@@ -12,7 +12,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          # go.mod 要求 go 1.25.0，而 golangci-lint 用 GOTOOLCHAIN=local（不会自动升级工具链），
+          # 若工具链低于 1.25 会报 "go.mod requires go >= 1.25.0 (running go 1.23; GOTOOLCHAIN=local)"。
+          go-version: "1.25"
 
       - name: Install Task
         uses: arduino/setup-task@v2
