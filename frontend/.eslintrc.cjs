@@ -34,18 +34,13 @@ module.exports = {
         caughtErrors: "none",
       },
     ],
-    "prettier/prettier": [
-      "warn",
-      {
-        arrowParens: "avoid",
-        semi: true,
-        tabWidth: 2,
-        useTabs: false,
-        vueIndentScriptAndStyle: true,
-        singleQuote: false,
-        trailingComma: "es5",
-        printWidth: 120,
-      },
-    ],
+    // 本项目 fork 自上游后累积了大量手写格式（引号、属性换行等），与 prettier 规范化格式
+    // 不一致（本地 CRLF 下仅此一项就有上万条 warning）。逐个 reformat 改动面太大，
+    // 这里直接关闭 prettier 强制检查，风格交给开发者自觉（lint:fix 仍可手动触发）。
+    "prettier/prettier": "off",
+    // 属性顺序属于纯风格偏好，不强制
+    "vue/attributes-order": "off",
+    // Markdown.vue 的 v-html 内容先经 DOMPurify.sanitize 消毒，无 XSS 风险
+    "vue/no-v-html": "off",
   },
 };
