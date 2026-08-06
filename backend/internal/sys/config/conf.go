@@ -29,7 +29,7 @@ type Config struct {
 }
 
 type ImportConfig struct {
-	ImportDirs    string `yaml:"import_dirs"    conf:"env:HBOX_IMPORT_DIRS"`
+	ImportDirs     string `yaml:"import_dirs"      conf:"env:HBOX_IMPORT_DIRS"`
 	ImportThumbDir string `yaml:"import_thumb_dir" conf:"env:HBOX_IMPORT_THUMB_DIR,default:.@__thumb"`
 }
 

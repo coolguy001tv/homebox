@@ -62,7 +62,6 @@ func TestMain(m *testing.M) {
 	tClient = client
 	tRepos = repo.New(tClient, tbus, os.TempDir()+"/homebox")
 	tSvc = New(tRepos)
-	defer func() { _ = client.Close() }()
 
 	bootstrap()
 	tCtx = Context{
@@ -71,5 +70,7 @@ func TestMain(m *testing.M) {
 		UID:     tUser.ID,
 	}
 
-	os.Exit(m.Run())
+	code := m.Run()
+	_ = client.Close()
+	os.Exit(code)
 }

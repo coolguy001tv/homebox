@@ -8,7 +8,7 @@
             :key="h.value"
             class="text-no-transform text-sm bg-neutral text-neutral-content cursor-pointer"
             @click="sortBy(h.value)"
-            :style="h.value === 'item'?'width:102px':''"
+            :style="(h.value as string) === 'item' ? 'width:102px' : ''"
           >
             <div
               class="flex items-center gap-1"

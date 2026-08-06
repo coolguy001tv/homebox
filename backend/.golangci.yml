@@ -25,6 +25,11 @@ linters-settings:
   gocritic:
     enabled-checks:
       - ruleguard
+    disabled-checks:
+      # 项目有意使用全大写缩写参数名（GID/ID/UID/AID），且 TestMain 的
+      # os.Exit(m.Run()) 与 main 中的 log.Fatal 是标准退出模式，这两项检查误报居多
+      - captLocal
+      - exitAfterDefer
   testifylint:
     enable-all: true
   tagalign:
@@ -45,7 +50,6 @@ linters:
     - errcheck
     - errorlint
     - exhaustive
-    - exportloopref
     - gochecknoinits
     - goconst
     - gocritic

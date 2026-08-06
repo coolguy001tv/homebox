@@ -39,8 +39,8 @@ type (
 		ParentItemIDs   []uuid.UUID  `json:"parentIds"`
 		SortBy          string       `json:"sortBy"`
 		IncludeArchived bool         `json:"includeArchived"`
-		PurchaseFrom	string		 `json:"purchaseFrom"`
-		Manufacturer	string		 `json:"manufacturer"`
+		PurchaseFrom    string       `json:"purchaseFrom"`
+		Manufacturer    string       `json:"manufacturer"`
 		Fields          []FieldQuery `json:"fields"`
 		OrderBy         string       `json:"orderBy"`
 		OrderDir        string       `json:"order"`
@@ -69,7 +69,7 @@ type (
 	}
 
 	ItemUpdate struct {
-		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable,x-omitempty"`
+		ParentID    uuid.UUID `json:"parentId"       extensions:"x-nullable,x-omitempty"`
 		ID          uuid.UUID `json:"id"`
 		AssetID     AssetID   `json:"assetId,string"`
 		Name        string    `json:"name"`
@@ -582,7 +582,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetLocationID(data.LocationID).
 		SetAssetID(int(data.AssetID))
 
-	if data.LabelIDs != nil && len(data.LabelIDs) > 0 {
+	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)
 	}
 

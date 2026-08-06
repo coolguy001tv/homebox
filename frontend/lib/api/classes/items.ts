@@ -13,8 +13,8 @@ import {
   MaintenanceLog,
 } from "../types/data-contracts";
 import { AttachmentTypes, PaginationResult } from "../types/non-generated";
-import { Requests } from "~~/lib/requests";
 import { ImportAPI } from "./import";
+import { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
   orderBy?: string;

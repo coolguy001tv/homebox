@@ -46,17 +46,18 @@ func TestIsWithin_Subpath(t *testing.T) {
 		{name: "absolute file", path: `C:\test-images\foo.jpg`, wantOK: true},
 		{name: "relative subdir", path: `subdir`, wantOK: true},
 		{name: "traversal attempt", path: `..\Windows\System32`, wantOK: false},
-		{name: "absolute outside", path: `D:\other\file.jpg`, wantOK: false},
+		{name: "absolute outside", path: `D:\othere\file.jpg`, wantOK: false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var target string
-			if filepath.IsAbs(tt.path) {
+			switch {
+			case filepath.IsAbs(tt.path):
 				target = filepath.Clean(tt.path)
-			} else if tt.path == "." || tt.path == "" {
+			case tt.path == "." || tt.path == "":
 				target = absBase
-			} else {
+			default:
 				target = filepath.Clean(filepath.Join(absBase, tt.path))
 			}
 

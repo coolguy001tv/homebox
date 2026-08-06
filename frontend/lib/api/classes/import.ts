@@ -35,7 +35,7 @@ export class ImportAPI extends BaseAPI {
     });
   }
 
-  thumbURL(importPath: string, width: number): string {
+  fileThumbURL(importPath: string, width: number): string {
     const encoded = encodeURIComponent(importPath);
     return this.authURL(`/import/thumb?path=${encoded}&w=${width}`);
   }

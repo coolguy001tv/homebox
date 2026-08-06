@@ -54,19 +54,6 @@
   const orderBy = useRouteQuery("orderBy", "createdAt");
   const order = useRouteQuery("order", "desc");
 
-  const orderByLabel = computed(() => {
-    const map: Record<string, string> = {
-      createdAt: "创建时间",
-      updatedAt: "更新时间",
-      purchaseTime: "购买时间",
-      purchasePrice: "购买价格",
-      name: "名字",
-    };
-    return map[orderBy.value] ?? "创建时间";
-  });
-
-  const orderLabel = computed(() => (order.value === "asc" ? "升序" : "倒序"));
-
   const fieldSelector = useRouteQuery("fieldSelector", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));

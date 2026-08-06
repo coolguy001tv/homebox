@@ -51,6 +51,7 @@ describe("locations lifecycle (create, update, delete)", () => {
       name: "test-label",
       description: "test-description",
       color: "",
+      required: false,
     };
 
     const { response, data } = await api.labels.update(label.id, labelData);

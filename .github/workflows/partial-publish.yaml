@@ -49,6 +49,9 @@ jobs:
 
       - name: build nightly image
         if: ${{ inputs.release == false }}
+        # 三平台 buildx 推送偶发卡死（v0.1.19 曾卡近 6h 被 GH Actions 超时取消），
+        # 显式加 30 分钟超时保护，避免长时间占满 job
+        timeout-minutes: 30
         run: |
           docker buildx build --push --no-cache \
             --tag=hellocoolguy/homebox:${{ inputs.tag }} \
@@ -58,6 +61,7 @@ jobs:
 
       - name: build release image
         if: ${{ inputs.release == true }}
+        timeout-minutes: 30
         run: |
           docker buildx build --push --no-cache \
             --tag hellocoolguy/homebox:latest \

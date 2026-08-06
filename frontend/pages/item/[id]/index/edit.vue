@@ -513,8 +513,8 @@ const itemId = computed<string>(() => route.params.id as string);
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
-            <template  v-for="field in mainFields" :key="field.ref" >
-              <div class="sm:divide-y sm:divide-gray-300 grid grid-cols-1" v-if="shouldDisplayField(field) || preferences.editorAdvancedView">
+            <template v-for="field in mainFields">
+              <div :key="field.ref" class="sm:divide-y sm:divide-gray-300 grid grid-cols-1" v-if="shouldDisplayField(field) || preferences.editorAdvancedView">
                 <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
                   <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
                   <FormTextField

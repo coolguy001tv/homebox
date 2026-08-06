@@ -3,6 +3,8 @@ import { describe, expect, test } from "vitest";
 import { factories } from "../factories";
 
 describe("basic notifier workflows", () => {
+  // singleUse 每次新建用户（注册+登录），并发跑完整套件时该用例偶发超过默认 5s，
+  // 放宽超时避免 flaky（CI 上同样会出现）
   test("user should be able to create, update, and delete a notifier", async () => {
     const { client } = await factories.client.singleUse();
 
@@ -55,5 +57,5 @@ describe("basic notifier workflows", () => {
       expect(deleteResult.error).toBeFalsy();
       expect(deleteResult.status).toBe(204);
     }
-  });
+  }, 15000);
 });

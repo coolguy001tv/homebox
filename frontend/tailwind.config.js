@@ -1,4 +1,8 @@
-module.exports = {
+import aspectRatio from "@tailwindcss/aspect-ratio";
+import typography from "@tailwindcss/typography";
+import daisyui from "daisyui";
+
+export default {
   content: ["./app.vue", "./{components,pages,layouts}/**/*.{vue,js,ts,jsx,tsx}"],
   darkMode: "class", // or 'media' or 'class'
   theme: {
@@ -53,5 +57,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography"), require("daisyui")],
+  plugins: [aspectRatio, typography, daisyui],
 };

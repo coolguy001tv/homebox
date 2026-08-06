@@ -22,8 +22,8 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
-          version: latest
+          # 固定版本，避免 `latest`（v2）无法加载本项目 v1 格式的 .golangci.yml（CI 报 exit code 3）
+          version: v1.64.8
 
           # Optional: working directory, useful for monorepos
           working-directory: backend

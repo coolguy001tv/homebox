@@ -46,6 +46,7 @@ function label(): LabelCreate {
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
     color: faker.internet.color(),
+    required: false,
   };
 }
 

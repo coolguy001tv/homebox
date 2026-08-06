@@ -17,8 +17,8 @@ func (aid AssetID) Int() int {
 }
 
 func ParseAssetIDBytes(d []byte) (AID AssetID, ok bool) {
-	d = bytes.Replace(d, []byte(`"`), []byte(``), -1)
-	d = bytes.Replace(d, []byte(`-`), []byte(``), -1)
+	d = bytes.ReplaceAll(d, []byte(`"`), []byte(``))
+	d = bytes.ReplaceAll(d, []byte(`-`), []byte(``))
 
 	aidInt, err := strconv.Atoi(string(d))
 	if err != nil {
@@ -52,8 +52,8 @@ func (aid *AssetID) UnmarshalJSON(d []byte) error {
 		return nil
 	}
 
-	d = bytes.Replace(d, []byte(`"`), []byte(``), -1)
-	d = bytes.Replace(d, []byte(`-`), []byte(``), -1)
+	d = bytes.ReplaceAll(d, []byte(`"`), []byte(``))
+	d = bytes.ReplaceAll(d, []byte(`-`), []byte(``))
 
 	aidInt, err := strconv.Atoi(string(d))
 	if err != nil {

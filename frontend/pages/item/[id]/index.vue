@@ -81,10 +81,11 @@
     return (
       item.value?.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
+          // item.value 经可选链确认非 null，此处用非空断言取 id
+          const itemId = item.value!.id;
           acc.push({
-            // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.thumbURL(item.value.id, cur.id, 400),
-            original: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
+            src: api.thumbURL(itemId, cur.id, 400),
+            original: api.authURL(`/items/${itemId}/attachments/${cur.id}`),
             title: cur.document.title,
             id: cur.id,
           });
@@ -258,48 +259,6 @@
     return details;
   });
 
-  const showWarranty = computed(() => {
-    if (preferences.value.showEmpty) {
-      return true;
-    }
-    return validDate(item.value?.warrantyExpires);
-  });
-
-  const warrantyDetails = computed(() => {
-    const details: Details = [
-      {
-        name: "Lifetime Warranty",
-        text: item.value?.lifetimeWarranty ? "Yes" : "No",
-      },
-    ];
-
-    if (item.value?.lifetimeWarranty) {
-      details.push({
-        name: "Warranty Expires",
-        text: "N/A",
-      });
-    } else {
-      details.push({
-        name: "Warranty Expires",
-        text: item.value?.warrantyExpires || "",
-        type: "date",
-        date: true,
-      });
-    }
-
-    details.push({
-      name: "Warranty Details",
-      type: "markdown",
-      text: item.value?.warrantyDetails || "",
-    });
-
-    if (!preferences.value.showEmpty) {
-      return filterZeroValues(details);
-    }
-
-    return details;
-  });
-
   const showPurchase = computed(() => {
     if (preferences.value.showEmpty) {
       return true;
@@ -352,39 +311,6 @@
       return filterZeroValues(v);
     }
 
-
-    return v;
-  });
-
-  const showSold = computed(() => {
-    if (preferences.value.showEmpty) {
-      return true;
-    }
-    return item.value?.soldTo || item.value?.soldPrice !== "0";
-  });
-
-  const soldDetails = computed<Details>(() => {
-    const v: Details = [
-      {
-        name: "Sold To",
-        text: item.value?.soldTo || "",
-      },
-      {
-        name: "Sold Price",
-        text: item.value?.soldPrice || "",
-        type: "currency",
-      },
-      {
-        name: "Sold At",
-        text: item.value?.soldTime || "",
-        type: "date",
-        date: true,
-      },
-    ];
-
-    if (!preferences.value.showEmpty) {
-      return filterZeroValues(v);
-    }
 
     return v;
   });

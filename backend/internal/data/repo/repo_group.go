@@ -168,15 +168,14 @@ func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, GID uu
 		updatedTotal.Count = count
 
 		updatedV = append(updatedV, updatedTotal)
-
 	}
 
 	// 现在 updatedV 包含了正确的 Count 值，你可以用它替换原来的 v
 	v = updatedV
 
 	// 或者，如果你想一次性打印整个数组，可以将其转换为JSON字符串
-	//jsonTotals, err := json.MarshalIndent(v, "", "  ")
-	//log.Info().RawJSON("totals", jsonTotals).Msg("所有标签的统计信息2")
+	// jsonTotals, err := json.MarshalIndent(v, "", "  ")
+	// log.Info().RawJSON("totals", jsonTotals).Msg("所有标签的统计信息2")
 
 	return v, err
 }

@@ -1,4 +1,4 @@
-# CI 待办清单（2026-08-05 创建，明天继续）
+# CI 待办清单（2026-08-06 更新）
 
 ## ✅ 已完成
 
@@ -8,33 +8,25 @@
 - **打 tag `v0.1.19` 并推送**，触发发布
 - **`.eslintrc.js` → `.eslintrc.cjs`**：修复 `frontend/package.json` 里 `"type": "module"` 导致 ESLint 8 无法加载 CommonJS 配置的问题
 
-## 🔍 待确认
+### 2026-08-06 修复批次（本地全部验证通过）
 
-### 1. 确认 v0.1.19 镜像发布结果
-- 查看 GitHub Actions **Publish Release** 运行（run id `31012908020`）中 `Publish Tag / Publish Homebox` job 是否成功（当时已登录 Docker Hub 成功，正在构建推送 `latest` + `v0.1.19`）
-- 确认 Docker Hub 上 `hellocoolguy/homebox:latest` 与 `hellocoolguy/homebox:v0.1.19` 已存在（三平台）
-- 确认 **Publish Dockers** 运行（run id `31012673571`，push main 触发的 `nightly` 镜像）结果
-- 链接：https://github.com/coolguy001tv/homebox/actions
+| 项 | 修复内容 |
+|---|---|
+| 前端 lint（10 error） | 修复 6 个文件：删除未使用变量（FileBrowser/toast、index.vue 4 个死代码 computed、items.vue 2 个）、import 顺序、`<template v-for>` key 移到真实元素 |
+| 前端 typecheck | 修 5 个既有 TS 错误：`ImportAPI.thumbURL` 重命名 `fileThumbURL`（避免与基类签名冲突）、index.vue `item.value` 非空断言、测试文件补 `LabelCreate.required`、Table.vue 比较断言；tsconfig 加 `ignoreDeprecations`（nuxi typecheck 用 npx 拉 latest TS，对 Nuxt 3.6 生成的 baseUrl/moduleResolution 报弃用错误） |
+| 后端 golangci-lint | 修 errcheck（tx.Rollback/f.Close）、gocritic ifElseChain/wrapperFunc、gosimple S1009；`.golangci.yml` 排除 opinionated 检查（captLocal 全大写缩写参数名、exitAfterDefer TestMain/main 退出模式）、移除已弃用 `exportloopref`；CI 固定 `version: v1.64.8`（`latest`=v2 无法加载 v1 配置，CI 报 exit code 3） |
+| Integration Tests（vitest 无法启动） | `postcss.config.js` / `tailwind.config.js` 是 CommonJS 语法但 package.json 是 `"type": "module"` → 改为 ESM 语法（`export default` / `import`） |
+| notifier 测试 5s 超时 flake | 并发跑完整套件时 singleUse（注册+登录）超过默认 5s，用例加 `15000` 超时 |
+| 发布 build 卡死防护 | `partial-publish.yaml` 的 build nightly/release image 步骤加 `timeout-minutes: 30`（v0.1.19 的 release 构建曾卡近 6h 被 GH Actions 超时取消） |
 
-## ⚠️ 待修复（CI 全绿）
+## 🔍 v0.1.19 发布失败原因（已查明）
 
-### 2. 前端 lint 失败（`pnpm run lint:ci`，10 个 error）
-`.eslintrc.cjs` 修复后 config 可加载，但暴露 10 个既有代码 error，分布在 6 个文件：
+- **3 个测试 job 失败**：Frontend Lint（10 error）、Frontend Integration Tests（postcss config 加载失败）、Backend golangci-lint（config exit 3）
+- **Publish Homebox 被取消**：`build release image` 从 14:00 跑到 19:59（近 6 小时）被 GitHub Actions 6h 超时强制取消 → Docker Hub 上**没有** v0.1.19，`latest` 仍是 0.1.17（7/27）
+- 同日 Publish Nightly 三平台构建 28 分钟成功，说明 release 那次是偶发卡死/限流
 
-| 文件 | 位置 | 问题 |
-|---|---|---|
-| `components/Item/FileBrowser.vue` | :112 | `toast` 未使用 |
-| `composables/utils.ts` | :28 | `currency` 未使用 |
-| `lib/api/classes/items.ts` | :17 | import 顺序（`./import` 应在 `~~/lib/requests` 前） |
-| `pages/item/[id]/index.vue` | :261 / :268 / :359 / :366 | `showWarranty` / `warrantyDetails` / `showSold` / `soldDetails` 未使用 |
-| `pages/item/[id]/index/edit.vue` | :516 | `<template v-for>` 不能有 key |
-| `pages/items.vue` | :57 / :68 | `orderByLabel` / `orderLabel` 未使用 |
+## ⏭️ 下一步
 
-> 注意：lint 输出里大量 `Delete ␍`（CRLF）警告**只是本地 Windows 现象**。git 中文件以 LF 存储（`attr/text eol=lf`），CI（Linux）上不会出现，**不用处理**。
-
-### 3. 后端 golangci-lint 失败
-- `Backend Server Tests / Go` 的 `golangci-lint` 步骤失败，需本地跑 golangci-lint 或 `task` 查看具体报错（可能是既有 Go 代码问题）
-
-### 4. 修复后重新发版
-- 修复上述 lint 后 commit + 推 main，下次打 tag 时 CI 即可全绿
-- 如果希望 `v0.1.19` 的 CI 记录也是绿的，可在修复后删除远端 tag 并重新打（镜像会重新推送，覆盖同名标签）
+1. 提交全部修复并推送 main
+2. 删除远端 tag `v0.1.19` 并重新打 tag（镜像重新推送覆盖同名标签）
+3. 确认新 run 全绿 + Docker Hub 出现 `hellocoolguy/homebox:v0.1.19` 和更新后的 `latest`

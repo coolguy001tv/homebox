@@ -97,7 +97,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, attachmentID uuid.UUID, dat
     if err != nil {
         return nil, err
     }
-    defer tx.Rollback() // nop after successful Commit
+    defer func() { _ = tx.Rollback() }() // nop after successful Commit
 
     txClient := tx.Client()
 

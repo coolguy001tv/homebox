@@ -87,7 +87,7 @@ func saveJPEG(img image.Image, path string) error {
 	if err != nil {
 		return fmt.Errorf("create cache file: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	return jpeg.Encode(f, img, &jpeg.Options{Quality: ThumbnailQuality})
 }

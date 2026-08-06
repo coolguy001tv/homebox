@@ -109,7 +109,6 @@ const emit = defineEmits<{
 const open = useVModel(props, "modelValue", emit);
 
 const api = useUserApi();
-const toast = useNotifier();
 
 const loading = ref(false);
 const errorMsg = ref("");
@@ -131,7 +130,7 @@ const breadcrumbs = computed(() => {
 });
 
 function thumbSrc(filePath: string): string {
-  return api.items.importDir.thumbURL(filePath, 120);
+  return api.items.importDir.fileThumbURL(filePath, 120);
 }
 
 function formatSize(bytes: number): string {

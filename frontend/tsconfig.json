@@ -1,4 +1,9 @@
 {
   // https://v3.nuxtjs.org/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    // nuxi typecheck 通过 npx 拉取 typescript@latest（Nuxt 3.6 生成的配置仍用
+    // baseUrl / moduleResolution=node10，新版 TS 已弃用），用 ignoreDeprecations 压制
+    "ignoreDeprecations": "6.0"
+  }
 }
