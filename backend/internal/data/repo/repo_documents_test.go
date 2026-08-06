@@ -109,3 +109,53 @@ func TestDocumentRepository_CreateUpdateDelete(t *testing.T) {
 		})
 	}
 }
+
+// openFDCount returns the number of file descriptors in this process that
+// point at path. It is only meaningful on Linux, which exposes the process
+// fd table via /proc/self/fd; on other platforms it returns -1 and callers
+// should skip the assertion.
+func openFDCount(path string) int {
+	fds, err := os.ReadDir("/proc/self/fd")
+	if err != nil {
+		return -1
+	}
+
+	count := 0
+	for _, fd := range fds {
+		link, err := os.Readlink(filepath.Join("/proc/self/fd", fd.Name()))
+		if err != nil {
+			continue
+		}
+		if link == path {
+			count++
+		}
+	}
+	return count
+}
+
+// TestDocumentRepository_CreateClosesFile is a regression test for a file
+// handle leak: Create() opened the target file with os.Create but never
+// closed it, leaving the descriptor open after the call returned. On Windows
+// that made Delete() fail with "file in use" (HTTP 500 when removing an
+// attachment); on Linux the descriptor leaked silently. A successful Create()
+// must not leave any descriptor to the file open.
+func TestDocumentRepository_CreateClosesFile(t *testing.T) {
+	temp := t.TempDir()
+	r := DocumentRepository{
+		db:  tClient,
+		dir: temp,
+	}
+
+	doc, err := r.Create(context.Background(), tGroup.ID, DocumentCreate{
+		Title:   "leak-test.md",
+		Content: bytes.NewReader([]byte("hello")),
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = r.Delete(context.Background(), doc.ID)
+	})
+
+	if fdCount := openFDCount(doc.Path); fdCount >= 0 {
+		require.Zero(t, fdCount, "Create() left %d open file handle(s) to %s", fdCount, doc.Path)
+	}
+}

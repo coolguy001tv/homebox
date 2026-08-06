@@ -81,6 +81,7 @@ func (r *DocumentRepository) Create(ctx context.Context, gid uuid.UUID, doc Docu
 	if err != nil {
 		return DocumentOut{}, err
 	}
+	defer func() { _ = f.Close() }()
 
 	_, err = io.Copy(f, doc.Content)
 	if err != nil {

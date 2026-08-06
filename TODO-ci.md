@@ -37,8 +37,10 @@
 
 **验证**：golangci-lint EXIT=0、`pnpm run lint:ci` EXIT=0、`nuxi typecheck` EXIT=0；集成测试在 Linux Docker 容器中 **51/51 全绿**（CI 失败 100% 由 noAuth 崩溃导致）。
 
-### 顺带发现的真实 bug（未改，供后续处理）
-- `repo_documents.go:80-88` `Create()` 里 `os.Create(path)` 后**没有 `defer f.Close()`** → 文件句柄泄漏。Windows 上删除附件返回 500（"file in use"）；Linux 上 POSIX 语义删除仍成功但 FD 泄漏。**不影响 CI 绿，但值得修。**
+### 顺带发现的真实 bug（已修复，2026-08-06）
+- `repo_documents.go:80-88` `Create()` 里 `os.Create(path)` 后**没有 `defer f.Close()`** → 文件句柄泄漏。Windows 上删除附件返回 500（"file in use"）；Linux 上 POSIX 语义删除仍成功但 FD 泄漏。
+- **修复**：加 `defer func() { _ = f.Close() }()`（覆盖成功/错误所有出口，符合项目惯例）。**新增回归测试 `TestDocumentRepository_CreateClosesFile`**：用 `/proc/self/fd` 计数断言 Create 后无悬挂 FD——泄漏在 Linux CI 上也可检测（此前该泄漏只在本机 Windows+CGO 才可见，而本机缺 CGO，测试从没跑到过；现有 `TestDocumentRepository_CreateUpdateDelete` 的 Delete 断言在 Linux 上对打开文件照样成功，一直绿）。
+- **验证**：Docker golang:1.25 容器修复前红（"left 1 open file handle(s)"）→ 修复后绿；完整后端套件 `./app/... ./internal/... ./pkgs/...` exit 0。
 
 ## 🔍 v0.1.19 run #9（commit cc968be）的二轮测试失败（已修复，2026-08-06）
 
@@ -70,7 +72,7 @@
 | Backend golangci-lint | ✅ `install-mode: goinstall` 生效（go1.25 从源码编译 v1.64.8） |
 | Backend go:coverage | ✅ 可移植重写后全绿（容器实证 GO_TEST_EXIT=0） |
 | Frontend Lint / Integration | ✅ |
-| Publish Tag | ⏳ 例行 Docker 三平台构建（与本次修复无关，~20 分钟） |
+| Publish Tag | ✅ 镜像已发布：Docker Hub `v0.1.19` 存在（来源 run #12 或 #13，构建自 63a32cc，见下说明） |
 
 **最后一个失败已修复**：`TestIsWithin` / `TestIsWithin_Subpath`（`backend/internal/core/services/service_import_test.go`）硬编码 Windows 路径（`C:\test-images`、`D:\othere\file.jpg`、`..\Windows\System32`）。Linux 上反斜杠是**字面字符**，Windows 绝对路径被当相对路径处理 → 包含性断言结果相反 → `go:coverage` 必挂。这是 golangci 修好后才暴露的**潜在问题**（作者本地 Windows 编写、本地通过，Linux CI 之前从没跑到）。修复：改用 `filepath.Join(os.TempDir(), ...)` 构造双平台绝对路径，**保留全部用例语义**（大小写由 `strings.EqualFold` 语义保证，Windows 行为不变）。
 
@@ -87,14 +89,14 @@
 5. ✅ 四轮修复 setup-go go 1.23→1.25（commit `d6e2bfb`）
 6. ✅ golangci OOM：`install-mode: goinstall` 源码编译（commit `63a32cc`）→ run #12 lint 绿
 7. ✅ 可移植重写 isWithin 测试（commit `b180520`）→ run #13 测试全绿
-8. ⏳ 等 Publish Tag 构建完成，确认 v0.1.19 镜像更新（例行，约 20 分钟）
+8. ✅ 确认 v0.1.19 镜像已更新：Docker Hub `hellocoolguy/homebox:v0.1.19` 与 `latest` 均存在（`docker manifest inspect` 实证，2026-08-06）
 
 ### 后续可选优化（不阻塞，另开轮次）
 
 - **方向 B（已拍板）**：golangci-lint 升级 v2.12.2（go1.26 编译、原生支持 go1.25 模块），迁移 `.golangci.yml` 到 v2 格式
 - `setup-go` 加 `cache-dependency-path: backend/go.sum` 提速（Go 构建缓存恢复）
 - Node 20 deprecated 的 action 升级（checkout@v5 / setup-go@v6 / golangci-lint-action@v7）
-- 真实 bug：`repo_documents.go:80-88` `Create()` 缺 `defer f.Close()`（文件句柄泄漏）
+- ~~真实 bug：`repo_documents.go:80-88` `Create()` 缺 `defer f.Close()`（文件句柄泄漏）~~ → ✅ 已修复（见上「顺带发现的真实 bug」段，含回归测试）
 
 ### 补充决策（2026-08-06）
 
