@@ -1,25 +1,28 @@
 package services
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
 
 func TestIsWithin(t *testing.T) {
-	base := `C:\test-images`
+	// 用 os.TempDir() 构造双平台绝对路径：Windows 为 C:\...\Temp\TestImages，
+	// Linux 为 /tmp/TestImages。isWithin 是纯字符串逻辑，路径无需真实存在。
+	base := filepath.Join(os.TempDir(), "TestImages")
 
 	tests := []struct {
 		name   string
 		target string
 		want   bool
 	}{
-		{name: "base itself", target: `C:\test-images`, want: true},
-		{name: "base itself lower", target: `c:\test-images`, want: true},
-		{name: "file inside", target: `C:\test-images\foo.jpg`, want: true},
-		{name: "subdir inside", target: `C:\test-images\subdir\bar.jpg`, want: true},
-		{name: "outside", target: `C:\Windows\explorer.exe`, want: false},
-		{name: "sibling folder", target: `C:\test-images-other`, want: false},
+		{name: "base itself", target: base, want: true},
+		{name: "base itself different case", target: strings.ToLower(base), want: true},
+		{name: "file inside", target: filepath.Join(base, "foo.jpg"), want: true},
+		{name: "subdir inside", target: filepath.Join(base, "subdir", "bar.jpg"), want: true},
+		{name: "outside", target: filepath.Join(os.TempDir(), "other", "file.jpg"), want: false},
+		{name: "sibling folder", target: base + "-other", want: false},
 	}
 
 	for _, tt := range tests {
@@ -33,7 +36,7 @@ func TestIsWithin(t *testing.T) {
 }
 
 func TestIsWithin_Subpath(t *testing.T) {
-	absBase, _ := filepath.Abs(`C:\test-images`)
+	absBase, _ := filepath.Abs(filepath.Join(os.TempDir(), "TestImages"))
 	absBase = filepath.Clean(absBase)
 
 	tests := []struct {
@@ -43,10 +46,12 @@ func TestIsWithin_Subpath(t *testing.T) {
 	}{
 		{name: "root empty", path: "", wantOK: true},
 		{name: "root dot", path: ".", wantOK: true},
-		{name: "absolute file", path: `C:\test-images\foo.jpg`, wantOK: true},
-		{name: "relative subdir", path: `subdir`, wantOK: true},
-		{name: "traversal attempt", path: `..\Windows\System32`, wantOK: false},
-		{name: "absolute outside", path: `D:\othere\file.jpg`, wantOK: false},
+		{name: "absolute file", path: filepath.Join(absBase, "foo.jpg"), wantOK: true},
+		{name: "relative subdir", path: "subdir", wantOK: true},
+		// 前向斜杠穿越路径在双平台都能解析：Windows 把 / 视为分隔符，
+		// Linux 亦然，Clean 后落到 base 之外。
+		{name: "traversal attempt", path: "../Windows/System32", wantOK: false},
+		{name: "absolute outside", path: filepath.Join(os.TempDir(), "othere", "file.jpg"), wantOK: false},
 	}
 
 	for _, tt := range tests {
