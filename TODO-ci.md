@@ -40,11 +40,26 @@
 ### 顺带发现的真实 bug（未改，供后续处理）
 - `repo_documents.go:80-88` `Create()` 里 `os.Create(path)` 后**没有 `defer f.Close()`** → 文件句柄泄漏。Windows 上删除附件返回 500（"file in use"）；Linux 上 POSIX 语义删除仍成功但 FD 泄漏。**不影响 CI 绿，但值得修。**
 
+## 🔍 v0.1.19 run #9（commit cc968be）的二轮测试失败（已修复，2026-08-06）
+
+注意 `publish-tag` job **没有 `needs:` 测试 job**——发布与测试并行，镜像会照常发布，测试失败不影响发版。本轮 3 个测试 job 仍失败，已全部修复：
+
+| 失败 job | 根因 | 修复（纯配置） |
+|---|---|---|
+| Backend golangci exit 1（config verify） | golangci-lint-action@v6 默认跑 `golangci-lint config verify`，其 JSONSchema 对 v1 配置**误报**（`run.skip-dirs`/`exclusions` 被 `additionalProperties:false` 拒绝）。本地 `golangci-lint run` 从不触发 verify，故此前未发现 | action 加 `verify: false`；`.golangci.yml` 保持 run.go + skip-dirs 不变 |
+| Frontend Typecheck exit 1 | `nuxi typecheck` 因本地无 vue-tsc 走 `npx -p vue-tsc -p typescript` 拉 **latest**（vue-tsc@3.3.9 + TS 6.x），最新 TS 不导出 `./lib/tsc` → `ERR_PACKAGE_PATH_NOT_EXPORTED` / `ScriptKind is not defined` 崩溃 | devDependencies 加 `vue-tsc@1.8.27`（与本地 `typescript@5.0.2` 兼容；vue-tsc 2.x 需要更新的 TS API 也崩，勿升）；nuxi 检测到本地 typescript+vue-tsc 即用本地、不再走 npx；删除 tsconfig 里为 npx-latest 设的 `ignoreDeprecations` |
+| Integration Tests（1 flake） | **noAuth 崩溃已消失**（服务器正常，47/51 过、12/13 文件过）——Taskfile 修复生效；剩余 `stats.test.ts` 的 items.import 偶发 `SQLITE_BUSY`（busy_timeout=1000ms 在 vitest 并行打同一 SQLite 文件时不够） | Taskfile 全局 env `busy_timeout` 1000→10000 |
+
+**验证**：golangci-lint run EXIT=0、`pnpm run lint:ci` EXIT=0、`pnpm run typecheck` EXIT=0；pnpm 9 + node 18 Docker frozen install 成功（lockfile 由 pnpm 10 写入，`lockfileVersion: 9.0` 兼容 pnpm 9）。SQLITE_BUSY flake 本地无法复现（Docker 复现时 51/51 过），如 CI 再 flake 则给 vitest 加 `fileParallelism: false`。
+
+**备注**：`.golangci.yml` 的 `issues.fix: true` 会在本地 lint 时**自动改写文件**（曾把 `ent/schema/user.go` 的多余空行删掉）。已回滚并确认 skip-dirs 排除 ent、CI 不会碰它。
+
 ## ⏭️ 下一步
 
 1. ✅ 提交全部修复并推送 main（commit `5ad84de`，27 文件，97+/170-）
 2. ✅ 删除远端 tag `v0.1.19` 并重新打 tag 推送（触发 Publish Release run #31065556566）
-3. ⏳ 重新提交本次 3 个配置修复 + 重新打 tag `v0.1.19` 触发新 run，确认全绿 + Docker Hub 更新
+3. ✅ 提交二轮 3 个配置修复（commit `cc968be`，4 文件）
+4. ⏳ 提交三轮修复（golangci verify:false / 前端 vue-tsc / busy_timeout）+ 重新打 tag 触发新 run，确认全绿 + Docker Hub 更新
 
 ### 补充决策（2026-08-06）
 

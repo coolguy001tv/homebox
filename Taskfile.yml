@@ -1,7 +1,10 @@
 version: "3"
 
 env:
-  HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
+  # busy_timeout 从 1000 提到 10000：CI 里 vitest 并行跑多个测试文件，
+  # 并发写同一 SQLite 文件时 1s 等锁超时会导致 SQLITE_BUSY (500) flake
+  # （stats.test.ts import 曾因此失败）。
+  HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=10000&_pragma=journal_mode=WAL&_fk=1
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
   # 注意：noAuth 只在本地 go:run 启用，不能放全局 env——
   # 否则 CI 的 task test:ci 会以 noAuth 启动空库后端导致 log.Fatal 崩溃
