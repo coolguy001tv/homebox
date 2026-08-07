@@ -7,14 +7,16 @@ jobs:
   Go:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           # go.mod 要求 go 1.25.0，而 golangci-lint 用 GOTOOLCHAIN=local（不会自动升级工具链），
           # 若工具链低于 1.25 会报 "go.mod requires go >= 1.25.0 (running go 1.23; GOTOOLCHAIN=local)"。
           go-version: "1.25"
+          # go.sum 在 backend/ 子目录，不指定的话 setup-go 在仓库根找不到缓存依赖
+          cache-dependency-path: backend/go.sum
 
       - name: Install Task
         uses: arduino/setup-task@v2
@@ -22,21 +24,16 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          # 固定版本，避免 `latest`（v2）无法加载本项目 v1 格式的 .golangci.yml（CI 报 exit code 3）
-          version: v1.64.8
+          # golangci-lint v2.12.2（go1.26 编译），原生支持 go.mod 1.25.0 模块：
+          # 不再需要 install-mode: goinstall 从源码编译，官方二进制直接可用；
+          # 也不再触发 v1.64.8 官方二进制（go1.24 编译）的 OOM / 版本不匹配问题。
+          version: v2.12.2
 
-          # 官方 v1.64.8 二进制由 Go 1.24 编译，与 go1.25 工具链/go.mod 1.25.0 不兼容：
-          # go/packages 加载时内存失控 OOM（exit 137，Docker 已复现）。
-          # install-mode: goinstall 让 action 用 CI 工具链 go1.25 从源码编译 golangci，
-          # 生成 go1.25-built 二进制，与项目匹配（Docker 实证 golangci run EXIT=0）。
-          install-mode: goinstall
-
-          # v6 action 默认会跑 `golangci-lint config verify`，其 JSONSchema 对 v1 配置误报
-          # （`run.skip-dirs`/`exclusions` 被 additionalProperties:false 拒绝，属于已知误报）。
-          # 关闭该校验，.golangci.yml 仍由 `golangci-lint run` 正常解析。
-          verify: false
+          # v2 配置带 `version: "2"`，JSONSchema 校验正常，无需再关 verify
+          # （v1 配置曾因 run.skip-dirs 被误报而设 verify: false）
+          verify: true
 
           # Optional: working directory, useful for monorepos
           working-directory: backend
