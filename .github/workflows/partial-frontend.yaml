@@ -54,7 +54,10 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 18
+          # node 18 已 EOL（2025-04-30）；且 pnpm/action-setup@v6 的 self-installer
+          # （@pnpm/exe/setup.js）在 node 18 下崩溃（ERR_INVALID_ARG_TYPE）。
+          # 用 22 与 Dockerfile 前端构建（node:22-alpine）保持一致。
+          node-version: 22
 
       - uses: pnpm/action-setup@v6
         with:
