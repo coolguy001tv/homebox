@@ -1,51 +1,6 @@
-run:
-  timeout: 10m
-  # 注：此处不再需要 `run.go` 覆盖。CI 改用 `install-mode: goinstall`
-  # （golangci-lint-action@v6）让 golangci v1.64.8 用 go1.25 从源码编译，
-  # 生成的二进制与 go.mod 目标 1.25.0 匹配，不再有 "build go version lower
-  # than targeted" 报错，也不再触发官方 go1.24 二进制的内存失控 OOM。
-  skip-dirs:
-    - internal/data/ent.*
-linters-settings:
-  goconst:
-    min-len: 5
-    min-occurrences: 5
-  exhaustive:
-    default-signifies-exhaustive: true
-  revive:
-    ignore-generated-header: false
-    severity: warning
-    confidence: 3
-  depguard:
-    rules:
-      main:
-        deny:
-          - pkg: io/util
-            desc: |
-              Deprecated: As of Go 1.16, the same functionality is now provided by
-              package io or package os, and those implementations should be
-              preferred in new code. See the specific function documentation for
-              details.
-  gocritic:
-    enabled-checks:
-      - ruleguard
-    disabled-checks:
-      # 项目有意使用全大写缩写参数名（GID/ID/UID/AID），且 TestMain 的
-      # os.Exit(m.Run()) 与 main 中的 log.Fatal 是标准退出模式，这两项检查误报居多
-      - captLocal
-      - exitAfterDefer
-  testifylint:
-    enable-all: true
-  tagalign:
-    order:
-      - json
-      - schema
-      - yaml
-      - yml
-      - toml
-      - validate
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - asciicheck
     - bodyclose
@@ -59,23 +14,73 @@ linters:
     - gocritic
     - gocyclo
     - goprintffuncname
-    - gosimple
     - govet
     - ineffassign
     - misspell
     - nakedret
     - revive
+    - sqlclosecheck
     - staticcheck
-    - stylecheck
     - tagalign
     - testifylint
-    - typecheck
-    - typecheck
     - unconvert
     - unused
     - whitespace
     - zerologlint
-    - sqlclosecheck
+  settings:
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: io/util
+              desc: |
+                Deprecated: As of Go 1.16, the same functionality is now provided by
+                package io or package os, and those implementations should be
+                preferred in new code. See the specific function documentation for
+                details.
+    exhaustive:
+      default-signifies-exhaustive: true
+    goconst:
+      min-len: 5
+      min-occurrences: 5
+      # v2 新版 goconst 会把测试 fixture 里的领域字面量（如 CSV 表头 HB.*）也算进去。
+      # 测试里用真实字面量是设计使然，开启后与 v1.64.8 的行为一致（非测试代码里
+      # HB.location 仅出现 1 次，达不到 min-occurrences=5）。
+      ignore-tests: true
+    gocritic:
+      enabled-checks:
+        - ruleguard
+      disabled-checks:
+        - captLocal
+        - exitAfterDefer
+    revive:
+      confidence: 3
+      severity: warning
+    tagalign:
+      order:
+        - json
+        - schema
+        - yaml
+        - yml
+        - toml
+        - validate
+    testifylint:
+      enable-all: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      # 迁移前的 run.skip-dirs 对应项：ent 生成代码整目录排除（含 ent/schema，
+      # 项目内代码规范由 review 保证，lint 不碰 ent，与 v1 行为一致）
+      - internal/data/ent.*
 issues:
-  exclude-use-default: false
   fix: true
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

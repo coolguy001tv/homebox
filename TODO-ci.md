@@ -93,10 +93,24 @@
 
 ### 后续可选优化（不阻塞，另开轮次）
 
-- **方向 B（已拍板）**：golangci-lint 升级 v2.12.2（go1.26 编译、原生支持 go1.25 模块），迁移 `.golangci.yml` 到 v2 格式
-- `setup-go` 加 `cache-dependency-path: backend/go.sum` 提速（Go 构建缓存恢复）
-- Node 20 deprecated 的 action 升级（checkout@v5 / setup-go@v6 / golangci-lint-action@v7）
+- ✅ **方向 B（已拍板）**：golangci-lint 升级 v2.12.2，迁移 `.golangci.yml` 到 v2 格式（见下方「方向 B」段）
+- ✅ `setup-go` 加 `cache-dependency-path: backend/go.sum` 提速（Go 构建缓存恢复）
+- ✅ Node 20 deprecated 的 action 升级（checkout@v5 / setup-go@v6 / setup-node@v5 / golangci-lint-action@v9）
 - ~~真实 bug：`repo_documents.go:80-88` `Create()` 缺 `defer f.Close()`（文件句柄泄漏）~~ → ✅ 已修复（见上「顺带发现的真实 bug」段，含回归测试）
+
+### ✅ 方向 B：golangci-lint 升级 v2.12.2 + CI 优化批次（2026-08-07，分支 `golangci-v2`）
+
+| 项 | 内容 |
+|---|---|
+| golangci-lint v1→v2 | 本地 `go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.2`，`golangci-lint migrate --skip-validation` 迁移配置（v2 内置的 v1 JSONSchema 有 bug，把 v1 合法的 `run.skip-dirs` 当 additionalProperties 拒掉，须跳校验） |
+| 迁移丢失的自定义排除 | migrate 把 `run.skip-dirs: internal/data/ent.*` 换成 v2 默认路径，已手动加回 `linters.exclusions.paths` |
+| v2 收紧暴露 4 个新 issue | v1.64.8 对照跑同份代码 EXIT=0，确认是 v2 新版 linter 收紧、非历史遗留：① testifylint `len`：`assert.Equal(len,len)`→`assert.Len`（repo_users_test.go）；② staticcheck SA5008：`json:"-,omitempty"`→`json:"-"`（repo_items.go，swagger 里 importRef 本就 0 次出现，产物不变）；③④ goconst `HB.*`×2：加 `ignore-tests: true`（CSV 表头领域字面量，测试 fixture 用真实字面量是设计使然；非测试代码 HB.location 仅 1 次，够不到 min-occurrences=5） |
+| partial-backend.yaml | golangci-lint-action **v6→v9**（v7/v8 仍是 node20 运行时，达不到「Node 20 弃用」目的，故按目标用 v9 而非 TODO 原计划的 v7）；version v1.64.8→v2.12.2；删 `install-mode: goinstall` 与 `verify: false`（v2 二进制 go1.26 编译原生支持 go1.25 模块、`config verify` 正常） |
+| setup-go 缓存 | backend + frontend 两处 setup-go 加 `cache-dependency-path: backend/go.sum` |
+| action 升级 | checkout v4→v5、setup-go v5→v6、setup-node v4→v5（全部 node20→node24） |
+| 验证 | 本地 `golangci-lint config verify` EXIT=0、`golangci-lint run` 0 issues、`go build ./...` EXIT=0、`go vet`（含改动包测试文件）EXIT=0；CGO 测试本机跑不了（老问题） |
+
+**遗留（未动，等用户拍板）**：pnpm/action-setup@v4、arduino/setup-task@v2、docker/setup-qemu-action@v3、docker/setup-buildx-action@v3、docker/login-action@v3 仍是 node20 运行时；虽有 node24 新版本（pnpm v6 / task v3 / docker v4），但跨大版本且发布链路本地无法验证，未擅自升级。
 
 ### 补充决策（2026-08-06）
 
