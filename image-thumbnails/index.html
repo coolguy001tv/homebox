@@ -1,0 +1,1192 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://hay-kot.github.io/homebox/image-thumbnails/">
+      
+      
+        <link rel="prev" href="../import-csv/">
+      
+      
+        <link rel="next" href="../build/">
+      
+      
+      <link rel="icon" href="../assets/img/favicon.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>Image Thumbnails - Homebox</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bcfcd587.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extras.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="homebox" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#image-thumbnails" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Homebox" class="md-header__button md-logo" aria-label="Homebox" data-md-component="logo">
+      
+  <img src="../assets/img/favicon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homebox
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Image Thumbnails
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="homebox" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hay-kot/homebox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Homebox
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href=".." class="md-tabs__link">
+          
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://redocly.github.io/redoc/?url=https://hay-kot.github.io/homebox/api/openapi-2.0.json" class="md-tabs__link">
+        
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Homebox" class="md-nav__button md-logo" aria-label="Homebox" data-md-component="logo">
+      
+  <img src="../assets/img/favicon.svg" alt="logo">
+
+    </a>
+    Homebox
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hay-kot/homebox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Homebox
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tips-tricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tips and Tricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import-csv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Import and Export
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Image Thumbnails
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Image Thumbnails
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 路由
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      缩略图接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      鉴权
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      行为说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存机制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存位置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      生成失败
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      前端集成
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="前端集成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发者用法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      支持的图片格式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术参数
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      流量对比示例
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      注意事项
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building The Binary
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://redocly.github.io/redoc/?url=https://hay-kot.github.io/homebox/api/openapi-2.0.json" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 路由
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      缩略图接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      鉴权
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      行为说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存机制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存位置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      生成失败
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      前端集成
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="前端集成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发者用法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      支持的图片格式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术参数
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      流量对比示例
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      注意事项
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="image-thumbnails">Image Thumbnails</h1>
+<p>Homebox 内置了图片自动缩略图功能，可以显著减少图片附件的传输流量。本页介绍该功能的使用方法和注意事项。</p>
+<h2 id="_1">概述</h2>
+<p>默认情况下，Homebox 通过 <code>/api/v1/items/{id}/attachments/{attachment_id}</code> 直接返回用户上传的原始图片文件。对于手机拍摄的高分辨率照片（通常 4000×3000 像素、4-8MB），在列表卡片等小尺寸展示场景中会产生大量不必要的带宽消耗。</p>
+<p>缩略图功能通过以下方式解决这个问题：</p>
+<ul>
+<li><strong>按需生成</strong>：首次请求时动态生成缩略图并写入磁盘缓存</li>
+<li><strong>磁盘缓存</strong>：后续相同尺寸的请求直接返回缓存文件，零 CPU 开销</li>
+<li><strong>原图保留</strong>：原始文件不受影响，下载和弹窗查看仍使用原图</li>
+</ul>
+<h2 id="api">API 路由</h2>
+<h3 id="_2">缩略图接口</h3>
+<div class="highlight"><pre><span></span><code>GET /api/v1/items/{id}/attachments/{attachment_id}/thumb?w={width}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>必需</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>path</td>
+<td>是</td>
+<td>物品 UUID</td>
+</tr>
+<tr>
+<td><code>attachment_id</code></td>
+<td>path</td>
+<td>是</td>
+<td>附件 UUID</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>query</td>
+<td>否</td>
+<td>目标宽度（像素）。省略时返回原图。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">鉴权</h3>
+<p>缩略图接口使用与原附件接口相同的鉴权中间件（<code>assetMW</code>），支持：</p>
+<ul>
+<li><strong>Bearer Token</strong>：标准 <code>Authorization: Bearer &lt;token&gt;</code> 请求头</li>
+<li><strong>access_token</strong>：URL 查询参数 <code>?access_token=&lt;token&gt;</code>，适用于 <code>&lt;img&gt;</code> 标签直接渲染</li>
+</ul>
+<h3 id="_4">行为说明</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>?w=400</code></td>
+<td>缩放至宽度 400px，高度等比缩放，输出 JPEG (quality 85)</td>
+</tr>
+<tr>
+<td><code>?w=0</code> 或不传 <code>w</code></td>
+<td>返回原始文件</td>
+</tr>
+<tr>
+<td>原图宽度 ≤ 目标宽度</td>
+<td>不缩放，仅重新编码为 JPEG</td>
+</tr>
+<tr>
+<td>缓存文件已存在</td>
+<td>直接返回缓存，跳过编解码</td>
+</tr>
+<tr>
+<td>非图片附件</td>
+<td>返回原始文件（不处理）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">示例</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 获取 400px 宽度的缩略图</span>
+curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;http://localhost:7745/api/v1/items/872f387e/attachments/751e69f1/thumb?w=400&quot;</span>
+
+<span class="c1"># 配合 access_token 在 img 标签中使用</span>
+&lt;img<span class="w"> </span><span class="nv">src</span><span class="o">=</span><span class="s2">&quot;/api/v1/items/{itemId}/attachments/{attachmentId}/thumb?w=400&amp;access_token={token}&quot;</span><span class="w"> </span>/&gt;
+</code></pre></div>
+<h2 id="_6">缓存机制</h2>
+<h3 id="_7">缓存位置</h3>
+<p>缩略图缓存文件与原图存放在同一目录下，文件名格式为：</p>
+<div class="highlight"><pre><span></span><code>&lt;原文件名&gt;.thumb_w&lt;宽度&gt;.jpg
+</code></pre></div>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code># 原图
+./.data/&lt;gid&gt;/documents/a1b2c3d4.jpg
+
+# 400px 缩略图缓存
+./.data/&lt;gid&gt;/documents/a1b2c3d4.thumb_w400.jpg
+
+# 800px 缩略图缓存
+./.data/&lt;gid&gt;/documents/a1b2c3d4.thumb_w800.jpg
+</code></pre></div>
+<h3 id="_8">缓存管理</h3>
+<ul>
+<li>缓存文件<strong>不会自动清理</strong>。如需清理，手动删除 <code>*.thumb_w*.jpg</code> 文件即可，下次请求时会自动重新生成。</li>
+<li>删除原图附件时，关联的缩略图缓存<strong>不会自动删除</strong>（可定期清理）。</li>
+<li>缓存文件的总大小远小于原图，通常无需关注。</li>
+</ul>
+<h3 id="_9">生成失败</h3>
+<p>如果缩略图生成失败（例如源文件损坏），服务会记录错误日志并<strong>回退到返回原图</strong>，不会中断请求。</p>
+<h2 id="_10">前端集成</h2>
+<p>前端已在以下场景使用缩略图：</p>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>缩略图宽度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物品列表卡片 (<code>Card.vue</code>)</td>
+<td>400px</td>
+<td>卡片首图，<code>aspect-[4/3]</code> 容器</td>
+</tr>
+<tr>
+<td>表格视图 (<code>Table.vue</code>)</td>
+<td>400px</td>
+<td>表格首图列</td>
+</tr>
+<tr>
+<td>物品详情页 (<code>index.vue</code>)</td>
+<td>800px</td>
+<td>图片列表区域，<code>max-h-[200px]</code> 内展示</td>
+</tr>
+<tr>
+<td>编辑页 (<code>edit.vue</code>)</td>
+<td>100px</td>
+<td>附件列表缩略图，高度 48px</td>
+</tr>
+<tr>
+<td>详情页弹窗</td>
+<td>原图</td>
+<td>点击图片放大查看时使用原始分辨率</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">开发者用法</h3>
+<p>在代码中使用 <code>BaseAPI.thumbURL()</code> 生成缩略图 URL：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useUserApi</span><span class="p">();</span>
+
+<span class="c1">// 获取 400px 宽度的缩略图 URL（自动附加 access_token）</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">thumbUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">api</span><span class="p">.</span><span class="nx">thumbURL</span><span class="p">(</span><span class="nx">itemId</span><span class="p">,</span><span class="w"> </span><span class="nx">attachmentId</span><span class="p">,</span><span class="w"> </span><span class="mf">400</span><span class="p">);</span>
+
+<span class="c1">// 获取原始图片 URL（下载等场景）</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">originalUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">api</span><span class="p">.</span><span class="nx">authURL</span><span class="p">(</span><span class="sb">`/items/</span><span class="si">${</span><span class="nx">itemId</span><span class="si">}</span><span class="sb">/attachments/</span><span class="si">${</span><span class="nx">attachmentId</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="_12">支持的图片格式</h2>
+<p>以下格式支持缩略图生成：</p>
+<ul>
+<li>JPEG (<code>.jpg</code>, <code>.jpeg</code>)</li>
+<li>PNG (<code>.png</code>)</li>
+<li>WebP (<code>.webp</code>)</li>
+<li>GIF (<code>.gif</code>，仅第一帧)</li>
+<li>BMP (<code>.bmp</code>)</li>
+<li>TIFF (<code>.tiff</code>)</li>
+</ul>
+<p>所有格式的缩略图统一输出为 <strong>JPEG</strong> 格式，质量 <strong>85%</strong>。GIF 动画仅保留第一帧。</p>
+<h2 id="_13">技术参数</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输出格式</td>
+<td>JPEG</td>
+</tr>
+<tr>
+<td>输出质量</td>
+<td>85（1-100）</td>
+</tr>
+<tr>
+<td>缩放算法</td>
+<td>Lanczos</td>
+</tr>
+<tr>
+<td>自动旋转</td>
+<td>是（读取 EXIF Orientation）</td>
+</tr>
+<tr>
+<td>依赖库</td>
+<td><code>github.com/disintegration/imaging</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_14">流量对比示例</h2>
+<p>以一张 4000×3000 像素、4.5MB 的典型手机照片为例：</p>
+<table>
+<thead>
+<tr>
+<th>展示场景</th>
+<th>无缩略图</th>
+<th>有缩略图</th>
+<th>节省</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列表卡片 (400px)</td>
+<td>4.5 MB</td>
+<td>~30 KB</td>
+<td>99.3%</td>
+</tr>
+<tr>
+<td>详情页 (800px)</td>
+<td>4.5 MB</td>
+<td>~100 KB</td>
+<td>97.8%</td>
+</tr>
+<tr>
+<td>编辑页预览 (100px)</td>
+<td>4.5 MB</td>
+<td>~5 KB</td>
+<td>99.9%</td>
+</tr>
+<tr>
+<td>弹窗查看原图</td>
+<td>4.5 MB</td>
+<td>4.5 MB</td>
+<td>0%（有意保留）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_15">注意事项</h2>
+<ol>
+<li><strong>首次请求延迟</strong>：首次请求某个尺寸的缩略图时需要解码、缩放、编码，会对该请求增加数百毫秒延迟。后续请求不受影响。</li>
+<li><strong>磁盘空间</strong>：每个缩略图缓存文件通常为 10-100KB，对于百张图片的规模影响可忽略。如空间敏感，可定期清理 <code>*.thumb_w*.jpg</code> 文件。</li>
+<li><strong>升级兼容</strong>：缩略图路由为新增接口，不影响已有的原图路由和 API。现有前端代码无缝升级。</li>
+<li><strong>GIF 动画</strong>：缩略图仅保留 GIF 的第一帧，如需查看动画请使用原图路由。</li>
+<li><strong>透明通道</strong>：PNG/WebP 的透明背景在缩略图中会变为白色（JPEG 不支持透明）。</li>
+</ol>
+<h2 id="_16">配置</h2>
+<p>缩略图功能暂无可配置项，使用以下硬编码值：</p>
+<ul>
+<li>JPEG 质量：<code>85</code></li>
+<li>缩放算法：<code>Lanczos</code></li>
+</ul>
+<p>如需调整，可修改 <code>backend/internal/core/services/service_items_thumbnails.go</code> 中的 <code>ThumbnailQuality</code> 常量。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.instant", "navigation.expand", "navigation.sections", "navigation.tabs.sticky", "navigation.tabs"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+    
+  </body>
+</html>
