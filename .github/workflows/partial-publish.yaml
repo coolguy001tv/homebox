@@ -27,6 +27,9 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: "1.23"
+          # go.sum 在 backend/ 子目录，不指定的话 setup-go 在仓库根找不到缓存依赖
+          #（会报 "Restore cache failed: Dependencies file is not found" 警告）
+          cache-dependency-path: backend/go.sum
 
       - name: Set up QEMU
         id: qemu
