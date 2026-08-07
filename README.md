@@ -69,7 +69,7 @@ docker push hellocoolguy/homebox:0.1.21
 `docker images` 可查看本机已构建的镜像（例如上面的 `hellocoolguy/homebox:0.1.21`）。
 
 ## 分支注意事项
-目前是基于v0.10.3-release分支进行的开发，不要切换到main上，名字的由来是当前分支是官方的v0.10.3版本切出来的。
+开发在 `main` 分支进行，发布打 tag `v*`（见上方「Docker 镜像发布」）。历史遗留的 `v0.10.3-release` 分支是早期从官方 v0.10.3 切出的旧线，已冻结不再使用。
 
 ## 一些异常情况
 
