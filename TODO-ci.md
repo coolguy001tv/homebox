@@ -112,6 +112,23 @@
 
 **后续（2026-08-07 已完成）**：pnpm/action-setup@v4、arduino/setup-task@v2、docker 三个 v3 也已升级到 node24 新版本（pnpm v6 / task v3 / docker v4），至此所有 GitHub-hosted action 均运行在 node24。要点：buildx v4 **移除了 `install` 输入**（装 buildx 插件已是默认行为，删掉 `install: true` 即可）；pnpm v6 仅加 pnpm v11 支持（固定 `version: 9` 不受影响）；setup-task v3 / docker v4 的 breaking 仅限 node20→24（托管 runner 无需处理）。全部 YAML 语法校验通过。
 
+### ✅ v0.1.20 / v0.1.21 全流程验证（2026-08-07，方向 B 收尾）
+
+**v0.1.20 run #31142364443**：方向 B 各项全部经真实 CI 验证
+- ✅ Backend（3m8s）：golangci-lint **v2.12.2**（含 `verify: true`）、Build API、Test 全绿
+- ✅ Frontend Lint、Publish Tag（release 镜像 `latest`+`v0.1.20` 已推 Docker Hub）、Deploy docs
+- ❌ Frontend Integration Tests：`pnpm/action-setup@v6` 的 self-installer 崩溃
+- **根因**：该 job 的 `setup-node@v5` 用 `node-version: 18`（已 EOL 2025-04-30）；`@pnpm/exe/setup.js` 在 node 18 下报 `ERR_INVALID_ARG_TYPE`（`path.resolve` 收到 undefined），日志实证 `Node.js v18.20.8`。Lint job 没跑 setup-node、用 runner 默认 node（22），故同样配置却通过——node 版本差异导致同一个 action 一个 job 成、一个 job 败。
+- **修复**（commit `26516b5`）：Integration Tests 的 node-version 18→**22**（与 Dockerfile 前端构建 `node:22-alpine` 一致），并加注释说明原因。
+
+**v0.1.21 run #31144045444**：全流程全绿（RELEASE21_WATCH_EXIT=0）
+- ✅ Backend golangci-lint v2 + Test（3m6s）；✅ Frontend Lint（42s）；✅ Frontend Integration Tests（node 22 修复生效，1m46s）；✅ Publish Tag（`latest`+`v0.1.21` 三平台，30m32s）；✅ Deploy docs（25s）
+- Docker Hub `hellocoolguy/homebox:latest` 已更新到 v0.1.21（v0.1.20 与 v0.1.21 均已发布，v0.1.21 含全部修复）
+
+**顺带收尾**：partial-publish.yaml 的 setup-go 补 `cache-dependency-path: backend/go.sum`（commit `487b0a1`），消除之前遗留的 "Restore cache failed" 警告（见上文 v0.1.19 段的「已知无害警告」）。
+
+**分支收尾**：`golangci-v2` 已 fast-forward 合并进 main 并删除本地分支，4 个 commit（a9eef26 golangci v2 迁移 / 0435b7b + a801865 action 升级 / 487b0a1 setup-go 缓存 / 26516b5 node 22 修复）。
+
 ### 补充决策（2026-08-06）
 
 - **命名改动回滚**：原先把 captLocal 触发的参数命名（`GID→gid`、`ID→id`、`UID→uid`、`AID→aid`）和 exitAfterDefer 触发的 `log.Fatal→log.Error` 都改了代码，后来又禁用了这两个规则——属于「改代码 + 禁规则」重复。已回滚纯命名改动，统一为**用规则禁用解决 opinionated 命名检查**，diff 只保留真修复。
