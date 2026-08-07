@@ -110,7 +110,7 @@
 | action 升级 | checkout v4→v5、setup-go v5→v6、setup-node v4→v5（全部 node20→node24） |
 | 验证 | 本地 `golangci-lint config verify` EXIT=0、`golangci-lint run` 0 issues、`go build ./...` EXIT=0、`go vet`（含改动包测试文件）EXIT=0；CGO 测试本机跑不了（老问题） |
 
-**遗留（未动，等用户拍板）**：pnpm/action-setup@v4、arduino/setup-task@v2、docker/setup-qemu-action@v3、docker/setup-buildx-action@v3、docker/login-action@v3 仍是 node20 运行时；虽有 node24 新版本（pnpm v6 / task v3 / docker v4），但跨大版本且发布链路本地无法验证，未擅自升级。
+**后续（2026-08-07 已完成）**：pnpm/action-setup@v4、arduino/setup-task@v2、docker 三个 v3 也已升级到 node24 新版本（pnpm v6 / task v3 / docker v4），至此所有 GitHub-hosted action 均运行在 node24。要点：buildx v4 **移除了 `install` 输入**（装 buildx 插件已是默认行为，删掉 `install: true` 即可）；pnpm v6 仅加 pnpm v11 支持（固定 `version: 9` 不受影响）；setup-task v3 / docker v4 的 breaking 仅限 node20→24（托管 runner 无需处理）。全部 YAML 语法校验通过。
 
 ### 补充决策（2026-08-06）
 

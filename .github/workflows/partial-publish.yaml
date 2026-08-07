@@ -30,19 +30,19 @@ jobs:
 
       - name: Set up QEMU
         id: qemu
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           image: tonistiigi/binfmt:latest
           platforms: all
 
-      - name: install buildx
+      - name: Set up buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          install: true
+        uses: docker/setup-buildx-action@v4
+        # 注意：v4 移除了 `install` 输入——装 buildx 插件到 docker CLI 已是默认行为
+        # （非 standalone 时自动 installPlugin），后续 `docker buildx build` 照常可用
 
       - name: login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
