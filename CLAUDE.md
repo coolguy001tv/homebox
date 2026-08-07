@@ -6,6 +6,7 @@
 - **部署**: Docker, 前端 Nuxt 构建产物嵌入 Go binary
 - **当前分支**: `v0.10.3-release` (基于官方 v0.10.3 切出)
 - **Docker Hub**: `hellocoolguy/homebox:0.1.x`
+- **镜像发布**: 由 GitHub Actions 自动构建（push 到 main → nightly 三平台镜像；push tag `v*` → 跑完整测试后构建 release 镜像 `latest`+`vX.Y.Z` 并部署 docs）。**推荐发布方式**：`git tag vX.Y.Z && git push origin vX.Y.Z`（详见 README「Docker 镜像发布」）；不要手动构建——`scripts/release.sh` 仅应急/本地验证用。
 
 ## 项目结构
 

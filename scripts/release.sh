@@ -5,6 +5,13 @@ set -euo pipefail
 # HomeBox Docker Release Script
 # 一键发布脚本：构建 → 检查登录 → 推送 → (可选) latest 标签
 #
+# ⚠️ 手动发版脚本，仅供应急/本地验证。正常情况下镜像由 GitHub Actions
+# 自动构建，无需手动执行：
+#   - push 到 main  → 自动构建 nightly 镜像（三平台）
+#   - push tag v*   → 自动跑测试并构建 release 镜像（latest + vX.Y.Z，三平台）
+# 推荐发布方式：git tag vX.Y.Z && git push origin vX.Y.Z
+# 注意：手动构建是单平台（仅本机架构），且推 git tag 会再次触发 CI 构建。
+#
 # 用法:
 #   交互模式:  ./scripts/release.sh [版本号]
 #   AI/CI 模式: ./scripts/release.sh <版本号> -y [--latest] [--git-tag]

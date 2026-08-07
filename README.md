@@ -13,33 +13,60 @@
 
 ## Quick Start
 
-## Docker build脚本
-可以参考[这里](https://hub.docker.com/repository/docker/hellocoolguy/homebox/general)看看线上最新版本的信息
+## Docker 镜像发布
 
-注意：每次记得修改以下的版本号信息，当前使用的是0.1.11 （可以当前页面全局替换0.1.11到0.1.X）
+镜像由 **GitHub Actions 自动构建**，正常情况下无需手动构建/推送。
 
-`docker build . -t hellocoolguy/homebox:0.1.11`
+### GitHub Actions 何时自动构建
 
-记得先打开本地的Docker Desktop，否则找不到docker命令
+| 事件 | 触发的 workflow | 产物 |
+|---|---|---|
+| push 到 `main` | `publish.yaml` | 三平台 nightly 镜像 `hellocoolguy/homebox:nightly` |
+| push tag `v*`（如 `v0.1.21`） | `tag.yaml` | 跑完整测试（后端 + 前端）→ 通过后构建三平台 release 镜像 `hellocoolguy/homebox:latest` + `v0.1.21` → 部署 docs |
+| PR 到 `main` | `pull-requests.yaml` | 只跑测试，不构建镜像 |
 
-如果遇到网络问题需要设置代理，可以在终端中设置：
+三平台 = `linux/amd64`、`linux/arm64`、`linux/arm/v7`（buildx + QEMU 交叉构建）。
+
+### 推荐发布流程（用 GitHub Actions 构建）
+
+```bash
+# 1. 代码已合并到 main 后，打版本 tag 并推送：
+git tag v0.1.21
+git push origin v0.1.21
+# 2. GitHub Actions 自动完成：测试 → 三平台构建 → 推送 Docker Hub（latest + v0.1.21）→ 部署 docs
+# 3. 在仓库 Actions 页面查看 Publish Release 运行进度
+```
+
+版本号规则：`vX.Y.Z`。线上最新版本可参考 [Docker Hub](https://hub.docker.com/repository/docker/hellocoolguy/homebox/general)。
+
+### 手动构建（不推荐，仅应急/本地验证）
+
+仓库提供 `scripts/release.sh` 一键脚本（构建 → 推送 → 可选 latest / git tag）：
+
+```bash
+./scripts/release.sh 0.1.21 -y --latest --git-tag
+```
+
+或手动执行：
+
+```bash
+docker build . -t hellocoolguy/homebox:0.1.21   # 记得先打开本机 Docker Desktop，否则找不到 docker 命令
+docker push hellocoolguy/homebox:0.1.21
+```
+
+> **为什么推荐 GitHub Actions 构建而不是手动？**
+> - 手动 `docker build` 是**单平台**（仅本机 CPU 架构），CI 是**三平台**（amd64/arm64/arm/v7）
+> - CI 在干净环境构建（固定 Go 1.25 / Node 22 工具链），不依赖本机环境、可复现；手动构建受本机工具链影响，产物可能与线上不一致
+> - 手动发版容易漏推 `latest` 或 git tag；CI 自动带完整测试保障
+> - **除非 CI 不可用，否则不要手动发版**。若只是想触发 CI 构建，直接 `git tag` + `git push origin` 即可，无需跑 `release.sh`
+
+如果本地构建遇到网络问题，可先设置代理再构建：
 
 1. `export http_proxy=http://127.0.0.1:7890`
 2. 测试网站访问： `curl -I https://google.com`
-3. 后续可以在proxy(Clash)中查看连接看看是否正常。
+3. 后续可以在 proxy(Clash) 中查看连接是否正常。
 
-## 发布流程
-
-1. 确保上面的docker build命令正常成功执行
-2. 登录到docker hub: `docker login` (密码参见notion文档)
-3. `docker push hellocoolguy/homebox:0.1.11`
-4. 可选的 latest tag操作：
-   1. docker tag hellocoolguy/homebox:0.1.11 hellocoolguy/homebox:latest
-   2. docker push hellocoolguy/homebox:latest
-
-## 一些有用的脚本
-
-1. `docker images`可以查看当前已经build好的image，比如前面通过`docker build`出来的`hellocoolguy/homebox:0.1.11`
+`docker images` 可查看本机已构建的镜像（例如上面的 `hellocoolguy/homebox:0.1.21`）。
 
 ## 分支注意事项
 目前是基于v0.10.3-release分支进行的开发，不要切换到main上，名字的由来是当前分支是官方的v0.10.3版本切出来的。
