@@ -52,11 +52,14 @@ jobs:
 
       - name: build nightly image
         if: ${{ inputs.release == false }}
-        # 三平台 buildx 推送偶发卡死（v0.1.19 曾卡近 6h 被 GH Actions 超时取消），
-        # 显式加 30 分钟超时保护，避免长时间占满 job
-        timeout-minutes: 30
+        # 三平台 buildx 推送偶发卡死（v0.1.19 曾卡近 6h 被 GH Actions 超时取消）。
+        # 启用 gha 缓存跨构建复用中间层（尤其 arm64/armv7 的 pnpm install），
+        # 超时放宽到 45 分钟兜底，避免长时间占满 job。
+        timeout-minutes: 45
         run: |
-          docker buildx build --push --no-cache \
+          docker buildx build --push \
+            --cache-from type=gha,scope=homebox \
+            --cache-to type=gha,mode=max,scope=homebox \
             --tag=hellocoolguy/homebox:${{ inputs.tag }} \
             --build-arg=COMMIT=$(git rev-parse HEAD) \
             --build-arg=BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
@@ -64,9 +67,14 @@ jobs:
 
       - name: build release image
         if: ${{ inputs.release == true }}
-        timeout-minutes: 30
+        # 三平台 buildx 推送偶发卡死（v0.1.19 曾卡近 6h 被 GH Actions 超时取消）。
+        # 启用 gha 缓存跨构建复用中间层（尤其 arm64/armv7 的 pnpm install），
+        # 超时放宽到 45 分钟兜底，避免长时间占满 job。
+        timeout-minutes: 45
         run: |
-          docker buildx build --push --no-cache \
+          docker buildx build --push \
+            --cache-from type=gha,scope=homebox \
+            --cache-to type=gha,mode=max,scope=homebox \
             --tag hellocoolguy/homebox:latest \
             --tag hellocoolguy/homebox:${{ inputs.tag }} \
             --build-arg VERSION=${{ inputs.tag }} \
