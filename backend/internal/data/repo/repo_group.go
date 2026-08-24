@@ -288,7 +288,14 @@ func (r *GroupRepository) GroupCreate(ctx context.Context, name string) (Group, 
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, ID uuid.UUID, data GroupUpdate) (Group, error) {
-	currency := group.Currency(strings.ToLower(data.Currency))
+	// Normalize the legacy "rmb" code to the ISO 4217 "cny" code.
+	// ("RMB" is a common abbreviation for renminbi, not a valid ISO 4217 code.)
+	currencyCode := strings.ToLower(data.Currency)
+	if currencyCode == "rmb" {
+		currencyCode = "cny"
+	}
+
+	currency := group.Currency(currencyCode)
 
 	entity, err := r.db.Group.UpdateOneID(ID).
 		SetName(data.Name).

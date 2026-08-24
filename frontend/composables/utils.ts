@@ -34,7 +34,7 @@ export function fmtCurrency(value: number | string, currency = "CNY", locale = "
     style: "currency",
     currency: currency || "CNY",
     minimumFractionDigits: 2,
-    // currencyDisplay: 'symbol', // 格式化成符号
+    currencyDisplay: 'symbol', // 格式化成符号
   });
   return formatter.format(value);
 }

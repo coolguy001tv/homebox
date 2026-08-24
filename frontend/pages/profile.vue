@@ -28,8 +28,9 @@
     const formatter = new Intl.NumberFormat("zh-CN", {
       style: "currency",
       currencyDisplay: 'symbol',
-      currency: 'CNY', // 人民币
-      // currency: currency.value ? currency.value.code : "USD",
+      // Show the example for the currency currently selected in the dropdown,
+      // e.g. "CNY" renders as ¥1,000.00.
+      currency: currency.value.code,
     });
 
     const result = formatter.format(1000)

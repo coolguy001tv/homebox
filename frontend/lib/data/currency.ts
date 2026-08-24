@@ -5,6 +5,7 @@ export type Codes =
   | "BRL"
   | "CAD"
   | "CHF"
+  | "CNY"
   | "CZK"
   | "DKK"
   | "EUR"
@@ -18,7 +19,6 @@ export type Codes =
   | "NOK"
   | "NZD"
   | "PLN"
-  | "RMB"
   | "RUB"
   | "RON"
   | "SAR"
@@ -45,6 +45,7 @@ export const currencies: Currency[] = [
   { code: "BRL", local: "Brazil", symbol: "R$", name: "Brazilian Real" },
   { code: "CAD", local: "Canada", symbol: "C$", name: "Canadian Dollar" },
   { code: "CHF", local: "Switzerland", symbol: "CHF", name: "Swiss Franc" },
+  { code: "CNY", local: "zh-CN", symbol: "¥", name: "Chinese Yuan" },
   { code: "CZK", local: "cs-CZ", symbol: "Kč", name: "Czech Koruna" },
   { code: "DKK", local: "da-DK", symbol: "kr", name: "Danish Krone" },
   { code: "EUR", local: "Eurozone", symbol: "€", name: "Euro" },
@@ -58,7 +59,6 @@ export const currencies: Currency[] = [
   { code: "NOK", local: "Norway", symbol: "kr", name: "Norwegian Krone" },
   { code: "NZD", local: "New Zealand", symbol: "NZ$", name: "New Zealand Dollar" },
   { code: "PLN", local: "Poland", symbol: "zł", name: "Polish Zloty" },
-  { code: "RMB", local: "zh-CN", symbol: "¥", name: "Chinese Yuan" },
   { code: "RON", local: "ro-RO", symbol: "lei", name: "Romanian Leu" },
   { code: "RUB", local: "Russia", symbol: "₽", name: "Russian Ruble" },
   { code: "SAR", local: "Saudi Arabia", symbol: "﷼", name: "Saudi Riyal" },
