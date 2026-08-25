@@ -14,9 +14,10 @@ RUN pnpm build
 # CGO 已禁用，Go 可原生交叉编译：钉在 BUILDPLATFORM，按 TARGETPLATFORM 注入 GOOS/GOARCH/GOARM，
 # 避免 QEMU 模拟下 go build 超时
 FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
-ARG BUILD_TIME
-ARG COMMIT
-ARG VERSION
+# 空默认值保证未传 --build-arg 时变量仍存在（nightly 不传 VERSION），配合 set -u 不会报 unbound
+ARG BUILD_TIME=
+ARG COMMIT=
+ARG VERSION=
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT
@@ -34,7 +35,7 @@ RUN set -eux; \
     export GOOS="$TARGETOS" GOARCH="$TARGETARCH"; \
     if [ -n "$TARGETVARIANT" ]; then export GOARM="${TARGETVARIANT#v}"; fi; \
     CGO_ENABLED=0 go build \
-    -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION"  \
+    -ldflags "-s -w -X main.commit=${COMMIT:-} -X main.buildTime=${BUILD_TIME:-} -X main.version=${VERSION:-}"  \
     -o /go/bin/api \
     -v ./app/api/*.go
 
