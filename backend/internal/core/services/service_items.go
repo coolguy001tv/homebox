@@ -20,8 +20,6 @@ var (
 type ItemService struct {
 	repo *repo.AllRepos
 
-	filepath string
-
 	autoIncrementAssetID bool
 }
 

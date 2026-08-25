@@ -16,8 +16,7 @@ func TestItemService_AddAttachment(t *testing.T) {
 	temp := os.TempDir()
 
 	svc := &ItemService{
-		repo:     tRepos,
-		filepath: temp,
+		repo: tRepos,
 	}
 
 	loc, err := tRepos.Locations.Create(context.Background(), tGroup.ID, repo.LocationCreate{

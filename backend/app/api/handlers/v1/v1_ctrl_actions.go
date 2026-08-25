@@ -79,5 +79,5 @@ func (ctrl *V1Controller) HandleItemDateZeroOut() errchain.HandlerFunc {
 //	@Router      /v1/actions/set-primary-photos [Post]
 //	@Security    Bearer
 func (ctrl *V1Controller) HandleSetPrimaryPhotos() errchain.HandlerFunc {
-	return actionHandlerFactory("ensure asset IDs", ctrl.repo.Items.SetPrimaryPhotos)
+	return actionHandlerFactory("set primary photos", ctrl.repo.Items.SetPrimaryPhotos)
 }

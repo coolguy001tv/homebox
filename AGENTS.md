@@ -69,32 +69,32 @@ HTTP Handler → Service → Repository → Ent Client → SQLite
 
 - **AttachmentRepo.Update 事务缺失** (`backend/internal/data/repo/repo_item_attachments.go:90-150`): 用 `ent.Tx()` 包裹所有写操作，保证「更新主照片 → 清除其他 primary 标记」的原子性。修复后未跑测试（Windows 本机缺 CGO），建议在 Linux/Mac 或 CI 中验证。
 
+### 已处理 (2026-08-25)
+
+- `ItemService.filepath` 死字段：删除（含测试中对该字段的死赋值）
+- `HandleSetPrimaryPhotos` 描述错误：`"ensure asset IDs"` → `"set primary photos"`
+- `extractQuery` 局部闭包：单一调用者，评估为非问题，保留现状
+
 ### 待处理 (按优先级)
 
-**P1 - 代码质量**
-- `ItemService.filepath` 字段 (service_items.go:23) 从未使用 — 死代码
-- `HandleSetPrimaryPhotos` 描述字符串复制粘贴错误 (v1_ctrl_actions.go:82): 描述为 "ensure asset IDs" 应为 "set primary photos"
-- `extractQuery` 每次请求重新定义 (v1_ctrl_items.go:35-80) — 应提取为包级别函数
-
-**P2 - 性能**
+**P1 - 性能**
 - `ZeroOutTimeFields` 逐条 UPDATE (repo_items.go:843-888) — N+1，应批量更新
 - `SetPrimaryPhotos` 逐条 UPDATE (repo_items.go:890-937) — 同上
 - DaisyUI 31 个主题全量打包 (tailwind.config.js) — ~150KB CSS
 - MarkdownIt 每次组件实例重新创建 (components/global/Markdown.vue)
 
-**P3 - 架构一致性**
+**P2 - 架构一致性**
 - 部分 Handler 绕过 Service 层直接调 Repo (v1_ctrl_items.go)
 - 两套映射函数工具并存 (map_helpers.go vs automappers.go) — 功能重复
 
-**P4 - 前端**
-- `fmtCurrency()` 硬编码 CNY，忽略传入货币参数
+**P3 - 前端**
 - `data-contracts.ts` 全局 `@ts-nocheck` 禁用类型检查
 - `route()` 将 undefined/null 转为字符串 (lib/api/base/urls.ts)
 - `titlecase()`/`capitalize()` 空字符串边界问题 (lib/strings/index.ts)
 - 注册失败 loading 未重置 (pages/index.vue:68-85)
 - ItemCard 嵌套 `<a>` 标签 (components/Item/Card.vue) — HTML 无效
 
-**P5 - 依赖更新**
+**P4 - 依赖更新**
 - Nuxt 3.6.5 → 最新版
 - DaisyUI 2.x → 4.x/5.x
 - TypeScript 5.0 → 5.x+

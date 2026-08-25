@@ -5,6 +5,7 @@ homebox.db
 .idea
 .DS_Store
 test-mailer.json
+.codex
 node_modules
 
 *.venv
