@@ -18,4 +18,4 @@
 - [x] **验证 Docker 发版流程** — Docker Hub 发布已加入 CI/CD：`publish.yaml`（push main → nightly）与 `tag.yaml`（push tag `v*` → release 镜像 `latest` + `vX.Y.Z`）buildx 三平台自动构建推送，已实测 v0.1.21 全流程通过。手动 `scripts/release.sh` 仅应急使用（详见 README「Docker 镜像发布」）。rootless 镜像未做（当前只发标准镜像）。
 
 ## Git
-- [ ] **CRLF/LF 换行问题** — 每次改动都会出现 CRLF 与 LF 混用，需要统一换行符配置（`.gitattributes` / Git 自动转换）。
+- [x] **CRLF/LF 换行问题** — 新增 `.gitattributes`（`* text=auto eol=lf`），入库与检出统一 LF，消除 commit 转换警告（commit `8fe4c9a`，2026-08-25）。
