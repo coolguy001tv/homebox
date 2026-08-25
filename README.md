@@ -1,17 +1,6 @@
-<div align="center">
-  <img src="/docs/docs/assets/img/lilbox.svg" height="200"/>
-</div>
+# HomeBox
 
-<h1 align="center" style="margin-top: -10px"> HomeBox </h1>
-<p align="center">
-   <a href="https://hay-kot.github.io/homebox/">Docs</a>
-   |
-   <a href="https://homebox.fly.dev">Demo</a>
-   |
-   <a href="https://discord.gg/tuncmNrE4z">Discord</a>
-</p>
-
-## Quick Start
+自托管的家庭物品管理系统（Go + Ent + SQLite + Nuxt 3）。本仓库文档面向唯一维护者，均为中文。
 
 ## Docker 镜像发布
 
@@ -22,7 +11,7 @@
 | 事件 | 触发的 workflow | 产物 |
 |---|---|---|
 | push 到 `main` | `publish.yaml` | 三平台 nightly 镜像 `hellocoolguy/homebox:nightly` |
-| push tag `v*`（如 `v0.1.21`） | `tag.yaml` | 跑完整测试（后端 + 前端）→ 通过后构建三平台 release 镜像 `hellocoolguy/homebox:latest` + `v0.1.21` → 部署 docs |
+| push tag `v*`（如 `v0.1.21`） | `tag.yaml` | 跑完整测试（后端 + 前端）→ 通过后构建三平台 release 镜像 `hellocoolguy/homebox:latest` + `v0.1.21` |
 | PR 到 `main` | `pull-requests.yaml` | 只跑测试，不构建镜像 |
 
 三平台 = `linux/amd64`、`linux/arm64`、`linux/arm/v7`（buildx + QEMU 交叉构建）。
@@ -33,7 +22,7 @@
 # 1. 代码已合并到 main 后，打版本 tag 并推送：
 git tag v0.1.21
 git push origin v0.1.21
-# 2. GitHub Actions 自动完成：测试 → 三平台构建 → 推送 Docker Hub（latest + v0.1.21）→ 部署 docs
+# 2. GitHub Actions 自动完成：测试 → 三平台构建 → 推送 Docker Hub（latest + v0.1.21）
 # 3. 在仓库 Actions 页面查看 Publish Release 运行进度
 ```
 
@@ -97,29 +86,6 @@ WHERE  path like '%/data/%';
 ```
 4. 打开前端页面`http://localhost:3000`
 
-[Configuration & Docker Compose](https://hay-kot.github.io/homebox/quick-start)
-
-```bash {"id":"01J05HHH061CS0NPR62CBA4E9K"}
-# If using the rootless image, ensure data 
-# folder has correct permissions
-mkdir -p /path/to/data/folder
-chown 65532:65532 -R /path/to/data/folder
-docker run -d \
-  --name homebox \
-  --restart unless-stopped \
-  --publish 3100:7745 \
-  --env TZ=Europe/Bucharest \
-  --volume /path/to/data/folder/:/data \
-  ghcr.io/hay-kot/homebox:latest
-# ghcr.io/hay-kot/homebox:latest-rootless
-
-
-```
-
-## Credits
-
-- Logo by [@lakotelman](https://github.com/lakotelman)
-
 ## Browse NAS Files 功能说明
 
 ### 配置方法
@@ -163,3 +129,60 @@ volumes:
 - `HBOX_IMPORT_DIRS` 只写新目录路径，Browse NAS Files 弹窗只显示新目录
 - 旧目录映射**不写在** `HBOX_IMPORT_DIRS` 中（不在文件浏览器中显示），但**保留 volumes 挂载**以维持已有 symlink 有效
 - 旧映射路径保持不变（如 `/import/Pictures`），否则已有 symlink 会断裂
+
+## 环境变量与配置
+
+以下环境变量用于配置运行行为（docker-compose 的 `environment:` 或 `--env`）：
+
+| Variable                             | Default                | Description                                                                        |
+| ------------------------------------ | ---------------------- | ---------------------------------------------------------------------------------- |
+| HBOX_MODE                            | production             | application mode used for runtime behavior  can be one of: development, production |
+| HBOX_WEB_PORT                        | 7745                   | port to run the web server on, if you're using docker do not change this           |
+| HBOX_WEB_HOST                        |                        | host to run the web server on, if you're using docker do not change this           |
+| HBOX_OPTIONS_ALLOW_REGISTRATION      | true                   | allow users to register themselves                                                 |
+| HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID | true                   | auto increments the asset_id field for new items                                   |
+| HBOX_WEB_MAX_UPLOAD_SIZE             | 10                     | maximum file upload size supported in MB                                           |
+| HBOX_WEB_READ_TIMEOUT                | 10                     | Read timeout of HTTP sever                                                         |
+| HBOX_WEB_WRITE_TIMEOUT               | 10                     | Write timeout of HTTP server                                                       |
+| HBOX_WEB_IDLE_TIMEOUT                | 30                     | Idle timeout of HTTP server                                                        |
+| HBOX_STORAGE_DATA                    | /data/                 | path to the data directory, do not change this if you're using docker              |
+| HBOX_STORAGE_SQLITE_URL              | /data/homebox.db?_fk=1 | sqlite database url, if you're using docker do not change this                     |
+| HBOX_LOG_LEVEL                       | info                   | log level to use, can be one of: trace, debug, info, warn, error, critical         |
+| HBOX_LOG_FORMAT                      | text                   | log format to use, can be one of: text, json                                       |
+| HBOX_MAILER_HOST                     |                        | email host to use, if not set no email provider will be used                       |
+| HBOX_MAILER_PORT                     | 587                    | email port to use                                                                  |
+| HBOX_MAILER_USERNAME                 |                        | email user to use                                                                  |
+| HBOX_MAILER_PASSWORD                 |                        | email password to use                                                              |
+| HBOX_MAILER_FROM                     |                        | email from address to use                                                          |
+| HBOX_SWAGGER_HOST                    | 7745                   | swagger host to use, if not set swagger will be disabled                           |
+| HBOX_SWAGGER_SCHEMA                  | http                   | swagger schema to use, can be one of: http, https                                  |
+
+CLI 参数（非 Docker 部署时，运行 `homebox --help`）：
+
+```sh
+Usage: api [options] [arguments]
+
+OPTIONS
+  --mode/$HBOX_MODE                                                        <string>  (default: development)
+  --web-port/$HBOX_WEB_PORT                                                <string>  (default: 7745)
+  --web-host/$HBOX_WEB_HOST                                                <string>
+  --web-max-upload-size/$HBOX_WEB_MAX_UPLOAD_SIZE                          <int>     (default: 10)
+  --storage-data/$HBOX_STORAGE_DATA                                        <string>  (default: ./.data)
+  --storage-sqlite-url/$HBOX_STORAGE_SQLITE_URL                            <string>  (default: ./.data/homebox.db?_fk=1)
+  --log-level/$HBOX_LOG_LEVEL                                              <string>  (default: info)
+  --log-format/$HBOX_LOG_FORMAT                                            <string>  (default: text)
+  --mailer-host/$HBOX_MAILER_HOST                                          <string>
+  --mailer-port/$HBOX_MAILER_PORT                                          <int>
+  --mailer-username/$HBOX_MAILER_USERNAME                                  <string>
+  --mailer-password/$HBOX_MAILER_PASSWORD                                  <string>
+  --mailer-from/$HBOX_MAILER_FROM                                          <string>
+  --swagger-host/$HBOX_SWAGGER_HOST                                        <string>  (default: localhost:7745)
+  --swagger-scheme/$HBOX_SWAGGER_SCHEME                                    <string>  (default: http)
+  --demo/$HBOX_DEMO                                                        <bool>
+  --debug-enabled/$HBOX_DEBUG_ENABLED                                      <bool>    (default: false)
+  --debug-port/$HBOX_DEBUG_PORT                                            <string>  (default: 4000)
+  --options-allow-registration/$HBOX_OPTIONS_ALLOW_REGISTRATION            <bool>    (default: true)
+  --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID  <bool>    (default: true)
+  --help/-h
+  display this help message
+```
