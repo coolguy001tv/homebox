@@ -1,36 +1,31 @@
-# Auto-detect text files and normalize to LF on commit.
-# Working tree can use platform-native line endings, but the repo always stores LF.
-* text=auto
+# 文本文件统一为 LF：入库与检出均为 LF（覆盖 autocrlf）
+* text=auto eol=lf
 
-# Explicitly mark source code as text
-*.go      text eol=lf
-*.ts      text eol=lf
-*.vue     text eol=lf
-*.js      text eol=lf
-*.json    text eol=lf
-*.yaml    text eol=lf
-*.yml     text eol=lf
-*.md      text eol=lf
-*.css     text eol=lf
-*.html    text eol=lf
-*.mod     text eol=lf
-*.sum     text eol=lf
-Dockerfile text eol=lf
+# 二进制文件：不做任何换行符转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
 
-# Binary files — do not convert
-*.png     binary
-*.jpg     binary
-*.jpeg    binary
-*.gif     binary
-*.ico     binary
-*.svg     binary
-*.webp    binary
-*.woff    binary
-*.woff2   binary
-*.ttf     binary
-*.eot     binary
-*.db      binary
-*.exe     binary
-*.dll     binary
-*.so      binary
-*.dylib   binary
+# 显式强制 LF：Go / 前端生态默认换行符（入库与检出均为 LF）
+*.go text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.vue text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.csv text eol=lf
+*.tmpl text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
