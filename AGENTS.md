@@ -55,51 +55,7 @@ HTTP Handler → Service → Repository → Ent Client → SQLite
 - **WebSocket 事件推送**: 数据变更时通知前端
 - **通知系统**: Shoutrrr 多平台 (Discord, Telegram, Slack 等)
 
----
+## 已知约束
 
-## 代码审查结论 (2026-07-14)
-
-以下结论记录了上次全面代码审查的结果，方便后续优化时优先查看。
-
-### Ent QueryBuilder 指针语义
-
-`*ItemQuery.Where()` 使用指针接收者 (`func (iq *ItemQuery) Where(...) *ItemQuery`)。调用 `iq.Where()` 时通过指针直接修改了共享 struct (`iq.predicates = append(...)`)，所以 `qb.Where(...)` 和 `qb = qb.Where(...)` 功能等价 — 不是 Bug。
-
-### 已修复
-
-- **AttachmentRepo.Update 事务缺失** (`backend/internal/data/repo/repo_item_attachments.go:90-150`): 用 `ent.Tx()` 包裹所有写操作，保证「更新主照片 → 清除其他 primary 标记」的原子性。修复后未跑测试（Windows 本机缺 CGO），建议在 Linux/Mac 或 CI 中验证。
-
-### 已处理 (2026-08-25)
-
-- `ItemService.filepath` 死字段：删除（含测试中对该字段的死赋值）
-- `HandleSetPrimaryPhotos` 描述错误：`"ensure asset IDs"` → `"set primary photos"`
-- `extractQuery` 局部闭包：单一调用者，评估为非问题，保留现状
-
-### 待处理 (按优先级)
-
-**P1 - 性能**
-- `ZeroOutTimeFields` 逐条 UPDATE (repo_items.go:843-888) — N+1，应批量更新
-- `SetPrimaryPhotos` 逐条 UPDATE (repo_items.go:890-937) — 同上
-- DaisyUI 31 个主题全量打包 (tailwind.config.js) — ~150KB CSS
-- MarkdownIt 每次组件实例重新创建 (components/global/Markdown.vue)
-
-**P2 - 架构一致性**
-- 部分 Handler 绕过 Service 层直接调 Repo (v1_ctrl_items.go)
-- 两套映射函数工具并存 (map_helpers.go vs automappers.go) — 功能重复
-
-**P3 - 前端**
-- `data-contracts.ts` 全局 `@ts-nocheck` 禁用类型检查
-- `route()` 将 undefined/null 转为字符串 (lib/api/base/urls.ts)
-- `titlecase()`/`capitalize()` 空字符串边界问题 (lib/strings/index.ts)
-- 注册失败 loading 未重置 (pages/index.vue:68-85)
-- ItemCard 嵌套 `<a>` 标签 (components/Item/Card.vue) — HTML 无效
-
-**P4 - 依赖更新**
-- Nuxt 3.6.5 → 最新版
-- DaisyUI 2.x → 4.x/5.x
-- TypeScript 5.0 → 5.x+
-
-### 已知特点 (非问题)
-
-- 项目中存在中英混合的代码注释和 UI 文本（如 "购买价格"、"制造商"），这是有意设计的本地化，不是需要修复的问题。
-- 前端多处硬编码中文 UI 文本，未使用 i18n 方案。
+- Ent `*ItemQuery.Where()` 使用指针接收者直接修改共享 struct，`qb.Where(...)` 与 `qb = qb.Where(...)` 等价 — 不是 Bug。
+- 代码注释和 UI 文本中英混合（如 "购买价格"、"制造商"）是有意设计，不是需要修复的问题。
